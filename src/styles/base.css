@@ -88,8 +88,14 @@ small, .small { font-size: var(--pl-size-sm); }
 .pl-masthead-net .val { font-size: var(--pl-size-lg); font-weight: 700; font-variant-numeric: tabular-nums; }
 .pl-masthead-tools { display: flex; gap: var(--pl-space-1); align-items: center; }
 @media (max-width: 720px) {
-  .pl-masthead-facts { order: 3; flex-basis: 100%; }
+  .pl-masthead { position: static; }
+  .pl-masthead-facts { order: 3; flex-basis: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; }
+  .pl-masthead-facts span { min-width: 0; overflow-wrap: anywhere; }
   .pl-masthead-net { margin-left: auto; }
+  .pl-nav { top: 0; }
+}
+@media (max-width: 360px) {
+  .pl-masthead-facts { grid-template-columns: 1fr; }
 }
 
 /* Tabs / section nav -------------------------------------------------------------- */

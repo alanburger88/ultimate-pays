@@ -10,7 +10,7 @@
     "build:single": "node bin/paylight.js build",
     "build": "node bin/paylight.js build --all",
     "validate": "node scripts/validate.js",
-    "test": "node scripts/validate.js && node --test tests/unit/",
+    "test": "node scripts/validate.js && node --test \"tests/unit/**/*.test.js\"",
     "test:e2e": "node tests/e2e/run.js",
     "lint": "node scripts/lint-modules.js"
   },
