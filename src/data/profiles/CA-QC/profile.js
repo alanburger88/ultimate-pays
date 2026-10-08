@@ -1,10 +1,18 @@
 /**
- * PLACEHOLDER profile CA-QC — generated stub copied from CA-ON. REPLACE ENTIRELY.
+ * Profile CA-QC — Québec, Canada. Jurisdiction pack for presentation.
  * Constructed for presentation; not reviewed for production issuance.
  * Sources are design references, not an executable legal rulebook.
+ *
+ * Statement structure follows the pay-slip content list of the Loi sur les
+ * normes du travail (art. 46) as published by the CNESST: employer, employee,
+ * occupation, payment date and period, hours paid at the prevailing rate,
+ * overtime hours with the applicable premium, nature and amount of bonuses
+ * and indemnities, wage rate, gross wages, nature and amount of each
+ * deduction, net wages. Québec pay statements conventionally separate the
+ * retenues à la source (federal tax, Québec tax, RRQ, RQAP, AE) from other
+ * deductions, which this profile models as two sub-totals.
  */
 export const profile = {
-  stub: true,
   id: 'CA-QC',
   version: '2026.1',
   country: 'CA',
@@ -13,7 +21,7 @@ export const profile = {
   subdivision: 'QC',
   group: 'north-america',
   currency: 'CAD',
-  locales: ['en-CA', 'fr-CA'],
+  locales: ['fr-CA', 'en-CA'],
   defaultLocale: 'fr-CA',
   statutoryLocale: 'fr-CA',
   paper: 'letter',
@@ -21,50 +29,68 @@ export const profile = {
   payFrequency: 'biweekly',
   entity: {
     legalName: 'Avenlo Québec inc.',
-    tradingName: 'Avenlo Group',
-    address: { lines: ['120 Front Street West, Suite 900'], city: 'Toronto', region: 'ON', postalCode: 'M5J 0A0', country: 'CA' },
-    registrations: [{ key: 'cra_payroll_account', valueMasked: 'RP•••• 0001' }],
+    tradingName: 'Avenlo Québec',
+    address: { lines: ['5800, rue Saint-Patrick, bureau 410'], city: 'Montréal', region: 'QC', postalCode: 'H4E 0A0', country: 'CA' },
+    registrations: [
+      { key: 'rq_identification', valueMasked: '•••• •••• RS0001' },
+      { key: 'cra_payroll_account', valueMasked: 'RP•••• 0002' },
+    ],
   },
   primaryTotal: 'net',
   payableTotal: 'payable',
   totals: [
     { id: 'gross', sum: { categories: ['earning'], cash: true }, required: true, prominent: true },
     { id: 'taxableGross', sum: { categories: ['earning', 'noncash'], taxable: true } },
-    { id: 'employeeDeductions', sum: { categories: ['deduction'] }, required: true, prominent: true },
+    { id: 'statutoryDeductions', sum: { categories: ['deduction'], groups: ['tax', 'social'] }, prominent: true },
+    { id: 'otherDeductions', sum: { categories: ['deduction'], excludeGroups: ['tax', 'social'] } },
+    { id: 'employeeDeductions', formula: ['statutoryDeductions', '+', 'otherDeductions'], required: true, prominent: true },
     { id: 'net', formula: ['gross', '-', 'employeeDeductions'], required: true, prominent: true, net: true },
     { id: 'reimbursements', sum: { categories: ['reimbursement'] } },
     { id: 'advances', sum: { categories: ['advance'] } },
     { id: 'payable', formula: ['net', '+', 'reimbursements', '-', 'advances'], required: true, prominent: true, payable: true },
     { id: 'employerContributions', sum: { categories: ['employer'] } },
     { id: 'nonCash', sum: { categories: ['noncash'] } },
+    { id: 'vacationAccrual', sum: { categories: ['info'], groups: ['leave'] } },
   ],
-  categoryOrder: ['earning', 'reimbursement', 'deduction', 'noncash', 'employer'],
+  categoryOrder: ['earning', 'reimbursement', 'deduction', 'noncash', 'employer', 'info'],
   reward: { grossTotal: 'gross', deductionsTotal: 'employeeDeductions', definitionKey: 'reward.definition.default' },
   statutoryTerms: {
-    cpp: { term: 'Canada Pension Plan (CPP)', locale: 'en-CA' },
-    ei: { term: 'Employment Insurance (EI)', locale: 'en-CA' },
-    income_tax: { term: 'Income tax — federal and Ontario', locale: 'en-CA' },
-    vacation_pay: { term: 'Vacation pay (Employment Standards Act, 2000)', locale: 'en-CA' },
+    rrq: { term: 'Régime de rentes du Québec (RRQ)', locale: 'fr-CA' },
+    rqap: { term: 'Régime québécois d’assurance parentale (RQAP)', locale: 'fr-CA' },
+    ae: { term: 'Assurance-emploi (AE)', locale: 'fr-CA' },
+    impot_quebec: { term: 'Impôt du Québec', locale: 'fr-CA' },
+    impot_federal: { term: 'Impôt fédéral', locale: 'fr-CA' },
+    fss: { term: 'Fonds des services de santé (FSS)', locale: 'fr-CA' },
+    indemnite_vacances: { term: 'Indemnité afférente au congé annuel (Loi sur les normes du travail)', locale: 'fr-CA' },
+    jour_ferie: { term: 'Indemnité de jour férié (Loi sur les normes du travail)', locale: 'fr-CA' },
+    heures_supplementaires: { term: 'Heures supplémentaires (Loi sur les normes du travail)', locale: 'fr-CA' },
   },
   requiredFields: [
     { path: 'employer.legalName', reasonKey: 'req.employer_identity' },
     { path: 'employee.displayName', reasonKey: 'req.employee_identity' },
-    { path: 'document.period', reasonKey: 'req.pay_period' },
+    { path: 'employee.occupation', reasonKey: 'req.occupation' },
     { path: 'document.payDate', reasonKey: 'req.pay_date' },
+    { path: 'document.period', reasonKey: 'req.pay_period' },
+    { path: 'lines[earning:regular].hours', reasonKey: 'req.hours' },
+    { path: 'lines[earning:overtime]', reasonKey: 'req.overtime' },
     { path: 'lines[earning].rate', reasonKey: 'req.wage_rate' },
     { path: 'totals.gross', reasonKey: 'req.gross' },
     { path: 'lines[deduction]', reasonKey: 'req.deductions_itemised' },
+    { path: 'lines[deduction:social]', reasonKey: 'req.social_contributions' },
     { path: 'totals.net', reasonKey: 'req.net' },
+    { path: 'profile.statutoryTerms', reasonKey: 'req.statutory_terms' },
   ],
-  requiredDisclosures: ['record_keeping', 'vacation_pay_basis', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'vacation_pay_basis', 'source_deductions', 'constructed_notice'],
   pack: {
     effectiveFrom: '2026-01-01',
     reviewStatus: 'constructed-unreviewed',
-    reviewOwner: 'Unassigned — requires Ontario payroll and qualified local review before issuance',
+    reviewOwner: 'Unassigned — requires Québec payroll and qualified local review before issuance',
     sources: [
-      { title: 'Ontario Employment Standards Act Policy and Interpretation Manual — s. 12 wage statements', url: 'https://www.ontario.ca/document/print/book/104586' },
+      { title: 'CNESST — Bulletin de paie (contenu obligatoire du bulletin de paie)', url: 'https://www.cnesst.gouv.qc.ca/fr/conditions-travail/salaire/bulletin-paie' },
+      { title: 'LégisQuébec — Loi sur les normes du travail, RLRQ c. N-1.1, art. 46 (bulletin de paie)', url: 'https://www.legisquebec.gouv.qc.ca/fr/document/lc/N-1.1' },
+      { title: 'Revenu Québec — Retenues à la source et cotisations de l’employeur', url: 'https://www.revenuquebec.ca/fr/entreprises/retenues-et-cotisations/' },
     ],
-    notes: 'Statement structure follows the s. 12 wage-statement content list as a design reference. Statutory contribution and tax amounts are supplied by payroll; this application does not recompute them.',
+    notes: 'Statement structure follows the art. 46 pay-slip content list as a design reference. Federal and Québec income tax, RRQ, RQAP, AE and FSS amounts are supplied by payroll from the official tables; this application never recomputes or infers a statutory rate. The vacation indemnity accrual percentage and union dues percentage are employer-policy figures referenced from the collective agreement content. Source URLs could not be re-verified from the build environment and must be confirmed at review.',
   },
   modules: { timeLeave: true, totalReward: true },
 };
