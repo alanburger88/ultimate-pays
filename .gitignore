@@ -1,0 +1,7 @@
+node_modules/
+dist/*.html
+dist/*.json
+dist/*.pdf
+dist/*.xlsx
+tests/e2e/out/
+.DS_Store

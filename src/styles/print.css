@@ -1,0 +1,28 @@
+/* Print: a clean, complete, pagination-aware record. Controls, chat, animation and launchers are removed. */
+@page { margin: 16mm 14mm; }
+@media print {
+  :root { --pl-bg: #fff; --pl-surface: #fff; --pl-ink: #000; --pl-muted: #333; --pl-line: #999; --pl-line-strong: #666; }
+  html, body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
+  .pl-skip, .pl-nav, .pl-launcher, .pl-tray, .pl-toasts, .pl-scrim, .pl-popover, .pl-banner, .pl-masthead-tools, .pl-section-actions, .pl-no-print, [data-no-print], #userwayAccessibilityIcon, .uwy, .pl-userway-reserve { display: none !important; }
+  .pl-masthead { position: static; border-bottom: 2px solid #000; }
+  .pl-main { padding: 0; }
+  .pl-print-only { display: block !important; }
+  .pl-section { display: block !important; page-break-inside: auto; margin-bottom: 8mm; }
+  .pl-section[hidden] { display: block !important; }
+  .pl-card { border: 1px solid #999; box-shadow: none; break-inside: avoid; }
+  table { page-break-inside: auto; }
+  thead { display: table-header-group; }
+  tfoot { display: table-footer-group; }
+  tr { page-break-inside: avoid; }
+  .pl-table-wrap { overflow: visible !important; }
+  .pl-cards { display: none !important; }
+  .pl-table-desktop { display: block !important; }
+  .pl-amount { filter: none !important; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #333; }
+  .pl-print-footer { display: block !important; position: fixed; bottom: 0; left: 0; right: 0; font-size: 8pt; color: #333; border-top: 1px solid #999; padding-top: 2mm; }
+  .pl-print-notice { display: block !important; font-size: 9pt; border: 1px solid #000; padding: 3mm; margin: 4mm 0; }
+  .pl-story, .pl-chart, .pl-flow, .pl-bar-h { display: none !important; }
+  .pl-chart-table, .pl-print-table { display: block !important; }
+  h2 { page-break-after: avoid; }
+}
+.pl-print-only, .pl-print-footer, .pl-print-notice { display: none; }

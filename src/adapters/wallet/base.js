@@ -1,0 +1,32 @@
+/** Shared behaviour for wallet providers. */
+export class WalletProvider {
+  constructor({ id, endpoint, record, profile, tokenProvider }) { this.id = id; this.endpoint = endpoint || null; this.record = record; this.profile = profile; this.tokenProvider = tokenProvider; this.state = 'idle'; }
+  /** @returns {{state:'unavailable'|'preview'|'ready', reasons:string[]}} reasons are i18n keys */
+  availability() {
+    const reasons = [];
+    if (!this.endpoint) reasons.push('wallet.reason_no_service');
+    if (!this.deviceSupported()) reasons.push('wallet.reason_device');
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) reasons.push('wallet.reason_offline');
+    reasons.push(...this.extraReasons());
+    return { state: reasons.length ? (this.endpoint ? 'unavailable' : 'preview') : 'ready', reasons };
+  }
+  deviceSupported() { return true; }
+  extraReasons() { return []; }
+  requirementKey() { return `wallet.req_${this.id}`; }
+  /**
+   * Opens an add request with the issuing service. Resolves { state: 'requested'|'issued'|'added', url? }.
+   * 'added' is only returned when the provider confirms; otherwise the honest state is 'requested'.
+   */
+  async request() {
+    const a = this.availability();
+    if (a.state !== 'ready') { const e = new Error('unavailable'); e.code = 'unavailable'; e.reasons = a.reasons; throw e; }
+    const token = this.tokenProvider ? await this.tokenProvider() : null;
+    if (!token) { const e = new Error('no credential'); e.code = 'no_token'; throw e; }
+    const res = await fetch(this.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ provider: this.id, documentRef: this.record.document.id, version: this.record.document.version }) });
+    if (!res.ok) { const e = new Error(`http ${res.status}`); e.code = `http_${res.status}`; throw e; }
+    const data = await res.json();
+    if (!data || typeof data.url !== 'string') { const e = new Error('bad response'); e.code = 'bad_response'; throw e; }
+    this.state = data.state === 'added' ? 'added' : data.state === 'issued' ? 'issued' : 'requested';
+    return { state: this.state, url: data.url };
+  }
+}

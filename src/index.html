@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en-CA" data-theme="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Paylight — Your pay, clearly.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230E6E6B'/%3E%3Cpath d='M9 23V9h7.5a5 5 0 0 1 0 10H13v4z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/print.css">
+<script id="paylight-launch" type="application/json">{}</script>
+</head>
+<body>
+<noscript>
+  <div class="pl-noscript">
+    <p>Paylight needs JavaScript to show your interactive statement. Please enable JavaScript, or ask payroll for a printed or PDF copy.</p>
+    <p>Please ensure JavaScript is enabled for purposes of <a href="https://accessibilityserver.org">website accessibility</a>.</p>
+  </div>
+</noscript>
+<div id="app" class="pl-app" data-loading="true">
+  <p class="pl-boot" aria-live="polite">Opening your statement…</p>
+</div>
+<script type="module" src="app/main.js"></script>
+</body>
+</html>

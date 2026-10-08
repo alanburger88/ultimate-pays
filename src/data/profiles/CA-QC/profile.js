@@ -1,0 +1,70 @@
+/**
+ * PLACEHOLDER profile CA-QC — generated stub copied from CA-ON. REPLACE ENTIRELY.
+ * Constructed for presentation; not reviewed for production issuance.
+ * Sources are design references, not an executable legal rulebook.
+ */
+export const profile = {
+  stub: true,
+  id: 'CA-QC',
+  version: '2026.1',
+  country: 'CA',
+  countryKey: 'country.ca',
+  jurisdiction: 'CA-QC',
+  subdivision: 'QC',
+  group: 'north-america',
+  currency: 'CAD',
+  locales: ['en-CA', 'fr-CA'],
+  defaultLocale: 'fr-CA',
+  statutoryLocale: 'fr-CA',
+  paper: 'letter',
+  taxYear: { startMonth: 1, startDay: 1, basisKey: 'ytd.basis.calendar_year' },
+  payFrequency: 'biweekly',
+  entity: {
+    legalName: 'Avenlo Québec inc.',
+    tradingName: 'Avenlo Group',
+    address: { lines: ['120 Front Street West, Suite 900'], city: 'Toronto', region: 'ON', postalCode: 'M5J 0A0', country: 'CA' },
+    registrations: [{ key: 'cra_payroll_account', valueMasked: 'RP•••• 0001' }],
+  },
+  primaryTotal: 'net',
+  payableTotal: 'payable',
+  totals: [
+    { id: 'gross', sum: { categories: ['earning'], cash: true }, required: true, prominent: true },
+    { id: 'taxableGross', sum: { categories: ['earning', 'noncash'], taxable: true } },
+    { id: 'employeeDeductions', sum: { categories: ['deduction'] }, required: true, prominent: true },
+    { id: 'net', formula: ['gross', '-', 'employeeDeductions'], required: true, prominent: true, net: true },
+    { id: 'reimbursements', sum: { categories: ['reimbursement'] } },
+    { id: 'advances', sum: { categories: ['advance'] } },
+    { id: 'payable', formula: ['net', '+', 'reimbursements', '-', 'advances'], required: true, prominent: true, payable: true },
+    { id: 'employerContributions', sum: { categories: ['employer'] } },
+    { id: 'nonCash', sum: { categories: ['noncash'] } },
+  ],
+  categoryOrder: ['earning', 'reimbursement', 'deduction', 'noncash', 'employer'],
+  reward: { grossTotal: 'gross', deductionsTotal: 'employeeDeductions', definitionKey: 'reward.definition.default' },
+  statutoryTerms: {
+    cpp: { term: 'Canada Pension Plan (CPP)', locale: 'en-CA' },
+    ei: { term: 'Employment Insurance (EI)', locale: 'en-CA' },
+    income_tax: { term: 'Income tax — federal and Ontario', locale: 'en-CA' },
+    vacation_pay: { term: 'Vacation pay (Employment Standards Act, 2000)', locale: 'en-CA' },
+  },
+  requiredFields: [
+    { path: 'employer.legalName', reasonKey: 'req.employer_identity' },
+    { path: 'employee.displayName', reasonKey: 'req.employee_identity' },
+    { path: 'document.period', reasonKey: 'req.pay_period' },
+    { path: 'document.payDate', reasonKey: 'req.pay_date' },
+    { path: 'lines[earning].rate', reasonKey: 'req.wage_rate' },
+    { path: 'totals.gross', reasonKey: 'req.gross' },
+    { path: 'lines[deduction]', reasonKey: 'req.deductions_itemised' },
+    { path: 'totals.net', reasonKey: 'req.net' },
+  ],
+  requiredDisclosures: ['record_keeping', 'vacation_pay_basis', 'constructed_notice'],
+  pack: {
+    effectiveFrom: '2026-01-01',
+    reviewStatus: 'constructed-unreviewed',
+    reviewOwner: 'Unassigned — requires Ontario payroll and qualified local review before issuance',
+    sources: [
+      { title: 'Ontario Employment Standards Act Policy and Interpretation Manual — s. 12 wage statements', url: 'https://www.ontario.ca/document/print/book/104586' },
+    ],
+    notes: 'Statement structure follows the s. 12 wage-statement content list as a design reference. Statutory contribution and tax amounts are supplied by payroll; this application does not recompute them.',
+  },
+  modules: { timeLeave: true, totalReward: true },
+};

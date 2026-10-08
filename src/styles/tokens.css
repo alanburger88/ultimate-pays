@@ -1,0 +1,149 @@
+/* Paylight design tokens. Light is the default; dark follows the [data-theme] attribute or the system. */
+:root {
+  --pl-font: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --pl-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --pl-size-xs: 0.78rem;
+  --pl-size-sm: 0.875rem;
+  --pl-size-md: 1rem;
+  --pl-size-lg: 1.2rem;
+  --pl-size-xl: 1.5rem;
+  --pl-size-2xl: 2rem;
+  --pl-size-3xl: 2.6rem;
+  --pl-lh: 1.5;
+  --pl-radius-sm: 6px;
+  --pl-radius: 12px;
+  --pl-radius-lg: 18px;
+  --pl-space-1: 4px;
+  --pl-space-2: 8px;
+  --pl-space-3: 12px;
+  --pl-space-4: 16px;
+  --pl-space-5: 24px;
+  --pl-space-6: 32px;
+  --pl-space-7: 48px;
+  --pl-gutter: 16px;
+  --pl-touch: 44px;
+  --pl-max-width: 1120px;
+  --pl-launcher-safe: calc(96px + env(safe-area-inset-bottom, 0px));
+  --pl-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --pl-dur: 220ms;
+  --pl-dur-slow: 420ms;
+
+  --pl-bg: #f6f4ef;
+  --pl-surface: #ffffff;
+  --pl-surface-2: #f0ede6;
+  --pl-surface-3: #e6e2d8;
+  --pl-ink: #1b1f24;
+  --pl-ink-2: #3d444d;
+  --pl-muted: #5f6873;
+  --pl-line: #d9d4c9;
+  --pl-line-strong: #b9b2a3;
+  --pl-accent: #0e6e6b;
+  --pl-accent-strong: #0a5553;
+  --pl-accent-soft: #d8ecea;
+  --pl-accent-ink: #ffffff;
+  --pl-positive: #1f7a4d;
+  --pl-positive-soft: #dcefe4;
+  --pl-negative: #b4453a;
+  --pl-negative-soft: #f6e0dc;
+  --pl-warn: #9a6b12;
+  --pl-warn-soft: #f8ecd0;
+  --pl-info: #2b5fa8;
+  --pl-info-soft: #dde8f8;
+  --pl-focus: #1d4ed8;
+  --pl-shadow: 0 1px 2px rgba(27, 31, 36, 0.06), 0 8px 24px rgba(27, 31, 36, 0.08);
+  --pl-shadow-lg: 0 12px 40px rgba(27, 31, 36, 0.18);
+  --pl-chart-1: #0e6e6b;
+  --pl-chart-2: #b4453a;
+  --pl-chart-3: #2b5fa8;
+  --pl-chart-4: #9a6b12;
+  --pl-chart-5: #6b4fa0;
+  --pl-chart-6: #3d7a3a;
+  --pl-chart-neutral: #8a9099;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --pl-bg: #121417;
+  --pl-surface: #1b1f24;
+  --pl-surface-2: #22272e;
+  --pl-surface-3: #2b323b;
+  --pl-ink: #eceef1;
+  --pl-ink-2: #c6ccd4;
+  --pl-muted: #a0a8b3;
+  --pl-line: #343b45;
+  --pl-line-strong: #4a5362;
+  --pl-accent: #5fc2bc;
+  --pl-accent-strong: #8ad8d3;
+  --pl-accent-soft: #163f3e;
+  --pl-accent-ink: #0b1a19;
+  --pl-positive: #5fcf93;
+  --pl-positive-soft: #163a28;
+  --pl-negative: #f08a7d;
+  --pl-negative-soft: #4a221d;
+  --pl-warn: #e2b14f;
+  --pl-warn-soft: #3f3114;
+  --pl-info: #86aef0;
+  --pl-info-soft: #1d2f4d;
+  --pl-focus: #9ec1ff;
+  --pl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --pl-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --pl-chart-1: #5fc2bc;
+  --pl-chart-2: #f08a7d;
+  --pl-chart-3: #86aef0;
+  --pl-chart-4: #e2b14f;
+  --pl-chart-5: #b79cf0;
+  --pl-chart-6: #8ed286;
+  --pl-chart-neutral: #7d8591;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --pl-bg: #121417;
+    --pl-surface: #1b1f24;
+    --pl-surface-2: #22272e;
+    --pl-surface-3: #2b323b;
+    --pl-ink: #eceef1;
+    --pl-ink-2: #c6ccd4;
+    --pl-muted: #a0a8b3;
+    --pl-line: #343b45;
+    --pl-line-strong: #4a5362;
+    --pl-accent: #5fc2bc;
+    --pl-accent-strong: #8ad8d3;
+    --pl-accent-soft: #163f3e;
+    --pl-accent-ink: #0b1a19;
+    --pl-positive: #5fcf93;
+    --pl-positive-soft: #163a28;
+    --pl-negative: #f08a7d;
+    --pl-negative-soft: #4a221d;
+    --pl-warn: #e2b14f;
+    --pl-warn-soft: #3f3114;
+    --pl-info: #86aef0;
+    --pl-info-soft: #1d2f4d;
+    --pl-focus: #9ec1ff;
+    --pl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --pl-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+    --pl-chart-1: #5fc2bc;
+    --pl-chart-2: #f08a7d;
+    --pl-chart-3: #86aef0;
+    --pl-chart-4: #e2b14f;
+    --pl-chart-5: #b79cf0;
+    --pl-chart-6: #8ed286;
+    --pl-chart-neutral: #7d8591;
+    color-scheme: dark;
+  }
+}
+
+:root[data-density="compact"] {
+  --pl-space-3: 8px;
+  --pl-space-4: 12px;
+  --pl-space-5: 16px;
+  --pl-space-6: 24px;
+  --pl-size-md: 0.95rem;
+  --pl-lh: 1.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --pl-dur: 0ms; --pl-dur-slow: 0ms; }
+}
+:root[data-motion="off"] { --pl-dur: 0ms; --pl-dur-slow: 0ms; }

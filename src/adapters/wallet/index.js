@@ -1,0 +1,22 @@
+/**
+ * Wallet provider adapters. Availability is determined per provider from
+ * device, configured issuing service, country and provider response.
+ * A standalone HTML file cannot sign passes; issuance always needs a server.
+ */
+import { AppleWallet } from './apple.js';
+import { GoogleWallet } from './google.js';
+import { SamsungWallet } from './samsung.js';
+
+export function walletProviders({ integration = {}, record, profile, tokenProvider = null }) {
+  const common = { record, profile, tokenProvider };
+  return [
+    new AppleWallet({ ...common, endpoint: integration.apple ? integration.apple.endpoint : null }),
+    new GoogleWallet({ ...common, endpoint: integration.google ? integration.google.endpoint : null }),
+    new SamsungWallet({ ...common, endpoint: integration.samsung ? integration.samsung.endpoint : null }),
+  ];
+}
+
+/** Minimal pass content: brand + neutral label + record reference. No amounts, identifiers or bank details. */
+export function passPreview(record, { brand = 'Paylight', label = 'Pay statement' } = {}) {
+  return { brand, label, reference: record.document.id, version: record.document.version, period: record.document.period };
+}

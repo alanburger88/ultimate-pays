@@ -1,0 +1,22 @@
+{
+  "name": "paylight",
+  "version": "0.1.0",
+  "description": "Paylight — the interactive payslip as the document. Portable single-file HTML pay statement with presenter studio, Lumi assistance, and governed exports.",
+  "private": true,
+  "type": "module",
+  "bin": { "paylight": "bin/paylight.js" },
+  "scripts": {
+    "present": "node bin/paylight.js present",
+    "build:single": "node bin/paylight.js build",
+    "build": "node bin/paylight.js build --all",
+    "validate": "node scripts/validate.js",
+    "test": "node scripts/validate.js && node --test tests/unit/",
+    "test:e2e": "node tests/e2e/run.js",
+    "lint": "node scripts/lint-modules.js"
+  },
+  "engines": { "node": ">=18" },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  },
+  "license": "UNLICENSED"
+}
