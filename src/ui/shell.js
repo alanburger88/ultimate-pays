@@ -44,7 +44,7 @@ function languageControl(ctx) {
   const locales = ctx.config.approvedLocales.filter((l) => ctx.doc.registry.languages[l]);
   if (locales.length < 2) return null;
   const select = h('select', { class: 'pl-select', aria: { label: t('app.language') }, on: { change: (e) => ctx.actions.setLocale(e.target.value) } },
-    locales.map((l) => h('option', { value: l, selected: l === ctx.locale ? true : null }, LANGUAGE_NAMES[l] || l)),
+    locales.map((l) => h('option', { value: l, lang: l, selected: l === ctx.locale ? true : null }, LANGUAGE_NAMES[l] || l)),
   );
   return select;
 }

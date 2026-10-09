@@ -330,12 +330,13 @@ function sortableTh(ctx, filters, key, label, cls) {
 }
 
 function selectCheckbox(ctx, r) {
-  return h('input', {
+  // The 44 px cell is the checkbox's label, so a tap anywhere in it selects the line.
+  return h('label', { class: 'pl-rowcheck-hit' }, h('input', {
     type: 'checkbox', class: 'pl-rowcheck', checked: r.selected,
     aria: { label: `${ctx.t('details.col_select')}: ${r.label}` },
     dataset: { lineFocus: '', focusKey: `sel-${r.line.id}` },
     on: { change: () => { releaseLine(ctx); ctx.actions.toggleSelect(r.line.id); } },
-  });
+  }));
 }
 
 function lineChips(ctx, r) {
@@ -465,7 +466,7 @@ function lineCard(ctx, r, model) {
   const open = () => openLineSheet(ctx, r, model);
   const card = h('article', {
     class: ['pl-line-card', 'pl-dcard', r.selected && 'is-selected'], dataset: { lineId: line.id },
-    on: { click: (e) => { if (e.target.closest('button, input, a, [role="button"], summary')) return; open(); } },
+    on: { click: (e) => { if (e.target.closest('button, input, label, a, [role="button"], summary')) return; open(); } },
   },
     h('div', { class: 'sel' }, selectCheckbox(ctx, r)),
     h('button', { class: 'body', type: 'button', aria: { haspopup: 'dialog' }, dataset: { focusKey: `details-open-${line.id}` }, on: { click: open } },

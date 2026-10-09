@@ -88,3 +88,6 @@
 
 /* Additions in the money scene (items added between gross and net, e.g. a non-cash benefit counted in net). */
 .pl-story .pl-story-bars .b.is-additions { background: var(--pl-chart-3); }
+
+/* Current chapter keeps the accent pairing (6.07:1 light, 8.44:1 dark); this module's generic chapter rule must not override it. */
+.pl-story .pl-story-chapters button[aria-current="true"] { background: var(--pl-accent); color: var(--pl-accent-ink); }

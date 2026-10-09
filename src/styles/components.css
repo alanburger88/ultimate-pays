@@ -1,5 +1,5 @@
 /* Buttons ------------------------------------------------------------------------- */
-.pl-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--pl-touch); padding: 0 var(--pl-space-4); border-radius: 999px; border: 1px solid var(--pl-line-strong); background: var(--pl-surface); color: var(--pl-ink); font-weight: 550; text-decoration: none; transition: background var(--pl-dur), border-color var(--pl-dur), color var(--pl-dur); }
+.pl-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--pl-touch); padding: 0 var(--pl-space-4); border-radius: 999px; border: 1px solid var(--pl-control-border); background: var(--pl-surface); color: var(--pl-ink); font-weight: 550; text-decoration: none; transition: background var(--pl-dur), border-color var(--pl-dur), color var(--pl-dur); }
 .pl-btn:hover { background: var(--pl-surface-2); }
 .pl-btn:disabled, .pl-btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .pl-btn-primary { background: var(--pl-accent); border-color: var(--pl-accent); color: var(--pl-accent-ink); }
@@ -14,7 +14,7 @@
 .pl-btn-group { display: flex; flex-wrap: wrap; gap: var(--pl-space-2); }
 
 /* Segmented control ------------------------------------------------------------------ */
-.pl-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--pl-line-strong); border-radius: 999px; padding: 3px; gap: 2px; background: var(--pl-surface); }
+.pl-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--pl-control-border); border-radius: 999px; padding: 3px; gap: 2px; background: var(--pl-surface); }
 .pl-seg button { border: 0; background: transparent; border-radius: 999px; min-height: 36px; padding: 0 14px; color: var(--pl-ink-2); font-weight: 550; }
 .pl-seg button[aria-pressed="true"], .pl-seg button[aria-checked="true"] { background: var(--pl-accent-soft); color: var(--pl-accent-strong); }
 
@@ -53,7 +53,7 @@ button.pl-chip[aria-pressed="true"] { background: var(--pl-accent); color: var(-
 .pl-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .pl-field > label, .pl-label { font-weight: 600; font-size: var(--pl-size-sm); }
 .pl-hint { color: var(--pl-muted); font-size: var(--pl-size-xs); }
-.pl-input, .pl-select, .pl-textarea { width: 100%; min-height: var(--pl-touch); padding: 8px 12px; border: 1px solid var(--pl-line-strong); border-radius: var(--pl-radius-sm); background: var(--pl-surface); color: var(--pl-ink); }
+.pl-input, .pl-select, .pl-textarea { width: 100%; min-height: var(--pl-touch); padding: 8px 12px; border: 1px solid var(--pl-control-border); border-radius: var(--pl-radius-sm); background: var(--pl-surface); color: var(--pl-ink); }
 .pl-textarea { min-height: 96px; resize: vertical; }
 .pl-input:focus-visible, .pl-select:focus-visible, .pl-textarea:focus-visible { outline: 3px solid var(--pl-focus); outline-offset: 1px; }
 .pl-check { display: flex; gap: 10px; align-items: flex-start; min-height: var(--pl-touch); padding: 6px 0; }
@@ -61,7 +61,7 @@ button.pl-chip[aria-pressed="true"] { background: var(--pl-accent); color: var(-
 .pl-check span { flex: 1; }
 .pl-switch { display: inline-flex; align-items: center; gap: 10px; min-height: var(--pl-touch); cursor: pointer; }
 .pl-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.pl-switch .track { width: 44px; height: 26px; border-radius: 999px; background: var(--pl-line-strong); position: relative; transition: background var(--pl-dur); flex: none; }
+.pl-switch .track { width: 44px; height: 26px; border-radius: 999px; background: var(--pl-control-border); position: relative; transition: background var(--pl-dur); flex: none; }
 .pl-switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform var(--pl-dur) var(--pl-ease); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 .pl-switch input:checked + .track { background: var(--pl-accent); }
 .pl-switch input:checked + .track::after { transform: translateX(18px); }
@@ -118,7 +118,7 @@ fieldset.pl-fieldset legend { font-weight: 600; padding: 0 6px; }
 .pl-statutory { font-size: var(--pl-size-xs); color: var(--pl-muted); font-style: italic; overflow-wrap: anywhere; }
 
 /* Popover (definition) ---------------------------------------------------------------------- */
-.pl-popover { position: absolute; z-index: 70; max-width: min(360px, calc(100vw - 2 * var(--pl-gutter))); background: var(--pl-surface); border: 1px solid var(--pl-line-strong); border-radius: var(--pl-radius); box-shadow: var(--pl-shadow-lg); padding: var(--pl-space-3) var(--pl-space-4); font-size: var(--pl-size-sm); }
+.pl-popover { position: absolute; z-index: 85; max-width: min(360px, calc(100vw - 2 * var(--pl-gutter))); background: var(--pl-surface); border: 1px solid var(--pl-line-strong); border-radius: var(--pl-radius); box-shadow: var(--pl-shadow-lg); padding: var(--pl-space-3) var(--pl-space-4); font-size: var(--pl-size-sm); }
 .pl-popover h4 { margin-bottom: 4px; }
 .pl-popover .pl-btn-icon { position: absolute; top: 4px; right: 4px; width: 36px; min-height: 36px; }
 
@@ -204,7 +204,7 @@ fieldset.pl-fieldset legend { font-weight: 600; padding: 0 6px; }
 .pl-cal-day[data-type="leave"] { background: var(--pl-warn-soft); border-color: var(--pl-warn); }
 .pl-cal-day[data-type="holiday"] { background: var(--pl-info-soft); border-color: var(--pl-info); }
 .pl-cal-day[data-type="rest"], .pl-cal-day[data-type="none"] { color: var(--pl-muted); }
-.pl-cal-day[data-outside="true"] { opacity: 0.4; }
+.pl-cal-day[data-outside="true"] { color: var(--pl-muted); background: var(--pl-surface-2); border-style: dashed; }
 .pl-cal-day.is-selected { outline: 2px solid var(--pl-accent); outline-offset: -2px; }
 .pl-cal-day[data-ot="true"] .h::after { content: " +"; color: var(--pl-negative); font-weight: 700; }
 @media (max-width: 480px) { .pl-cal-day { min-height: 48px; font-size: 10px; padding: 2px; } }
@@ -283,3 +283,16 @@ details.pl-details[open] > summary::before { transform: rotate(45deg); }
 .pl-card, .pl-line-card, .pl-notice, .pl-dialog-body, .pl-popover, .pl-tray, .pl-empty { overflow-wrap: anywhere; }
 .pl-notice > div { min-width: 0; }
 .pl-line-card .ytd, .pl-line-card .amt { white-space: normal; }
+
+/* Touch targets (WCAG 2.5.8, 44 px house rule) on small screens. */
+@media (max-width: 720px) {
+  .pl-btn-sm, .pl-seg button, button.pl-chip, .pl-story-chapters button { min-height: var(--pl-touch); }
+}
+/* A row checkbox's whole cell is its label, so the 44 px area selects rather than opening the line. */
+.pl-rowcheck-hit { display: inline-flex; align-items: center; justify-content: center; min-width: var(--pl-touch); min-height: var(--pl-touch); cursor: pointer; margin: -10px; }
+
+/* Bottom-left UserWay zone (position 5): on small screens the end of every dialog, sheet and drawer
+   (including Lumi's input row) stays above the widget's launcher, so no essential control sits under it. */
+@media (max-width: 720px) {
+  .pl-dialog { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+}

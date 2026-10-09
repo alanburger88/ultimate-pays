@@ -60,7 +60,7 @@
 .pl-tl-cal .pl-cal-day[aria-pressed="true"].is-selected { outline-color: var(--pl-accent-ink); }
 .pl-tl-cal .pl-cal-day[aria-pressed="true"].is-selected .d::after { background: var(--pl-accent-ink); }
 .pl-tl-cal .pl-cal-day:focus-visible { outline: 3px solid var(--pl-focus); outline-offset: 2px; z-index: 1; }
-.pl-tl-cal .pl-cal-day[data-outside="true"] { opacity: 0.55; }
+.pl-tl-cal .pl-cal-day[data-outside="true"] { color: var(--pl-muted); background: var(--pl-surface-2); border-style: dashed; }
 @media (max-width: 480px) {
   .pl-tl-calcard { padding: var(--pl-space-3) var(--pl-space-2); }
   .pl-tl-calcard .pl-tl-calhead, .pl-tl-calcard .pl-tl-selbar, .pl-tl-calcard .pl-tl-selhint, .pl-tl-calcard .pl-tl-legend, .pl-tl-calcard .pl-tl-daypanel, .pl-tl-calcard .pl-tl-listview { margin-left: var(--pl-space-1); margin-right: var(--pl-space-1); }

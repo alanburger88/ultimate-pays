@@ -98,7 +98,7 @@ function renderConfigError(config, launch) {
     actions.appendChild(h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.delete('region'); p.delete('scenario'); p.delete('preset'); p.delete('lang'); p.set('region', registry.defaultProfileId); location.hash = p.toString(); boot(); } } }, t('config.continue_with', { region: registry.defaultProfileId })));
   }
   if (hasStudio) actions.appendChild(h('button', { class: 'pl-btn', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.delete('region'); p.delete('lang'); p.delete('scenario'); p.set('studio', '1'); location.hash = p.toString(); boot(); } } }, t('config.open_studio')));
-  appEl.appendChild(h('div', { class: 'pl-wrap', style: { padding: '48px 16px' } },
+  appEl.appendChild(h('main', { class: 'pl-wrap', style: { padding: '48px 16px' } },
     h('div', { class: 'pl-card pl-card-lg stack', role: 'alert', style: { maxWidth: '560px', margin: '0 auto' } },
       h('h1', null, t('config.error_title')), list, actions,
       h('p', { class: 'muted small' }, 'paylight.html#region=ZA&lang=xh-ZA&preset=complete'),
@@ -106,6 +106,8 @@ function renderConfigError(config, launch) {
 }
 
 export function boot() {
+  // The accessibility widget is available on every screen, including configuration errors and the access screen.
+  loadUserWay();
   if (current) { for (const u of current.unsubscribe) u(); current = null; closeAll(); closePopover(); }
   const { launch, notices: launchNotices } = readLaunch();
   const prefs = loadPrefs();
@@ -331,8 +333,8 @@ function renderApp(ctx) {
     const main = h('main', { class: 'pl-main', id: 'pl-main', tabindex: '-1' }, h('div', { class: 'pl-wrap', id: 'pl-section-host' }));
     const trayHost = h('div', { id: 'pl-tray-host' });
     appEl.append(
-      h('a', { class: 'pl-skip', href: '#pl-main' }, t('app.skip_to_content')),
-      h('a', { class: 'pl-skip', href: '#pl-nav' }, t('app.skip_to_nav')),
+      h('a', { class: 'pl-skip', href: '#pl-main', on: { click: (e) => { e.preventDefault(); const s = document.querySelector('#pl-section-host .pl-section') || document.getElementById('pl-main'); if (s) s.focus(); } } }, t('app.skip_to_content')),
+      h('a', { class: 'pl-skip', href: '#pl-nav', on: { click: (e) => { e.preventDefault(); const tab = document.querySelector('.pl-tab[aria-selected="true"]'); const mobile = document.querySelector('.pl-nav-mobile .pl-btn'); const target = tab && tab.offsetParent ? tab : mobile; if (target) target.focus(); } } }, t('app.skip_to_nav')),
       renderBanner(ctx),
       renderMasthead(ctx),
       renderNav(ctx),

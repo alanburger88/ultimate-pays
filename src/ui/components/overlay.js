@@ -2,12 +2,17 @@
  * Overlay primitives: modal dialog, right drawer (desktop) / full sheet (mobile),
  * bottom sheet, popover and toasts. All manage focus, Escape, and scroll lock.
  */
-import { h, clear, trapFocus, focusFirst, icon, uid } from '../../app/dom.js';
+import { h, clear, trapFocus, focusFirst, focusables, icon, uid } from '../../app/dom.js';
 
 const open = [];
 let currentPopover = null;
 
-function lockScroll() { document.documentElement.style.overflow = open.length ? 'hidden' : ''; }
+function lockScroll() {
+  document.documentElement.style.overflow = open.length ? 'hidden' : '';
+  // The page behind an open dialog is inert: no focus, no clicks, hidden from assistive technology.
+  const app = document.getElementById('app');
+  if (app) app.inert = open.length > 0;
+}
 
 /**
  * openOverlay({ title, body, actions, size:'md'|'lg', align:'center'|'right'|'bottom', onClose, labelledBy, role })
@@ -59,7 +64,7 @@ export function openOverlay({ title, body, actions = null, size = 'md', align = 
   document.addEventListener('keydown', onKey);
   requestAnimationFrame(() => {
     if (initialFocus && dialog.contains(initialFocus)) initialFocus.focus();
-    else if (!focusFirst(bodyEl)) dialog.focus();
+    else if (!focusFirst(bodyEl)) { const foot = dialog.querySelector('.pl-dialog-foot'); if (!(foot && focusFirst(foot))) dialog.focus(); }
   });
   return api;
 }
@@ -103,11 +108,25 @@ export function openPopover({ anchor, title, body, closeLabel = 'Close' }) {
   let top = r.bottom + window.scrollY + 6;
   if (r.bottom + hgt + 12 > window.innerHeight && r.top - hgt - 6 > 0) top = r.top + window.scrollY - hgt - 6;
   pop.style.left = `${left}px`; pop.style.top = `${top}px`;
-  function onDoc(e) { if (!pop.contains(e.target) && e.target !== anchor) closePopover(); }
-  function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); closePopover(); anchor.focus(); } }
+  let self = null;
+  function onDoc(e) { if (currentPopover === self && !pop.contains(e.target) && e.target !== anchor) closePopover(); }
+  function onKey(e) {
+    if (currentPopover !== self) return;
+    if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); closePopover(); anchor.focus(); }
+  }
+  // Disclosure pattern: Tab out of the definition closes it and returns to its trigger, so focus never
+  // leaves a modal it was opened from.
+  function onTab(e) {
+    if (e.key !== 'Tab') return;
+    const items = focusables(pop);
+    const first = items[0]; const last = items[items.length - 1];
+    const leaving = !items.length || (e.shiftKey && (document.activeElement === first || document.activeElement === pop)) || (!e.shiftKey && document.activeElement === last);
+    if (leaving) { e.preventDefault(); closePopover(); anchor.focus(); }
+  }
+  pop.addEventListener('keydown', onTab);
   document.addEventListener('mousedown', onDoc, true);
   document.addEventListener('keydown', onKey, true);
-  currentPopover = { el: pop, anchor, cleanup: () => { document.removeEventListener('mousedown', onDoc, true); document.removeEventListener('keydown', onKey); } };
+  self = currentPopover = { el: pop, anchor, cleanup: () => { document.removeEventListener('mousedown', onDoc, true); document.removeEventListener('keydown', onKey, true); pop.removeEventListener('keydown', onTab); } };
   anchor.setAttribute('aria-expanded', 'true');
   pop.focus();
   return currentPopover;

@@ -339,7 +339,7 @@ export function openStudio(ctx) {
 
     // --- Language ------------------------------------------------------------
     const langControl = langs.length
-      ? h('select', { class: 'pl-select', dataset: { focusKey: 'studio-lang' }, on: { change: (e) => { form.lang = e.target.value; } } }, langs.map((l) => h('option', { value: l, selected: l === form.lang ? true : null }, `${LANGUAGE_NAMES[l] || l} (${l})`)))
+      ? h('select', { class: 'pl-select', dataset: { focusKey: 'studio-lang' }, on: { change: (e) => { form.lang = e.target.value; } } }, langs.map((l) => h('option', { value: l, lang: l, selected: l === form.lang ? true : null }, `${LANGUAGE_NAMES[l] || l} (${l})`)))
       : h('select', { class: 'pl-select', disabled: true }, h('option', null, t('studio.no_languages')));
     const langField = field(t('studio.language'), langControl, { hint: t('studio.lang_locked_note') });
 

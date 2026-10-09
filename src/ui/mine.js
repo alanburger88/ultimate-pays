@@ -299,7 +299,7 @@ export function openMine(ctx) {
     }
     const hintId = uid('mine-lang-hint');
     const select = h('select', { class: 'pl-select', id, dataset: { focusKey: 'mine-lang' }, aria: { describedby: hintId }, on: { change: (e) => { form.lang = e.target.value; } } },
-      locales.map((l) => h('option', { value: l, selected: l === form.lang ? true : null }, LANGUAGE_NAMES[l] || l)));
+      locales.map((l) => h('option', { value: l, lang: l, selected: l === form.lang ? true : null }, LANGUAGE_NAMES[l] || l)));
     return h('div', { class: 'pl-field pl-mine-field' }, h('label', { for: id }, t('mine.language')), select, h('span', { class: 'pl-hint', id: hintId }, t('mine.language_hint')));
   }
 

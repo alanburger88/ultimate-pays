@@ -507,11 +507,11 @@ function legend(ctx, m) {
 function entryCheckbox(ctx, m, e, scope = 'list') {
   const t = ctx.t;
   const name = entryName(ctx, e);
-  return h('input', {
+  return h('label', { class: 'pl-rowcheck-hit' }, h('input', {
     type: 'checkbox', class: 'pl-rowcheck', checked: m.selectedIds.includes(e.id),
     dataset: { focusKey: `tl-${scope}-entry-${e.id}` }, aria: { label: `${t('time.entry_select')}: ${name}` },
     on: { change: (ev) => { ctx.actions.toggleSelectEntry(e.id); announce(t(ev.target.checked ? 'time.entry_selected' : 'time.entry_deselected', { entry: name })); } },
-  });
+  }));
 }
 
 function lineLinks(ctx, m, e, scope = 'list') {

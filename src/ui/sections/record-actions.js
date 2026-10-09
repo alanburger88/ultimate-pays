@@ -306,12 +306,12 @@ function linesBlock(ctx, narrow) {
 
 function selectBox(ctx, line, isSelected) {
   const label = ctx.content.lineLabel(line);
-  return h('input', {
+  return h('label', { class: 'pl-rowcheck-hit' }, h('input', {
     type: 'checkbox', class: 'pl-rowcheck', checked: isSelected,
     aria: { label: `${ctx.t('details.col_select')}: ${label}` },
     dataset: { lineFocus: '', focusKey: `ra-sel-${line.id}` },
     on: { change: () => ctx.actions.toggleSelect(line.id) },
-  });
+  }));
 }
 
 function openLineButton(ctx, line, { text = false } = {}) {

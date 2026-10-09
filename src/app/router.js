@@ -28,8 +28,15 @@ export function createRouter({ onNavigate, onConfigChange }) {
 
   function configOf(obj) { const c = {}; for (const k of CONFIG_KEYS) if (obj[k] !== undefined) c[k] = obj[k]; return c; }
 
-  window.addEventListener('hashchange', () => {
+  window.addEventListener('hashchange', (e) => {
     if (suppress) { suppress = false; return; }
+    // An in-page anchor (e.g. '#pl-main') is not configuration: restore the previous fragment and ignore it.
+    const raw = location.hash.replace(/^#/, '');
+    if (raw && !raw.includes('=')) {
+      const prev = e && e.oldURL ? new URL(e.oldURL).hash : '';
+      history.replaceState(null, '', prev || '#');
+      return;
+    }
     const next = parseHash(location.hash);
     const prevCfg = JSON.stringify(configOf(last));
     const nextCfg = JSON.stringify(configOf(next));

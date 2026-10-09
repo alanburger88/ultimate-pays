@@ -335,7 +335,7 @@ export function openStory(ctx, { chapter = null } = {}) {
   const captionBar = h('div', { class: 'pl-story-caption', aria: { live: 'polite', atomic: 'true' } });
 
   // ---- controls ----
-  const playBtn = h('button', { class: 'pl-btn pl-btn-primary', type: 'button', aria: { pressed: 'false' }, on: { click: () => togglePlay() } });
+  const playBtn = h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => togglePlay() } });
   const replayBtn = h('button', { class: 'pl-btn', type: 'button', on: { click: () => replay() } }, icon('replay', { size: 16 }), ctx.t('story.replay'));
   const prevBtn = h('button', { class: 'pl-btn', type: 'button', on: { click: () => step(-1) } }, icon('back', { size: 16 }), ctx.t('common.previous'));
   const nextBtn = h('button', { class: 'pl-btn', type: 'button', on: { click: () => step(1) } }, ctx.t('common.next'), icon('forward', { size: 16 }));
@@ -372,23 +372,23 @@ export function openStory(ctx, { chapter = null } = {}) {
   const langPrefix = String(ctx.locale).toLowerCase().split('-')[0];
   function matchingVoice() { try { return window.speechSynthesis.getVoices().find((v) => String(v.lang || '').toLowerCase().startsWith(langPrefix)) || null; } catch (e) { return null; } }
   let speakBtn = null;
-  function stopSpeech() { if (utterance) { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } utterance = null; } if (speakBtn) { speakBtn.setAttribute('aria-pressed', 'false'); speakBtn.lastChild.textContent = ctx.t('story.audio_play'); } }
+  function stopSpeech() { if (utterance) { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } utterance = null; } if (speakBtn) { speakBtn.lastChild.textContent = ctx.t('story.audio_play'); } }
   function speakCurrent() {
     const voice = matchingVoice();
     if (!voice) return;
     stopSpeech();
     const u = new SpeechSynthesisUtterance(captionText(ctx, chapters[state.index]));
     u.lang = ctx.locale; u.voice = voice;
-    u.onend = () => { if (utterance === u) { utterance = null; speakBtn.setAttribute('aria-pressed', 'false'); speakBtn.lastChild.textContent = ctx.t('story.audio_play'); } };
+    u.onend = () => { if (utterance === u) { utterance = null; speakBtn.lastChild.textContent = ctx.t('story.audio_play'); } };
     u.onerror = u.onend;
     utterance = u;
-    speakBtn.setAttribute('aria-pressed', 'true'); speakBtn.lastChild.textContent = ctx.t('story.audio_stop');
+    speakBtn.lastChild.textContent = ctx.t('story.audio_stop');
     window.speechSynthesis.speak(u);
   }
   function refreshSpeech() {
     if (!wantsSpeech || speakBtn) return;
     if (!matchingVoice()) return;
-    speakBtn = h('button', { class: 'pl-btn', type: 'button', aria: { pressed: 'false' }, on: { click: () => { if (utterance) stopSpeech(); else speakCurrent(); } } }, icon('volume', { size: 16 }), h('span', null, ctx.t('story.audio_play')));
+    speakBtn = h('button', { class: 'pl-btn', type: 'button', on: { click: () => { if (utterance) stopSpeech(); else speakCurrent(); } } }, icon('volume', { size: 16 }), h('span', null, ctx.t('story.audio_play')));
     speechHost.append(speakBtn, h('span', { class: 'muted xs' }, ctx.t('story.narration_voice')));
   }
   if (wantsSpeech) {
@@ -451,7 +451,6 @@ export function openStory(ctx, { chapter = null } = {}) {
     if (!stepped) {
       if (!seeking) seek.value = String(state.t);
       seek.setAttribute('aria-valuetext', `${chapters[i].title}, ${ctx.t('story.progress', { current: i + 1, total: chapters.length })}`);
-      playBtn.setAttribute('aria-pressed', String(state.playing));
       clear(playBtn);
       playBtn.append(icon(state.playing ? 'pause' : 'play', { size: 16 }), ctx.t(state.playing ? 'story.pause' : 'story.play'));
       root.dataset.playing = String(state.playing);
