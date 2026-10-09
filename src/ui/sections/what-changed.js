@@ -42,9 +42,7 @@ registerStrings({
   'changed.trend_title': 'Net pay trend',
   'changed.trend_desc': 'Net pay across the last {count} pay periods, oldest first.',
   'changed.trend_point_aria': '{period}: net pay {amount}. Compare with this period.',
-  'changed.trend_current_aria': '{period}: net pay {amount}. This period.',
   'changed.trend_hint': 'Select an earlier point to compare this period with it.',
-  'changed.running_total': 'Running net pay',
   'changed.card_hint': 'Each card lists the line’s value in every period.',
 });
 
@@ -429,12 +427,20 @@ function drawHorizontal(ctx, bars, width, titleId) {
   const barH = 18;
   const svg = h('svg:svg', { class: 'pl-chart pl-wc-svg', viewBox: `0 0 ${width} ${height}`, width, height, role: 'group', aria: { labelledby: titleId } });
 
-  const every = Math.max(1, Math.ceil(sc.ticks.length / 4));
+  // Axis labels: only as many as fit without touching, always keeping the first tick and, when it fits, the last.
+  const tickText = sc.ticks.map((v) => ctx.fmt.money(v, { compact: true }));
+  const tickW = Math.max(...tickText.map((s) => s.length * 10 * CHAR_W)) + 8;
+  const spacing = sc.ticks.length > 1 ? plotW / (sc.ticks.length - 1) : plotW;
+  const every = Math.max(1, Math.ceil(tickW / spacing));
+  const shown = sc.ticks.map((_, k) => k % every === 0);
+  const lastShown = shown.lastIndexOf(true);
+  if (lastShown !== sc.ticks.length - 1 && (sc.ticks.length - 1 - lastShown) * spacing >= tickW) shown[sc.ticks.length - 1] = true;
   sc.ticks.forEach((v, k) => {
     svg.appendChild(h('svg:line', { class: 'grid', x1: x(v), x2: x(v), y1: top, y2: top + rowH * n }));
-    if (!privacy && k % every === 0) {
-      const anchor = k === 0 ? 'start' : k === sc.ticks.length - 1 ? 'end' : 'middle';
-      svg.appendChild(h('svg:text', { class: 'lbl', x: x(v), y: height - 6, 'text-anchor': anchor, style: 'font-size:10px' }, ctx.fmt.money(v, { compact: true })));
+    if (!privacy && shown[k]) {
+      const tx = x(v);
+      const anchor = tx - tickW / 2 < 0 ? 'start' : tx + tickW / 2 > width ? 'end' : 'middle';
+      svg.appendChild(h('svg:text', { class: 'lbl', x: tx, y: height - 6, 'text-anchor': anchor, style: 'font-size:10px' }, tickText[k]));
     }
   });
 
@@ -752,15 +758,30 @@ function drawTrend(ctx, m, width, titleId) {
   svg.appendChild(h('svg:path', { class: 'area', d: `${path} L${x(n - 1)},${top + plotH} L${x(0)},${top + plotH} Z` }));
   svg.appendChild(h('svg:path', { class: 'line', d: path }));
 
+  // Period labels: the current period is always labelled; earlier ones only where they do not touch another label.
+  const names = pts.map((p) => (p.current ? t('changed.series_current') : periodName(ctx, p.period)));
+  const anchorOf = (i) => (i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle');
+  const edges = (i) => { const w = names[i].length * size * CHAR_W; const px = x(i); const a = anchorOf(i); return a === 'start' ? [px, px + w] : a === 'end' ? [px - w, px] : [px - w / 2, px + w / 2]; };
   const every = Math.max(1, Math.ceil((n * 64) / Math.max(plotW, 1)));
+  const labelled = [n - 1];
+  for (let i = 0; i < n - 1; i++) {
+    if (i % every !== 0) continue;
+    const [l, r] = edges(i);
+    if (!labelled.some((j) => { const [l2, r2] = edges(j); return l < r2 + 6 && r > l2 - 6; })) labelled.push(i);
+  }
   pts.forEach((p, i) => {
     const px = x(i);
     const py = y(p.value);
-    const name = p.current ? t('changed.series_current') : periodName(ctx, p.period);
+    const name = names[i];
     const dot = h('svg:circle', { class: ['dot', p.current && 'is-current'], cx: px, cy: py, r: p.current ? 6 : 5 });
     if (p.current) {
       svg.appendChild(dot);
-      if (!privacy) svg.appendChild(h('svg:text', { class: 'val', x: Math.min(px, width - 4), y: py - 11, 'text-anchor': 'end' }, ctx.fmt.money(p.value)));
+      if (!privacy) {
+        // The value sits above the point unless the previous point is higher, where it would cover it: then below.
+        const prevY = n > 1 ? y(pts[n - 2].value) : py;
+        const below = prevY < py - 4 && py + size + 10 <= top + plotH - 2;
+        svg.appendChild(h('svg:text', { class: 'val', x: Math.min(px, width - 4), y: below ? py + size + 10 : py - 11, 'text-anchor': 'end' }, ctx.fmt.money(p.value)));
+      }
     } else {
       const isCmp = p.id === m.prior.periodId;
       const activate = () => setCompare(ctx, m, p.id);
@@ -774,10 +795,7 @@ function drawTrend(ctx, m, width, titleId) {
       h('svg:rect', { class: 'ring', x: px - hw / 2 + 1.5, y: top - 2.5, width: hw - 3, height: plotH + 5, rx: 6 }),
       dot));
     }
-    if (i % every === 0 || p.current) {
-      const anchor = i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle';
-      svg.appendChild(h('svg:text', { class: 'lbl', x: px, y: top + plotH + size + 6, 'text-anchor': anchor }, name));
-    }
+    if (labelled.includes(i)) svg.appendChild(h('svg:text', { class: 'lbl', x: px, y: top + plotH + size + 6, 'text-anchor': anchorOf(i) }, name));
   });
   return svg;
 }

@@ -22,7 +22,7 @@
  *
  * Contract: export function render(ctx) -> HTMLElement
  */
-import { h, icon, announce, uid } from '../../app/dom.js';
+import { h, icon, announce, uid, append } from '../../app/dom.js';
 import { registerStrings, has } from '../../app/i18n.js';
 import { sectionHeader, kpi, emptyState, isNarrow } from '../components/common.js';
 import { entryLabel, entryHours, selectedEntries } from '../tray.js';
@@ -59,7 +59,6 @@ registerStrings({
   'time.balance_closing_note': 'Closing balance',
   'time.entries_in_period.one': '{count} entry in this period',
   'time.entries_in_period.other': '{count} entries in this period',
-  'time.month_first': '{month}',
 });
 
 // ---------------------------------------------------------------------------
@@ -75,8 +74,8 @@ const state = {
   highlightKey: null,    // nav.entryIds key already scrolled to
 };
 
-/** Lists replace the many-column table below 900px (narrow mobile plus the tablet band). */
-const CARDS_QUERY = '(max-width: 899px)';
+/** Cards replace the many-column entries table below 1024px (phones and the tablet band), whatever the interface language. */
+const CARDS_QUERY = '(max-width: 1023px)';
 function useCards() { return isNarrow() || (window.matchMedia && window.matchMedia(CARDS_QUERY).matches); }
 
 let liveCtx = null;
@@ -362,20 +361,21 @@ function calendarCard(ctx, m) {
   function renderPanel() {
     while (panel.firstChild) panel.removeChild(panel.firstChild);
     const day = state.openDay ? m.days[state.openDay] : null;
+    // append() from dom.js skips null children; Element.append would print "null".
     if (day && day.entries.length) {
-      panel.append(
+      append(panel, [
         h('h3', null, t('time.day_detail', { date: ctx.fmt.date(day.iso, 'long') })),
         day.outside ? h('p', { class: 'muted small' }, t('time.outside_period')) : null,
         h('ul', { class: 'pl-tl-entries' }, day.entries.map((e) => entryItem(ctx, m, e, { withDate: false }))),
-      );
+      ]);
     } else if (m.highlightedEntries.length) {
-      panel.append(
+      append(panel, [
         h('h3', null, t('time.linked_entries_title')),
         h('p', { class: 'muted small' }, t('time.linked_entries_count', { count: m.highlightedEntries.length })),
         h('ul', { class: 'pl-tl-entries' }, m.highlightedEntries.map((e) => entryItem(ctx, m, e, { withDate: true }))),
-      );
+      ]);
     } else {
-      panel.append(h('p', { class: 'muted small pl-tl-hint' }, icon('info', { size: 16 }), t('time.pick_day')));
+      append(panel, [h('p', { class: 'muted small pl-tl-hint' }, icon('info', { size: 16 }), t('time.pick_day'))]);
     }
   }
 
@@ -486,7 +486,8 @@ function dayCell(ctx, m, day, api, panelId, roving) {
   },
     number,
     h('span', { class: 'h', aria: { hidden: 'true' } }, h('span', { class: 'h-full' }, hours), h('span', { class: 'h-short' }, ctx.fmt.number(day.minutes / 60, 2))),
-    h('span', { class: 'ty', aria: { hidden: 'true' } }, typeText || t('common.items', { count: day.entries.length })),
+    // Visible cell text uses the (short) entry type as the legend does; the specific leave type is in the accessible name and the detail panel.
+    h('span', { class: 'ty', aria: { hidden: 'true' } }, day.entries.length === 1 ? ctx.content.entryType(day.entries[0].type).label : t('common.items', { count: day.entries.length })),
     day.allSelected ? h('span', { class: 'chk', aria: { hidden: 'true' } }, icon('check', { size: 12 })) : null,
   );
   return h('div', { role: 'gridcell', class: 'pl-cal-cell' }, btn);
@@ -502,27 +503,28 @@ function legend(ctx, m) {
 
 // --- entry presentation ----------------------------------------------------------------
 
-function entryCheckbox(ctx, m, e) {
+/** scope keeps focus keys unique between the day panel ('day') and the list ('list'), so focus restores to the visible copy. */
+function entryCheckbox(ctx, m, e, scope = 'list') {
   const t = ctx.t;
   const name = entryName(ctx, e);
   return h('input', {
     type: 'checkbox', class: 'pl-rowcheck', checked: m.selectedIds.includes(e.id),
-    dataset: { focusKey: `tl-entry-${e.id}` }, aria: { label: `${t('time.entry_select')}: ${name}` },
+    dataset: { focusKey: `tl-${scope}-entry-${e.id}` }, aria: { label: `${t('time.entry_select')}: ${name}` },
     on: { change: (ev) => { ctx.actions.toggleSelectEntry(e.id); announce(t(ev.target.checked ? 'time.entry_selected' : 'time.entry_deselected', { entry: name })); } },
   });
 }
 
-function lineLinks(ctx, m, e) {
+function lineLinks(ctx, m, e, scope = 'list') {
   const t = ctx.t;
   const lines = m.lineIndex[e.id] || [];
   if (!lines.length) return h('span', { class: 'muted xs' }, t('time.no_lines_for_entry'));
   return lines.map((line) => textWithNode(ctx, 'time.linked_line', 'line', h('button', {
-    class: 'pl-btn-link', type: 'button', dataset: { focusKey: `tl-line-${e.id}-${line.id}` }, on: { click: () => ctx.actions.focusLine(line.id) },
+    class: 'pl-btn-link', type: 'button', dataset: { focusKey: `tl-${scope}-line-${e.id}-${line.id}` }, on: { click: () => ctx.actions.focusLine(line.id) },
   }, ctx.content.lineLabel(line))));
 }
 
-function fact(label, value) {
-  return h('div', { class: 'pl-tl-fact' }, h('dt', null, label), h('dd', { class: 'tabular' }, value));
+function fact(label, value, cls = null) {
+  return h('div', { class: ['pl-tl-fact', cls] }, h('dt', null, label), h('dd', { class: 'tabular' }, value));
 }
 
 function entryFacts(ctx, e) {
@@ -534,10 +536,11 @@ function entryFacts(ctx, e) {
       fact(t('time.regular_hours'), f(e.regularMinutes || 0)),
       (e.overtimeMinutes || 0) > 0 ? fact(t('time.overtime_hours'), f(e.overtimeMinutes)) : null,
       (e.premiumMinutes || 0) > 0 ? fact(t('time.premium_hours'), f(e.premiumMinutes)) : null,
-      fact(t('time.paid_hours'), entryHours(ctx, e)),
+      fact(t('time.paid_hours'), entryHours(ctx, e), 'paid'),
     );
   }
-  return h('dl', { class: 'pl-tl-facts' }, fact(t('time.paid_hours'), entryHours(ctx, e)));
+  // Leave, holiday and rest entries have only paid time. Cards show it in their hours column instead.
+  return h('dl', { class: 'pl-tl-facts' }, fact(t('time.paid_hours'), entryHours(ctx, e), 'paid'));
 }
 
 function entryHead(ctx, e, { withDate }) {
@@ -555,8 +558,8 @@ function entryItem(ctx, m, e, { withDate }) {
   const selected = m.selectedIds.includes(e.id);
   const highlighted = m.highlightIds.includes(e.id);
   return h('li', { class: ['pl-tl-entry', selected && 'is-selected', highlighted && 'is-focus'], dataset: { entryId: e.id } },
-    h('div', { class: 'sel' }, entryCheckbox(ctx, m, e)),
-    h('div', { class: 'pl-tl-entry-main' }, entryHead(ctx, e, { withDate }), entryFacts(ctx, e), h('div', { class: 'pl-tl-lines' }, lineLinks(ctx, m, e))),
+    h('div', { class: 'sel' }, entryCheckbox(ctx, m, e, 'day')),
+    h('div', { class: 'pl-tl-entry-main' }, entryHead(ctx, e, { withDate }), entryFacts(ctx, e), h('div', { class: 'pl-tl-lines' }, lineLinks(ctx, m, e, 'day'))),
   );
 }
 

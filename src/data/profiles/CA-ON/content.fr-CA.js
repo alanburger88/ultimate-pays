@@ -1,7 +1,7 @@
 /** Governed record content for profile CA-ON in Canadian French (fr-CA) — prepared translation, unreviewed for issuance. Prepared content; never generated at runtime. */
 export const content = {
   document: {
-    title: 'Relevé de gains',
+    title: 'Relevé des gains',
     subtitle: 'Bulletin de paie',
     recordKind: 'Relevé de salaire',
   },
@@ -35,7 +35,7 @@ export const content = {
     ei_employer: { label: 'AE — cotisation de l’employeur', plain: 'Avenlo verse une cotisation d’employeur à l’assurance-emploi sur votre rémunération assurable. Le service de la paie a fourni le montant.' },
     rrsp_employer: { label: 'REER collectif — contrepartie de l’employeur', plain: 'Avenlo verse une cotisation de contrepartie égale à la vôtre, soit 5 % du salaire de base.' },
     health_employer: { label: 'Assurance maladie complémentaire — part de l’employeur', plain: 'Avenlo paie la plus grande partie de la prime d’assurance maladie complémentaire et de soins dentaires.' },
-    ltd_employer: { label: 'Invalidité de longue durée — payée par l’employeur', plain: 'Avenlo paie la prime d’assurance invalidité de longue durée.' },
+    ltd_employer: { label: 'Assurance invalidité de longue durée — payée par l’employeur', plain: 'Avenlo paie la prime d’assurance invalidité de longue durée.' },
     life_taxable_benefit: { label: 'Assurance vie collective — avantage imposable', plain: 'La valeur de l’assurance vie collective payée par l’employeur. Elle est ajoutée à vos gains imposables, mais ne vous est pas versée en argent.' },
   },
   glossary: {
@@ -65,7 +65,7 @@ export const content = {
     'exp.retro_adjustment': { title: 'Pourquoi il y a un ajustement rétroactif', body: 'Votre révision salariale est entrée en vigueur le 16 août 2026 et a été traitée après que deux périodes de paie avaient déjà été payées. La différence de 60,00 $ par période pour ces deux périodes est versée maintenant.' },
     'exp.expense_reimbursement': { title: 'À propos du remboursement', body: 'La demande de remboursement de dépenses EXP-2026-0931 (déplacement pour une conférence) a été approuvée le 22 septembre 2026 et est payée avec cette paie. Elle ne fait pas partie du salaire brut et n’est pas imposée.' },
     'exp.cpp': { title: 'Cotisation au RPC cette période', body: 'Le service de la paie a calculé votre cotisation au RPC à partir de vos gains ouvrant droit à pension de la période, selon le taux fédéral et l’exemption de base en vigueur. Paylight affiche le montant fourni par le service de la paie et ne recalcule pas les cotisations obligatoires.' },
-    'exp.ei': { title: 'Assurance-emploi cette période', body: 'Le service de la paie a calculé votre cotisation à l’AE à partir de votre rémunération assurable, selon le taux de cotisation fédéral en vigueur. Le montant affiché est celui que le service de la paie a fourni.' },
+    'exp.ei': { title: 'Cotisation à l’AE cette période', body: 'Le service de la paie a calculé votre cotisation à l’AE à partir de votre rémunération assurable, selon le taux de cotisation fédéral en vigueur. Le montant affiché est celui que le service de la paie a fourni.' },
     'exp.income_tax': { title: 'Impôt sur le revenu cette période', body: 'L’impôt retenu à la source dépend de vos gains imposables de la période, y compris l’ajustement rétroactif et l’avantage imposable lié à l’assurance vie collective, ainsi que des crédits inscrits sur vos formulaires TD1. Le service de la paie a fourni ce montant à partir des tables officielles.' },
     'exp.rrsp': { title: 'Cotisations au REER collectif', body: 'Vous cotisez 5 % de votre salaire de base et Avenlo verse une contrepartie de 5 %. Les deux montants sont calculés sur le salaire de base seulement; l’ajustement rétroactif ne les modifie donc pas.' },
     'exp.health': { title: 'Assurance maladie complémentaire et soins dentaires', body: 'La prime est partagée : Avenlo paie 67,50 $ et vous payez 22,50 $ par période de paie.' },
