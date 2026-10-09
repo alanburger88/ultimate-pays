@@ -165,7 +165,10 @@ export function resolveConfig({ launch, prefs, studioSettings, registry }) {
   const langSource = launch.lang ? 'launch' : (studioSettings && studioSettings.lang) ? 'studio' : (prefs.presentation && prefs.presentation.lang) ? 'prefs' : null;
   if (wantedLang) {
     if (approved.includes(wantedLang) && registry.languages[wantedLang]) locale = wantedLang;
-    else if (langSource === 'launch' || langSource === 'studio') {
+    else if (registry.packageKind === 'employee') {
+      // Issued-record constraint: an employee package only offers the record's approved languages; disclose the fallback.
+      notices.push({ level: 'info', key: 'config.fallback_disclosed', params: { lang: profile.defaultLocale, wanted: wantedLang } });
+    } else if (langSource === 'launch' || langSource === 'studio') {
       // Explicit request for an unsupported combination: a visible error, with disclosed fallback option.
       errors.push({ key: 'config.unsupported_language', params: { lang: wantedLang, region: profileId, available: approved.join(', '), fallback: profile.defaultLocale } });
     } else {

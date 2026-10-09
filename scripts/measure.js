@@ -33,7 +33,8 @@ const metrics = await page.evaluate(() => {
 });
 console.log(`  statement interactive (app ready) after ${tReady} ms wall-clock with CPU ×4 throttling`);
 console.log(`  DOMContentLoaded ${metrics.domContentLoaded} ms · load ${metrics.loadEvent} ms · first-contentful-paint ${metrics.paint['first-contentful-paint'] ?? 'n/a'} ms · DOM nodes ${metrics.nodes}${metrics.heapMB ? ` · JS heap ${metrics.heapMB} MB` : ''}`);
-for (const section of ['pay-details', 'what-changed', 'time-leave', 'total-reward', 'record-actions']) {
+const sections = await page.evaluate(() => Array.from(document.querySelectorAll('.pl-tab')).map((b) => b.dataset.section).filter((s) => s !== 'my-pay'));
+for (const section of sections) {
   const t = Date.now();
   await page.evaluate((s) => { const p = new URLSearchParams(location.hash.slice(1)); p.set('section', s); location.hash = p.toString(); }, section);
   await page.waitForSelector(`#section-${section}`);

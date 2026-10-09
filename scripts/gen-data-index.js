@@ -17,7 +17,8 @@ export function generateIndex(manifest, filter = null) {
   lines.push('// GENERATED from manifest.js by scripts/gen-data-index.js — do not edit by hand.');
   const profiles = filter ? manifest.profiles.filter((p) => p.id === filter.profileId) : manifest.profiles;
   if (filter && profiles.length === 0) throw new Error(`Unknown profile ${filter.profileId}`);
-  const langs = filter ? Object.fromEntries(Object.entries(manifest.languages).filter(([tag]) => profiles.some((p) => Object.keys(p.contents).includes(tag)))) : manifest.languages;
+  // Employee packages carry the recipient's approved languages plus the reference pack (en-CA), which is the final fallback for any missing key.
+  const langs = filter ? Object.fromEntries(Object.entries(manifest.languages).filter(([tag]) => tag === 'en-CA' || profiles.some((p) => Object.keys(p.contents).includes(tag)))) : manifest.languages;
 
   const profileVars = [];
   const contentVars = [];
