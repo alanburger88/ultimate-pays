@@ -44,6 +44,7 @@
 .pl-ra-table .col-cat .cat { display: block; color: var(--pl-ink-2); }
 .pl-ra-table td.num { padding-top: 10px; }
 .pl-ra-table .col-actions { width: 1%; white-space: nowrap; padding-top: 4px; padding-bottom: 4px; }
+.pl-ra-table td.col-actions .pl-btn { white-space: nowrap; overflow-wrap: normal; }
 .pl-ra-table .pl-btn-icon { width: 36px; min-height: 36px; }
 .pl-ra-table .pl-line-title .cell-sub { display: block; }
 .pl-ra-table tbody tr.is-focus td { box-shadow: inset 3px 0 0 var(--pl-accent); background: var(--pl-accent-soft); }

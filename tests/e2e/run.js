@@ -149,7 +149,7 @@ if (!args.only || args.only === 'CA-ON') {
       await page.keyboard.press('Escape');
       // story
       await goSection(page, 'my-pay');
-      const storyBtn = page.locator('button', { hasText: /story/i }).first();
+      const storyBtn = page.locator('[data-focus-key="mypay-story"]').first();
       if (await storyBtn.count()) { await storyBtn.click(); await page.waitForTimeout(300); check(`${label} story opens with controls`, await page.locator('[role="dialog"] input[type="range"]').count() > 0); await page.keyboard.press('Escape'); }
       // exports produce downloads
       await goSection(page, 'record-actions');

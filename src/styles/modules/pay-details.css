@@ -122,4 +122,4 @@
 .pl-dtable thead th, .pl-dtable thead th button.sort { white-space: normal; overflow-wrap: break-word; hyphens: auto; text-align: inherit; }
 .pl-dtable thead th.num { text-align: right; }
 /* Row actions stay on one line; when the table cannot fit, the view switches to cards instead of squeezing them. */
-.pl-dtable .col-actions, .pl-dtable td.col-actions .pl-btn { white-space: nowrap; }
+.pl-dtable .col-actions, .pl-dtable td.col-actions .pl-btn { white-space: nowrap; overflow-wrap: normal; }
