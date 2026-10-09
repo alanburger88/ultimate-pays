@@ -10,7 +10,7 @@ node scripts/measure.js dist/paylight.html "#region=ZA&lang=zu-ZA&preset=complet
 
 Playwright is a dev dependency (`npm i -D playwright`); the cloud build environment uses its pre-installed Chromium.
 
-Last full run, 9 October 2026: 86 unit tests passed, 0 failed; 1 386 end-to-end checks passed, 0 failed (every profile × language at 320 px and 1200 px, a 200 % text-size pass, and the cross-section journeys).
+Last full run, 9 October 2026: 87 unit tests passed, 0 failed; 1 413 end-to-end checks passed, 0 failed (every profile × language at 320 px and 1200 px, a 200 % text-size pass, the cross-section journeys, and the theme toggle, header, story voice, wallet and drag-reorder checks).
 
 ## What the checks cover
 
