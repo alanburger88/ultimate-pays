@@ -338,6 +338,9 @@ export const pack = {
   'time.schedule_note_standard_week_40': 'Standard schedule: 40 hours per week.',
   'time.schedule_note_standard_week_37_5': 'Standard schedule: 37.5 hours per week.',
   'time.schedule_note_variable': 'Variable hours; paid as recorded.',
+  'time.schedule_note_standard_week_35': 'Standard schedule: 35 hours per week (151.67 hours per month).',
+  'time.schedule_note_standard_week_38': 'Standard schedule: 38 hours per week.',
+  'time.schedule_note_standard_week_45': 'Standard schedule: 45 hours per week.',
 
   // --- Total reward ------------------------------------------------------------
   'reward.title': 'Total reward',
@@ -587,7 +590,7 @@ export const pack = {
   'query.entries_included': 'Time entries included',
   'query.document_reference': 'Document reference',
   'query.what_will_be_sent': 'Exactly what will be sent',
-  'query.payload_note': 'Line identifiers, amounts, tags, your message and the document reference. Nothing else.',
+  'query.payload_note': 'Line identifiers and their issued amounts, time entry dates, tags, your notes, subject and message, the document reference and your language. Nothing else.',
   'query.submit': 'Send to payroll',
   'query.save_draft': 'Save draft',
   'query.draft_saved': 'Draft saved on this device.',
@@ -913,6 +916,9 @@ export const pack = {
   'req.leave_balances': 'Leave balances',
   'req.tax_identifiers': 'Tax reference (masked)',
   'req.statutory_terms': 'Statutory terminology',
+  'req.collective_agreement': 'Collective agreement and classification',
+  'req.bonuses_indemnities': 'Nature and amount of bonuses and indemnities',
+  'req.payment_method': 'Payment method',
 
   // --- Highlights --------------------------------------------------------------------
   'highlight.new_line': 'New this period',
@@ -924,6 +930,8 @@ export const pack = {
   'highlight.separate_payment': 'Separate payment',
   'highlight.first_period': 'First pay period',
   'highlight.ytd_basis': 'Year-to-date resets on {date}',
+  'highlight.variable_hours': 'Hours changed since last period',
+  'highlight.public_holiday': 'Public holiday in this period',
 
   // --- YTD basis ----------------------------------------------------------------------
   'ytd.basis.calendar_year': 'calendar year from 1 January',

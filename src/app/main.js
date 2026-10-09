@@ -143,8 +143,9 @@ export function boot() {
     verification: createVerification({ integration: config.presentation.integrations.verification, tokenProvider }),
   };
 
+  current = { ctx: null, unsubscribe: [] };
   const ctx = createContext({ store, doc, config, services, scope });
-  current = { ctx, unsubscribe: [] };
+  current.ctx = ctx;
   renderApp(ctx);
   if (restored && (restored.selection.lineIds.length || restored.nav.lineId)) toast(t('notice.restored'));
   for (const n of store.get().notices) if (n.key && n.level !== 'error') toast(t(n.key, n.params), { kind: n.level === 'warning' ? 'error' : 'info', duration: 8000 });
@@ -269,7 +270,9 @@ function createContext({ store, doc, config, services, scope }) {
   ctx.router = router;
 
   function persist() { saveSession(scope, store.get(), { retain: store.get().retainDrafts }); }
-  current && current.unsubscribe.push(store.subscribe(persist, ['nav', 'selection', 'queries', 'retainDrafts']));
+  current.unsubscribe.push(store.subscribe(persist, ['nav', 'selection', 'queries', 'retainDrafts']));
+  // Keep the fragment honest when a module clears or changes nav.lineId/view without calling go().
+  current.unsubscribe.push(store.subscribe((s) => { router.write({ section: s.nav.section, lineId: s.nav.lineId, view: s.nav.view }); }, ['nav']));
   // If the record only has one language, keep the fragment honest.
   router.write({ section: store.get().nav.section, lineId: store.get().nav.lineId, view: store.get().nav.view });
   return ctx;
@@ -378,7 +381,16 @@ function mountSection(ctx) {
   clear(host);
   host.appendChild(section);
   if (focusKey) { const again = host.querySelector(`[data-focus-key="${CSS.escape(focusKey)}"]`) || document.getElementById(focusKey); if (again) { again.focus({ preventScroll: true }); window.scrollTo({ top: scrollY }); } }
-  if (nav.lineId) requestAnimationFrame(() => { const row = host.querySelector(`[data-line-id="${CSS.escape(nav.lineId)}"]`); if (row) { row.scrollIntoView({ block: 'center', behavior: ctx.reducedMotion() ? 'auto' : 'smooth' }); row.classList.add('is-focus'); const f = row.querySelector('[data-line-focus]') || row; if (f.focus) f.focus({ preventScroll: true }); announce(t('a11y.line_focus', { line: (ctx.line(nav.lineId) && ctx.content.lineLabel(ctx.line(nav.lineId))) || nav.lineId })); } });
+  // Scroll to and focus the requested line only when the request changes, never on every re-render.
+  const lineKey = nav.lineId ? `${def.id}|${nav.lineId}` : null;
+  if (lineKey && mountSection.lastLineKey !== lineKey) {
+    mountSection.lastLineKey = lineKey;
+    requestAnimationFrame(() => { const row = host.querySelector(`[data-line-id="${CSS.escape(nav.lineId)}"]`); if (row) { row.scrollIntoView({ block: 'center', behavior: ctx.reducedMotion() ? 'auto' : 'smooth' }); row.classList.add('is-focus'); const f = row.querySelector('[data-line-focus]') || row; if (f.focus) f.focus({ preventScroll: true }); announce(t('a11y.line_focus', { line: (ctx.line(nav.lineId) && ctx.content.lineLabel(ctx.line(nav.lineId))) || nav.lineId })); } });
+  } else if (!lineKey) {
+    mountSection.lastLineKey = null;
+    if (nav.lineId === null) { /* nothing to highlight */ }
+  }
+  if (nav.lineId) { const row = host.querySelector(`[data-line-id="${CSS.escape(nav.lineId)}"]`); if (row) row.classList.add('is-focus'); }
 }
 
 function renderTrayInto(ctx, host) {

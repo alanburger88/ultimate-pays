@@ -68,7 +68,11 @@ export function formatPercent(permyriad, { locale, digits = 2 } = {}) {
 }
 
 export function formatRate(rateMinor, { currency, locale, per }) {
-  return `${formatMoney(rateMinor, { currency, locale })}${per ? `/${per}` : ''}`;
+  // Rates may carry more precision than the currency's minor unit (e.g. 22,4171 €/h on a French bulletin).
+  const extra = Number.isInteger(rateMinor) ? 0 : 2;
+  const digits = minorDigits(currency) + extra;
+  const text = extra ? numberFormat(locale, { style: 'currency', currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: digits, maximumFractionDigits: digits }).format(rateMinor / 10 ** minorDigits(currency)) : formatMoney(rateMinor, { currency, locale });
+  return `${text}${per ? `/${per}` : ''}`;
 }
 
 /** ISO date (YYYY-MM-DD) -> localized date. Dates are treated as calendar dates, never shifted by timezone. */

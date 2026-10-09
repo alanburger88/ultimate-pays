@@ -17,7 +17,7 @@ export class NullQueryService {
 export class HttpQueryService {
   constructor({ endpoint, tokenProvider, fetchImpl }) { this.connected = true; this.endpoint = endpoint; this.name = new URL(endpoint).host; this.tokenProvider = tokenProvider; this.fetchImpl = fetchImpl; }
   /**
-   * @param payload { documentRef, lineIds, entryIds, tags, note, subject, message, locale }
+   * @param payload { documentRef:{id,version}, lineIds, amounts:{lineId:minor}, currency, entryIds, entries:[{id,date}], tag, tags:{lineId:tagId}, notes:{lineId:text}, subject, message, locale, idempotencyKey }
    * @param options { idempotencyKey }
    * @returns {Promise<{caseReference:string, acknowledgedAt:string, nextStep?:string}>}
    */
