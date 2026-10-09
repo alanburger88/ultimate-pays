@@ -214,6 +214,16 @@ if (!args.only || args.only === 'CA-ON') {
   check('story offers the bundled voice when clips are embedded', !hasNarration || /ElevenLabs/.test(await voiceRun.page.locator('.pl-story-narration').innerText()));
   check('story voice is on without pressing Voice', !hasNarration || (await voiceRun.page.locator('.pl-story-narration button[aria-pressed]').getAttribute('aria-pressed')) === 'true');
   await voiceRun.close();
+  // Wallet is the last block on My pay
+  const mw = await openPage({ url, width: 1200, hash: '#region=CA-ON&lang=en-CA' });
+  check('wallet pass is the last block on My pay', await mw.page.evaluate(() => { const b = Array.from(document.querySelectorAll('#section-my-pay .pl-mypay > *')); return /pl-mp-wallet/.test(b[b.length - 1].className) && Boolean(b[b.length - 1].querySelector('[data-focus-key="ra-wallet-apple"]')); }));
+  // Typing only a new region in the address bar switches country, without carrying the old language over
+  await mw.page.selectOption('.pl-lang-select', 'fr-CA'); await mw.page.waitForTimeout(800);
+  await mw.page.evaluate(() => { location.hash = `${location.hash}&region=ZA`; }); await mw.page.waitForTimeout(1200);
+  check('address-bar region edit switches country and language', await mw.page.evaluate(() => document.documentElement.lang === 'en-ZA' && !document.querySelector('[role="alert"]') && /Nomsa/.test(document.title)));
+  await mw.page.evaluate(() => { location.hash = 'region=EU-IT&lang=de-DE&section=pay-details'; }); await mw.page.waitForTimeout(1200);
+  check('address-bar edit with region, language and section', await mw.page.evaluate(() => document.documentElement.lang === 'de-DE' && /Sofia/.test(document.title) && Boolean(document.getElementById('section-pay-details'))));
+  await mw.close();
   // Wallet: emulated add flow
   const w = await openPage({ url, width: 1200, hash: '#region=EU-DE&lang=en-GB&section=record-actions' });
   await w.page.click('[data-focus-key="ra-wallet-google"]');

@@ -39,6 +39,7 @@ The PRD (v0.1) states its decisions are recommended defaults pending confirmatio
 | German and Afrikaans voices | Keep the stand-ins (Yvonne, Cheyenne). | No change; swapping later is a one-line change in `narration/voices.json`. |
 | isiZulu and isiXhosa voices | Keep the best-effort voice (Cheyenne). | No change. |
 | Header | Remove the currency and the net pay amount from the header. | Header shows employer, employee, employee number, period and payment date only; currency stays in Record & actions and every export. |
+| Wallet placement | The wallet pass was too hidden; also show it at the bottom of My pay. | Wallet pass is the last block on My pay (providers only) and stays in Record & actions with the pass preview; both share the same state. |
 | Story voice | The voice plays by default; no need to press Voice. | Voice starts with the story in every motion mode; stale saved "captions" settings from earlier versions are ignored. |
 
 ## Still open

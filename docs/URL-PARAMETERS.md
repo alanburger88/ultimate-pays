@@ -8,6 +8,25 @@ paylight.html#region=ZA&scenario=za-overtime&lang=zu-ZA&preset=complete
 
 The same parameters work in the presenter file (`paylight.html`), on the local dev server (`npm run present`) and on any web host. Links never carry personal data, and they can never set where data is sent: service endpoints are deployment configuration only (see `CONFIGURATION.md`).
 
+## How to use them
+
+1. Open `paylight.html` in your browser. The address bar shows something like `file:///C:/Users/you/Downloads/paylight-v0.4/paylight.html#section=my-pay`.
+2. Click the address bar and replace everything after the `#` with the parameters you want, for example `region=ZA&lang=zu-ZA`.
+3. Press Enter. The statement switches straight away; no reload is needed.
+
+The `#` comes once, then each parameter is `name=value`, and parameters are joined with `&`. Order does not matter.
+
+```
+paylight.html#region=ZA                                   South Africa, default language (English)
+paylight.html#region=ZA&lang=zu-ZA                         South Africa in isiZulu
+paylight.html#region=ZA&scenario=za-new-starter            South Africa, the second employee (Sipho Khumalo)
+paylight.html#region=EU-DE&lang=en-GB&section=pay-details  Germany in English, opening on Pay details
+```
+
+Changing only the region is enough: a language or employee left over from the previous country is dropped, and the new country opens in its default language. A language a country does not offer shows a short message listing the ones it does, with a button to continue.
+
+The same text works after a web address once the file is hosted, for example `https://example.com/paylight.html#region=EU-FR&lang=fr-FR`, and can be saved as a bookmark or sent as a link.
+
 ## Parameters
 
 | Parameter | Values | What it does |

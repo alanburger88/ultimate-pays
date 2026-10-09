@@ -15,6 +15,7 @@ import { h, icon, debounce } from '../../app/dom.js';
 import { registerStrings } from '../../app/i18n.js';
 import { lineEffect, grossYearToDate, varianceBridge } from '../../app/calc.js';
 import { amount, delta, kpi, sectionHeader, chartWithTable, dataTable, termButton, notice, isNarrow } from '../components/common.js';
+import { walletCard } from './record-actions.js';
 
 registerStrings({
   'mypay.separate_payment_desc': 'Paid separately from this statement. These amounts are not part of the totals above.',
@@ -154,6 +155,18 @@ export function render(ctx) {
     flowBlock(ctx, m),
     employerBlock(ctx, m),
     reconciliationBlock(ctx, m),
+    walletBlock(ctx),
+  );
+}
+
+// --- Wallet pass (last on the page, also in Record & actions) ---------------------------------------
+
+function walletBlock(ctx) {
+  if (!ctx.modules().wallet) return null;
+  const id = 'mypay-wallet-h';
+  return h('section', { class: 'pl-card pl-mp-wallet', aria: { labelledby: id } },
+    cardHeading(ctx, ctx.t('record.wallet_title'), 'wallet', id),
+    walletCard(ctx, { compact: true }),
   );
 }
 

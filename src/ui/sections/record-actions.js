@@ -742,15 +742,21 @@ async function deleteDraft(ctx, d) {
 
 const WALLET_CHIP = { ready: 'pl-chip-positive', preview: 'pl-chip-outline', unavailable: 'pl-chip-warn', requested: 'pl-chip-info', issued: 'pl-chip-positive', added: 'pl-chip-positive', requesting: 'pl-chip-info' };
 
-function walletCard(ctx) {
+/**
+ * Wallet pass panel. Also used at the foot of My pay (compact: the providers only). Only one section is on
+ * screen at a time, so both places share the provider hosts and their state.
+ */
+export function walletCard(ctx, { compact = false } = {}) {
   const t = ctx.t;
   const providers = (ctx.services && ctx.services.wallets) || [];
   const preview = passPreview(ctx.doc.record, { brand: t('app.name'), label: t('wallet.preview_label') });
+  const list = providers.length
+    ? h('div', { class: 'pl-ra-wallets' }, providers.map((p) => h('div', { id: `ra-wallet-${p.id}`, class: 'pl-ra-wallet-host' }, walletProvider(ctx, p))))
+    : notice(ctx, t('record.wallet_none'), { kind: 'neutral' });
+  if (compact) return [h('p', { class: 'small' }, t('record.wallet_desc')), list];
   return [
     h('p', { class: 'small' }, t('record.wallet_desc')),
-    providers.length
-      ? h('div', { class: 'pl-ra-wallets' }, providers.map((p) => h('div', { id: `ra-wallet-${p.id}`, class: 'pl-ra-wallet-host' }, walletProvider(ctx, p))))
-      : notice(ctx, t('record.wallet_none'), { kind: 'neutral' }),
+    list,
     h('div', { class: 'pl-ra-panel pl-ra-pass-wrap' },
       h('div', null, h('h3', null, t('wallet.preview_title')), passCard(ctx, preview)),
       h('div', { class: 'stack' },

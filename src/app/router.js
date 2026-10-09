@@ -38,6 +38,13 @@ export function createRouter({ onNavigate, onConfigChange }) {
       return;
     }
     const next = parseHash(location.hash);
+    // A region typed into the address bar starts fresh: a language or record left over from the previous
+    // region (unchanged in the edit) does not carry across. Values the person actually changed are kept.
+    if (next.region && next.region !== last.region) {
+      let cleaned = false;
+      for (const k of ['lang', 'scenario']) if (next[k] !== undefined && next[k] === last[k]) { delete next[k]; cleaned = true; }
+      if (cleaned) history.replaceState(null, '', `#${new URLSearchParams(next).toString()}`);
+    }
     const prevCfg = JSON.stringify(configOf(last));
     const nextCfg = JSON.stringify(configOf(next));
     last = next;
