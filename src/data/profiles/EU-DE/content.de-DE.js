@@ -67,7 +67,6 @@ export const content = {
   disclosures: {
     record_keeping: "Bewahren Sie diese Abrechnung auf. Sie enthält den Abrechnungszeitraum, das Gesamtbrutto einschließlich Sachbezügen, Steuerbrutto und SV-Brutto, die gesetzlichen Abzüge nach Art und Höhe, den Nettoverdienst und den Auszahlungsbetrag. Der Aufbau orientiert sich an § 108 GewO und der Entgeltbescheinigungsverordnung; die rechtliche Konformität wurde nicht geprüft.",
     noncash_benefit_basis: 'Der Sachbezug Dienstwagen ist im Gesamtbrutto enthalten und wurde versteuert und verbeitragt. Da er nicht als Geld gezahlt wird, wird er nach dem Nettoverdienst wieder abgezogen. Die Bewertung erfolgt nach dem gesetzlichen Verfahren auf Grundlage des Bruttolistenpreises.',
-    constructed_notice: 'Diese Abrechnung wurde zu Präsentationszwecken konstruiert und nicht vom Arbeitgeber ausgestellt. Sie ist kein Verdienstnachweis.',
     query_window: 'Wenn Ihnen ein Betrag unrichtig erscheint, stellen Sie aus dieser Abrechnung heraus eine Rückfrage. Die Entgeltabrechnung bemüht sich um eine Antwort innerhalb von zwei Arbeitstagen; das ist ein Serviceziel, keine rechtliche Zusage.',
   },
   explanations: {

@@ -120,8 +120,9 @@ test('record model is complete and ignores the active UI filter', () => {
   assert.equal(m.totals.find((x) => x.id === 'net').minor, 219210);
   assert.equal(m.totals.find((x) => x.id === 'payable').minor, 227850);
   assert.equal(m.categories.find((c) => c.id === 'deduction').subtotalMinor, 92790);
-  assert.ok(m.disclosures.some((d) => d.key === 'constructed_notice'));
-  assert.ok(m.notices.includes('export.notice_constructed'));
+  assert.ok(m.disclosures.length > 0, 'disclosures carried');
+  assert.ok(m.notices.includes('export.notice_convenience'));
+  assert.ok(!m.notices.some((n) => /constructed/i.test(n)), 'no demo wording');
   assert.ok(m.notices.includes('export.notice_convenience'));
   assert.equal(m.time.entries.length, 10);
   assert.equal(m.time.balances.length, 2);
@@ -185,7 +186,8 @@ test('PDF text is searchable: employee name, net pay and labels extract with pdf
   assert.ok(out.includes(ctx.fmt.money(227850)), 'amount paid is text');
   assert.ok(out.includes('Statement of earnings'), 'governed document title');
   assert.ok(out.includes('Canada Pension Plan (CPP)'), 'statutory term in parentheses');
-  assert.ok(out.includes('Constructed presentation record'), 'constructed notice');
+  assert.ok(!/constructed|presentation record/i.test(out), 'no demo wording');
+  assert.ok(out.includes('Issued by Avenlo Canada Inc.'), 'issuer named');
   assert.ok(out.includes('Convenience copy'), 'convenience notice');
   assert.ok(out.includes('Keep this statement for your records'), 'required disclosure text');
   assert.ok(out.includes('Avenlo Group RRSP plan'), 'policy title');
@@ -283,7 +285,8 @@ test('full workbook is a valid typed .xlsx with every sheet and every line', () 
   const doc = parts['xl/worksheets/sheet9.xml'];
   assert.match(doc, /Not verified\. No verification service is connected/, 'integrity status is a sentence, not a code');
   assert.doesNotMatch(doc, />not-verified</);
-  assert.match(doc, /Constructed presentation record/);
+  assert.doesNotMatch(doc, /onstructed/);
+  assert.match(doc, /Issued by Avenlo Canada Inc\./);
   assert.match(doc, /Convenience copy/);
   assert.match(doc, /Keep this statement for your records/);
   assert.match(doc, /No later version is recorded/);

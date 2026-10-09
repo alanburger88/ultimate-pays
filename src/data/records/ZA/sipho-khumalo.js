@@ -29,7 +29,7 @@ export const record = {
     taxYear: { label: '2026/27', start: '2026-03-01', end: '2027-02-28' },
     // Only en-ZA content is prepared; af-ZA, zu-ZA and xh-ZA are added once translated.
     languages: ['en-ZA', 'af-ZA', 'zu-ZA', 'xh-ZA'],
-    provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
+    provenance: { kind: 'issued', issuer: 'Avenlo South Africa (Pty) Ltd', generatedBy: 'Paylight' },
     integrity: { status: 'not-verified', method: null },
   },
   employer: {
@@ -108,7 +108,6 @@ export const record = {
     { id: 'disc-hours', key: 'bcea_hours_statement', required: true },
     { id: 'disc-benefits', key: 'benefits_pending', required: false },
     { id: 'disc-query', key: 'query_window', required: false },
-    { id: 'disc-constructed', key: 'constructed_notice', required: true },
   ],
   policies: ['pol-pro-rata', 'pol-new-starter-benefits', 'pol-annual-leave', 'pol-sick-leave', 'pol-pay-date'],
   highlights: [

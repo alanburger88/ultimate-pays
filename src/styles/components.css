@@ -279,7 +279,9 @@ details.pl-details[open] > summary::before { transform: rotate(45deg); }
 
 /* Large text and long words (WCAG 1.4.4 / 1.4.10): text inside cards, notices and dialogs breaks rather than
    pushing the page sideways; buttons wrap their label; card figures may wrap as a last resort. */
-.pl-btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: center; height: auto; }
+/* Long labels wrap between words (break-word keeps a word's width as the minimum, so a table can never squeeze a button to one letter). */
+.pl-btn { max-width: 100%; white-space: normal; overflow-wrap: break-word; text-align: center; height: auto; }
+.pl-btn svg { flex-shrink: 0; }
 .pl-card, .pl-line-card, .pl-notice, .pl-dialog-body, .pl-popover, .pl-tray, .pl-empty { overflow-wrap: anywhere; }
 .pl-notice > div { min-width: 0; }
 .pl-line-card .ytd, .pl-line-card .amt { white-space: normal; }

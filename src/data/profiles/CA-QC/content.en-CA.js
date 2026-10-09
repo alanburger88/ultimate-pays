@@ -84,7 +84,6 @@ export const content = {
     source_deductions: 'Federal income tax, Québec income tax and the RRQ, RQAP and Employment Insurance contributions are calculated by payroll from the official Revenu Québec and Canada Revenue Agency tables. Paylight shows the amounts supplied and does not recompute them.',
     overtime_basis: 'Overtime is determined from your recorded shifts and paid at 150% of your hourly rate, as provided in the collective agreement.',
     query_window: 'If you believe an amount is wrong, raise a query from this statement. Payroll aims to respond within two business days; this is a service target, not a legal commitment.',
-    constructed_notice: 'This record was constructed for presentation and is not employer-issued. It is not proof of earnings.',
   },
   explanations: {
     'exp.salaire_regulier': { title: 'How your regular wages are calculated', body: 'Your regular hours recorded during the period (80.00 h over 10 shifts) are multiplied by your hourly rate of $27.40. Your hours vary from one period to the next; you are paid for the hours recorded.' },

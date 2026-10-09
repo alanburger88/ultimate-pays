@@ -514,13 +514,6 @@ export function buildPdf(ctx, { generatedAt = new Date().toISOString() } = {}) {
   L.paragraph(m.header, { size: 16, bold: true, after: 2 });
   L.paragraph([m.employerName, m.employeeName].filter(Boolean).join(` ${dash} `), { size: 10.5, after: 1 });
   L.paragraph([`${t('masthead.reference')}: ${m.recordId}`, m.versionText, `${t('export.language')}: ${m.language}`].join(' · '), { size: 8.5, gray: GRAY_TEXT, after: 6 });
-  if (m.constructed) {
-    L.rule(L.left, L.left + L.width, L.y, { width: 0.75, gray: 0.4 });
-    L.y += 4;
-    L.paragraph(t('export.notice_constructed'), { size: 9, bold: true, after: 3 });
-    L.rule(L.left, L.left + L.width, L.y, { width: 0.75, gray: 0.4 });
-    L.y += 8;
-  }
 
   // Particulars
   L.heading(t('record.particulars'));

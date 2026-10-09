@@ -27,7 +27,7 @@ export const record = {
     currency: 'EUR',
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
     languages: ['de-DE', 'en-GB', 'fr-FR', 'it-IT'],
-    provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
+    provenance: { kind: 'issued', issuer: 'Avenlo Deutschland GmbH', generatedBy: 'Paylight' },
     integrity: { status: 'not-verified', method: null },
   },
   employer: {
@@ -193,7 +193,6 @@ export const record = {
     { id: 'disc-record', key: 'record_keeping', required: true },
     { id: 'disc-sachbezug', key: 'noncash_benefit_basis', required: true },
     { id: 'disc-query', key: 'query_window', required: false },
-    { id: 'disc-constructed', key: 'constructed_notice', required: true },
   ],
   policies: ['pol-arbeitszeit', 'pol-dienstwagen', 'pol-bav', 'pol-reisekosten', 'pol-urlaub', 'pol-urlaubsgeld'],
   highlights: [

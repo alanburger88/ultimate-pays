@@ -93,7 +93,6 @@ export const content = {
     tfr_accrual_basis: 'The TFR quota shown accrued this month and is set aside by Avenlo under article 2120 of the Codice civile. It is not paid with your salary and is not a deduction. The year-to-date figure shows what has accrued since 1 January; the total fund set aside and its revaluation are communicated at year end.',
     ratei_basis: 'The thirteenth- and fourteenth-month accruals are shown for information and are not paid this month. The thirteenth month is paid in December; the fourteenth with the June salary.',
     query_window: 'If you believe an amount is wrong, raise a query from this payslip. Payroll aims to respond within two working days; this is a service target, not a legal commitment.',
-    constructed_notice: 'This payslip was constructed for presentation and is not employer-issued. It is not proof of earnings.',
   },
   explanations: {
     'exp.paga_base': { title: 'How base pay is calculated', body: 'Base pay is the monthly minimum for the 3rd level of the CCNL Terziario applied by Avenlo: €1,812.00 for a full month. Up to August 2026 it was €1,777.00; from 1 July 2026 it rose by €35.00 under the instalment of the renewed collective agreement, processed in September. The difference for July and August is paid on the line “CCNL increase arrears”.' },

@@ -132,3 +132,15 @@ button.pl-mp-attn:hover > .pl-icon { color: var(--pl-accent); }
 @media print {
   .pl-mp-pin-btn .pl-icon, .pl-mp-attn > .pl-icon, .pl-mp-flow-hint { display: none; }
 }
+
+/* Pay story invitation: first thing under the heading. */
+.pl-mp-story { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--pl-space-4); align-items: center; border-color: var(--pl-accent); background: linear-gradient(120deg, var(--pl-accent-soft), var(--pl-surface) 70%); }
+.pl-mp-story-art { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; background: var(--pl-accent); color: var(--pl-accent-ink); }
+.pl-mp-story .txt { min-width: 0; }
+.pl-mp-story .txt p { margin: 0; color: var(--pl-ink-2); }
+.pl-btn-lg { min-height: 52px; padding: 0 var(--pl-space-5); font-size: var(--pl-size-md); }
+@media (max-width: 640px) {
+  .pl-mp-story { grid-template-columns: auto minmax(0, 1fr); }
+  .pl-mp-story-art { width: 44px; height: 44px; border-radius: 12px; }
+  .pl-mp-story > .pl-btn { grid-column: 1 / -1; width: 100%; }
+}

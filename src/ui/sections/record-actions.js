@@ -116,11 +116,6 @@ if (typeof window !== 'undefined' && window.matchMedia) {
   if (mq.addEventListener) mq.addEventListener('change', onChange); else if (mq.addListener) mq.addListener(onChange);
 }
 
-function isConstructed(record) {
-  const prov = (record.document && record.document.provenance) || {};
-  return !prov.kind || prov.kind === 'constructed';
-}
-
 // ---------------------------------------------------------------------------
 // Render
 // ---------------------------------------------------------------------------
@@ -473,14 +468,8 @@ function provenanceCard(ctx) {
   const t = ctx.t;
   const { record } = ctx.doc;
   const prov = record.document.provenance || {};
-  const constructed = isConstructed(record);
   return [
-    constructed
-      ? notice(ctx, [
-        h('div', { class: 'pl-ra-prov-head' }, h('span', { class: 'strong' }, t('record.provenance_constructed')), h('span', { class: 'pl-chip pl-chip-warn' }, t('app.not_proof'))),
-        prov.generatedBy ? h('p', { class: 'muted small' }, t('record.provenance_generated_by', { source: prov.generatedBy })) : null,
-      ], { kind: 'warn' })
-      : notice(ctx, t('record.provenance_issued', { issuer: prov.issuer || '—' }), { kind: 'info', iconName: 'shield' }),
+    prov.issuer ? notice(ctx, t('record.provenance_issued', { issuer: prov.issuer }), { kind: 'info', iconName: 'building' }) : null,
     h('div', { class: 'pl-ra-sub' },
       h('section', { class: 'pl-ra-subpanel', aria: { labelledby: 'ra-h-integrity' } }, h('h3', { id: 'ra-h-integrity' }, t('record.integrity')), h('div', { id: 'ra-integrity-panel', class: 'stack' }, integrityBody(ctx))),
       h('section', { class: 'pl-ra-subpanel', aria: { labelledby: 'ra-h-consistency' } }, h('h3', { id: 'ra-h-consistency' }, t('record.consistency_title')), h('div', { class: 'stack' }, consistencyBody(ctx))),
@@ -650,9 +639,8 @@ function keepCard(ctx) {
   return [
     h('div', { class: 'pl-ra-tiles' }, tiles),
     h('div', { class: 'pl-ra-notices' },
-      notice(ctx, t('record.convenience_copy'), { kind: 'neutral' }),
+      notice(ctx, t('export.notice_convenience'), { kind: 'neutral' }),
       notice(ctx, t('record.export_filtered_warning'), { kind: 'info', iconName: 'filter' }),
-      isConstructed(record) ? notice(ctx, t('notice.constructed_download'), { kind: 'warn' }) : null,
     ),
     h('div', { class: 'pl-ra-panel' }, h('h3', null, t('record.retention')), h('p', { class: 'small' }, t('record.retention_desc'))),
   ];

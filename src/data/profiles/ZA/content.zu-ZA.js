@@ -67,7 +67,6 @@ export const content = {
   disclosures: {
     record_keeping: "Gcina lesi siliphu somholo njengerekhodi lakho. Sikhombisa isikhathi okukhokhelwa sona, umholo wakho ngemali, inani nenhloso yemali ngayinye edonswayo, kanye nemali ekhokhwe ngempela. Ukwakheka kwaso kulandela isigaba 33 soMthetho weMibandela Eyisisekelo Yokuqashwa (Basic Conditions of Employment Act) njengesiqondiso; asikahlolwa ukuthi siyahambisana yini nomthetho.",
     bcea_hours_statement: 'Amahora ajwayelekile asetshenziwe, amahora e-ovathayimu kanye nanoma yimaphi amahora asetshenzwe ngamaSonto noma ngamaholide omphakathi akhonjiswa esigabeni esithi Isikhathi nekhefu, kanye nesilinganiso somholo esisetshenziselwe i-ovathayimu.',
-    constructed_notice: 'Leli rekhodi lakhelwe ukwethulwa kuphela futhi alikhishwanga ngumqashi. Alibona ubufakazi bomholo.',
     query_window: 'Uma ukholwa ukuthi kukhona inani elingalungile, faka umbuzo usuka kulesi siliphu somholo. I-Avenlo People Services ihlose ukuphendula ezinsukwini ezimbili zokusebenza; lokhu kuyinhloso yesevisi, hhayi isibopho esingokomthetho.',
     benefits_pending: 'Ubulungu beSikhwama Somhlalaphansi sakwa-Avenlo nesikimu sezempilo buqala ngosuku lokuqala lwenyanga elandela usuku oqale ngalo umsebenzi. Akukho minikelo yesikhwama somhlalaphansi noma yosizo lwezempilo evela kulesi siliphu somholo; izovela kusukela ngo-Okthoba 2026.',
   },

@@ -5,48 +5,116 @@ import { openSheet } from './components/overlay.js';
 import { LANGUAGE_NAMES } from '../app/i18n.js';
 
 export function renderMasthead(ctx) {
-  const { record, profile } = ctx.doc;
+  const { record, profile, content } = ctx.doc;
   const t = ctx.t;
   const totals = ctx.doc.computed.totals;
   const payable = totals[profile.payableTotal || profile.primaryTotal];
   const net = totals[profile.primaryTotal];
   const branding = ctx.store.get().prefs.presentation.branding || {};
-  const facts = h('div', { class: 'pl-masthead-facts', role: 'list', aria: { label: t('record.document_particulars') } },
+  const employeeNumberLabel = (() => { const v = content.employeeField('employeeNumber'); return v && v !== 'employeeNumber' ? v : t('record.field_employee_number'); })();
+  const factsId = 'pl-mh-facts';
+  const facts = h('div', { class: 'pl-masthead-facts', id: factsId, role: 'list', aria: { label: t('record.document_particulars') } },
     fact(t('masthead.employer'), record.employer.legalName),
     fact(t('masthead.recipient'), record.employee.displayName),
+    record.employee.employeeNumber ? fact(employeeNumberLabel, record.employee.employeeNumber) : null,
     fact(t('masthead.period'), ctx.fmt.period(record.document.period)),
     fact(t('masthead.pay_date'), ctx.fmt.date(record.document.payDate)),
     fact(t('masthead.currency'), record.document.currency),
-    fact(t('masthead.reference'), `${record.document.id} · ${t('masthead.version', { version: record.document.version })}`),
   );
   const netBlock = h('div', { class: 'pl-masthead-net' },
     h('span', { class: 'lbl' }, payable !== net ? t('masthead.amount_paid') : t('masthead.net_pay')),
     amount(ctx, payable, { cls: 'val', tag: 'span' }),
   );
+  const header = h('header', { class: 'pl-masthead', role: 'banner', dataset: { expanded: 'false' } });
+  // Phone summary: who and which period, with the remaining particulars one tap away.
+  const detailsBtn = h('button', { class: 'pl-btn-link small pl-mh-details', type: 'button', aria: { expanded: 'false', controls: factsId }, on: { click: () => {
+    const open = header.dataset.expanded !== 'true';
+    header.dataset.expanded = String(open);
+    detailsBtn.setAttribute('aria-expanded', String(open));
+  } } }, t('masthead.details'), icon('down', { size: 14 }));
+  const summary = h('div', { class: 'pl-masthead-summary' },
+    h('span', { class: 'who' }, h('b', null, record.employee.displayName)),
+    h('span', { class: 'when muted' }, ctx.fmt.period(record.document.period)),
+    detailsBtn,
+  );
   const tools = h('div', { class: 'pl-masthead-tools' },
+    ctx.config.modules.story ? toolButton(ctx, { iconName: 'play', label: t('story.title'), cls: 'pl-tool-story pl-phone-only', onClick: () => ctx.actions.openStory() }) : null,
+    toolButton(ctx, { iconName: 'print', label: t('record.print'), cls: 'pl-tool-print pl-phone-only', onClick: () => ctx.actions.print() }),
     languageControl(ctx),
-    h('button', { class: 'pl-btn pl-btn-quiet pl-btn-icon', type: 'button', aria: { label: t('theme.toggle') }, title: t('theme.toggle'), on: { click: () => ctx.actions.cycleTheme() } }, icon(ctx.theme() === 'dark' ? 'moon' : 'sun')),
+    languageButton(ctx),
+    themeToggle(ctx),
   );
-  return h('header', { class: 'pl-masthead', role: 'banner' },
-    h('div', { class: 'pl-wrap' },
-      h('a', { class: 'pl-brand', href: '#', on: { click: (e) => { e.preventDefault(); ctx.actions.go(ctx.config.homeSection || ctx.config.startSection, { push: true }); } } },
-        h('span', { class: 'pl-brand-mark', aria: { hidden: 'true' } }, (branding.name || 'Paylight').slice(0, 1)),
-        h('span', null, branding.name || t('app.name'), h('small', null, ctx.content.document('title'))),
-      ),
-      facts, netBlock, tools,
+  header.appendChild(h('div', { class: 'pl-wrap' },
+    h('a', { class: 'pl-brand', href: '#', on: { click: (e) => { e.preventDefault(); ctx.actions.go(ctx.config.homeSection || ctx.config.startSection, { push: true }); } } },
+      h('span', { class: 'pl-brand-mark', aria: { hidden: 'true' } }, (branding.name || 'Paylight').slice(0, 1)),
+      h('span', { class: 'pl-brand-text' }, branding.name || t('app.name'), h('small', null, content.document('title'))),
     ),
-  );
+    summary, facts, netBlock, tools,
+  ));
+  return header;
   function fact(label, value) { return h('span', { role: 'listitem' }, `${label}: `, h('b', null, value)); }
+}
+
+/** Header action: icon plus label; the label hides on narrow screens and stays the accessible name. */
+function toolButton(ctx, { iconName, label, cls, onClick }) {
+  return h('button', { class: `pl-btn pl-btn-quiet pl-tool ${cls || ''}`, type: 'button', aria: { label }, title: label, on: { click: onClick } }, icon(iconName, { size: 18 }), h('span', { class: 'txt', aria: { hidden: 'true' } }, label));
+}
+
+/** The theme actually showing: an explicit choice, or the device setting when the choice is "system". */
+export function effectiveTheme() {
+  const pref = document.documentElement.dataset.theme || 'system';
+  if (pref === 'dark' || pref === 'light') return pref;
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function themeToggle(ctx) {
+  const t = ctx.t;
+  const btn = h('button', { class: 'pl-btn pl-btn-quiet pl-btn-icon pl-theme-toggle', type: 'button', dataset: { themeToggle: '', labelDark: t('theme.switch_to_dark'), labelLight: t('theme.switch_to_light') },
+    on: { click: () => ctx.actions.setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark') } });
+  syncThemeToggle(btn);
+  return btn;
+}
+
+/** Keep every theme toggle's icon and name in step with what is showing (called on any appearance change). */
+export function syncThemeToggle(only) {
+  const showing = effectiveTheme();
+  const buttons = only ? [only] : Array.from(document.querySelectorAll('[data-theme-toggle]'));
+  for (const btn of buttons) {
+    const label = showing === 'dark' ? btn.dataset.labelLight : btn.dataset.labelDark;
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+    replaceChildren(btn, icon(showing === 'dark' ? 'moon' : 'sun'));
+    btn.dataset.showing = showing;
+  }
+}
+
+function availableLocales(ctx) {
+  return ctx.config.approvedLocales.filter((l) => ctx.doc.registry.languages[l]);
 }
 
 function languageControl(ctx) {
   const t = ctx.t;
-  const locales = ctx.config.approvedLocales.filter((l) => ctx.doc.registry.languages[l]);
+  const locales = availableLocales(ctx);
   if (locales.length < 2) return null;
-  const select = h('select', { class: 'pl-select', aria: { label: t('app.language') }, on: { change: (e) => ctx.actions.setLocale(e.target.value) } },
+  const select = h('select', { class: 'pl-select pl-lang-select', aria: { label: t('app.language') }, on: { change: (e) => ctx.actions.setLocale(e.target.value) } },
     locales.map((l) => h('option', { value: l, lang: l, selected: l === ctx.locale ? true : null }, LANGUAGE_NAMES[l] || l)),
   );
   return select;
+}
+
+/** Phones: a compact globe button that opens the same choice as a sheet. */
+function languageButton(ctx) {
+  const t = ctx.t;
+  const locales = availableLocales(ctx);
+  if (locales.length < 2) return null;
+  const label = `${t('app.language')}: ${LANGUAGE_NAMES[ctx.locale] || ctx.locale}`;
+  return h('button', { class: 'pl-btn pl-btn-quiet pl-btn-icon pl-lang-btn', type: 'button', aria: { label, haspopup: 'dialog' }, title: label, on: { click: () => openSheet({
+    title: t('app.language'),
+    closeLabel: t('nav.close_menu'),
+    body: (dlg) => h('ul', { class: 'pl-menu-list' }, locales.map((l) => h('li', null,
+      h('button', { type: 'button', lang: l, aria: { current: String(l === ctx.locale) }, on: { click: () => { dlg.close(); if (l !== ctx.locale) ctx.actions.setLocale(l); } } }, icon(l === ctx.locale ? 'check' : 'globe'), LANGUAGE_NAMES[l] || l),
+    ))),
+  }) } }, icon('globe'));
 }
 
 export function renderNav(ctx) {
@@ -64,7 +132,12 @@ export function renderNav(ctx) {
   const mobileBtn = h('button', { class: 'pl-btn', type: 'button', title: t('nav.open_menu'), aria: { haspopup: 'dialog' }, on: { click: () => openSectionSheet(ctx) } },
     h('span', null, h('span', { class: 'muted small' }, `${t('nav.sections')}: `), h('b', null, t(currentSection.titleKey))), icon('down'));
   const mobile = h('div', { class: 'pl-nav-mobile' }, mobileBtn);
-  return h('nav', { class: 'pl-nav', id: 'pl-nav', aria: { label: t('nav.sections') } }, h('div', { class: 'pl-wrap' }, tabs, mobile));
+  // Wide screens: the two most-used actions sit at the end of the tab row (phones have them in the header).
+  const actions = h('div', { class: 'pl-nav-actions' },
+    ctx.config.modules.story ? toolButton(ctx, { iconName: 'play', label: t('story.title'), cls: 'pl-tool-story', onClick: () => ctx.actions.openStory() }) : null,
+    toolButton(ctx, { iconName: 'print', label: t('record.print'), cls: 'pl-tool-print', onClick: () => ctx.actions.print() }),
+  );
+  return h('nav', { class: 'pl-nav', id: 'pl-nav', aria: { label: t('nav.sections') } }, h('div', { class: 'pl-wrap' }, tabs, actions, mobile));
 }
 
 function onTabKey(e, sections, id, ctx) {
@@ -96,13 +169,11 @@ export function openSectionSheet(ctx) {
 
 export function renderFooter(ctx) {
   const t = ctx.t;
-  const { record } = ctx.doc;
+  // Presenter builds keep a quiet way into Studio; employee packages have no footer content at all.
+  if (ctx.config.packageKind === 'employee') return null;
   return h('footer', { class: 'pl-footer', role: 'contentinfo' },
     h('div', { class: 'pl-wrap' },
-      h('span', null, t('app.footer_provenance', { id: record.document.id, version: record.document.version, issued: ctx.fmt.dateTime(record.document.issuedAt) })),
-      h('span', null, t('record.provenance_constructed')),
-      h('span', { class: 'pl-chip pl-chip-warn' }, t('app.not_proof')),
-      ctx.config.packageKind !== 'employee' ? h('button', { class: 'pl-btn-link xs', type: 'button', on: { click: () => ctx.actions.openStudio() } }, t('app.presenter')) : null,
+      h('button', { class: 'pl-btn-link xs', type: 'button', on: { click: () => ctx.actions.openStudio() } }, t('app.presenter')),
     ),
   );
 }
@@ -111,11 +182,6 @@ export function renderLauncher(ctx) {
   const t = ctx.t;
   return h('button', { class: 'pl-launcher', type: 'button', id: 'pl-lumi-launcher', aria: { label: t('lumi.open'), expanded: 'false', haspopup: 'dialog' }, on: { click: () => ctx.actions.openLumi() } },
     icon('sparkle', { size: 22 }), h('span', { class: 'txt' }, t('lumi.name')));
-}
-
-export function renderBanner(ctx) {
-  const t = ctx.t;
-  return h('div', { class: 'pl-banner', id: 'pl-banner', dataset: { kind: 'constructed' } }, h('div', { class: 'pl-wrap' }, icon('info', { size: 14 }), h('span', null, t('app.constructed_banner'))));
 }
 
 export function setOfflineBanner(ctx, host, offline) {

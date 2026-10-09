@@ -73,7 +73,6 @@ export const content = {
   disclosures: {
     record_keeping: "Keep this payslip for your records. It shows the period for which payment is made, your remuneration in money, the amount and purpose of each deduction, and the actual amount paid. Its structure follows section 33 of the Basic Conditions of Employment Act as a reference; it has not been reviewed for legal compliance.",
     bcea_hours_statement: 'Ordinary hours worked, overtime hours and any hours worked on Sundays or public holidays are shown in the Time & leave section, together with the rate of remuneration used for overtime.',
-    constructed_notice: 'This record was constructed for presentation and is not employer-issued. It is not proof of earnings.',
     query_window: 'If you believe an amount is wrong, raise a query from this payslip. Avenlo People Services aims to respond within two business days; this is a service target, not a legal commitment.',
     benefits_pending: 'Membership of the Avenlo Retirement Fund and the medical scheme starts on the first day of the month after your start date. No retirement fund or medical aid contributions appear on this payslip; they will appear from October 2026.',
   },

@@ -145,15 +145,14 @@ export function render(ctx) {
     : null;
   return h('div', { class: 'stack-lg pl-mypay' },
     sectionHeader(ctx, t('mypay.title'), t('mypay.intro', { period: m.period }), headerActions),
+    storyBlock(ctx, m),
     pinnedBlock(ctx, m),
     kpiBlock(ctx, m),
     paymentBlock(ctx, m),
     adjustmentsBlock(ctx, m),
     h('div', { class: 'grid-2 pl-mp-pair' }, sinceLastBlock(ctx, m), attentionBlock(ctx, m)),
     flowBlock(ctx, m),
-    employerFigure(ctx, m).amount > 0 || ctx.modules().story
-      ? h('div', { class: 'grid-2 pl-mp-pair' }, employerBlock(ctx, m), storyBlock(ctx, m))
-      : null,
+    employerBlock(ctx, m),
     reconciliationBlock(ctx, m),
   );
 }
@@ -526,13 +525,14 @@ function storyBlock(ctx, m) {
   const t = ctx.t;
   if (!ctx.modules().story) return null;
   const id = 'mypay-story-h';
-  return h('section', { class: 'pl-card pl-mp-cta', aria: { labelledby: id } },
-    icon('story', { size: 22 }),
+  // The story leads the page: one clear invitation, directly under the heading.
+  return h('section', { class: 'pl-card pl-mp-story', aria: { labelledby: id } },
+    h('span', { class: 'pl-mp-story-art', aria: { hidden: 'true' } }, icon('story', { size: 28 })),
     h('div', { class: 'txt' },
       h('h2', { id, class: 'pl-mp-h3' }, t('story.title')),
       h('p', null, t('mypay.story_desc')),
-      h('button', { class: 'pl-btn pl-btn-primary', type: 'button', dataset: { focusKey: 'mypay-story' }, on: { click: () => ctx.actions.openStory() } }, icon('play', { size: 16 }), t('mypay.open_story')),
     ),
+    h('button', { class: 'pl-btn pl-btn-primary pl-btn-lg', type: 'button', dataset: { focusKey: 'mypay-story' }, on: { click: () => ctx.actions.openStory() } }, icon('play', { size: 18 }), t('mypay.open_story')),
   );
 }
 

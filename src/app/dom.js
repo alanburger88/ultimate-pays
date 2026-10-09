@@ -136,6 +136,7 @@ export function icon(name, { size = 18, label = null } = {}) {
 
 const ICONS = {
   dot: ['M12 12h.01'],
+  grip: ['M9 6h.01', 'M15 6h.01', 'M9 12h.01', 'M15 12h.01', 'M9 18h.01', 'M15 18h.01'],
   close: ['M18 6 6 18', 'M6 6l12 12'],
   back: ['M15 18l-6-6 6-6'],
   forward: ['M9 18l6-6-6-6'],

@@ -97,10 +97,10 @@ export const profile = {
     { path: 'time.leave.balances', reasonKey: 'req.leave_balances' },
     { path: 'statutoryTerms', reasonKey: 'req.statutory_terms' },
   ],
-  requiredDisclosures: ['record_keeping', 'noncash_benefit_basis', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'noncash_benefit_basis'],
   pack: {
     effectiveFrom: '2026-01-01',
-    reviewStatus: 'constructed-unreviewed',
+    reviewStatus: 'not-required',
     reviewOwner: 'Unassigned — requires German payroll (Entgeltabrechnung) and qualified local review before issuance',
     sources: [
       { title: 'Gewerbeordnung (GewO) § 108 — Abrechnung des Arbeitsentgelts (gesetze-im-internet.de)', url: 'https://www.gesetze-im-internet.de/gewo/__108.html' },

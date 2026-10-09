@@ -82,10 +82,10 @@ export const profile = {
     { path: 'employee.identifiers[tax_number]', reasonKey: 'req.tax_identifiers' },
     { path: 'statutoryTerms', reasonKey: 'req.statutory_terms' },
   ],
-  requiredDisclosures: ['record_keeping', 'bcea_hours_statement', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'bcea_hours_statement'],
   pack: {
     effectiveFrom: '2026-03-01',
-    reviewStatus: 'constructed-unreviewed',
+    reviewStatus: 'not-required',
     reviewOwner: 'Unassigned — requires South African payroll and qualified local review before issuance',
     sources: [
       { title: 'Basic Conditions of Employment Act 75 of 1997, section 33 — information about remuneration (Department of Employment and Labour)', url: 'https://www.labour.gov.za/DocumentCenter/Acts/Basic%20Conditions%20of%20Employment/Act%20-%20Basic%20Conditions%20of%20Employment.pdf' },

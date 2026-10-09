@@ -13,7 +13,7 @@ import { computeTotals, verifyRecord, rewardSummary, grossToNetFlow, varianceBri
 import * as money from './money.js';
 import * as registry from '../data/index.js';
 import { SECTIONS } from '../ui/sections/index.js';
-import { renderMasthead, renderNav, renderFooter, renderLauncher, renderBanner, setOfflineBanner } from '../ui/shell.js';
+import { renderMasthead, renderNav, renderFooter, renderLauncher, setOfflineBanner, syncThemeToggle } from '../ui/shell.js';
 import { toast, closeAll, closePopover } from '../ui/components/overlay.js';
 import { openLumi } from '../ui/lumi.js';
 import { openStory } from '../ui/story.js';
@@ -42,6 +42,14 @@ function applyAppearance(presentation) {
   root.dataset.privacy = presentation.privacyMode ? 'on' : 'off';
   root.dataset.motion = presentation.animation === false || presentation.lowData ? 'off' : 'on';
   if (presentation.branding && presentation.branding.accent) root.style.setProperty('--pl-accent', presentation.branding.accent); else root.style.removeProperty('--pl-accent');
+  syncThemeToggle();
+}
+
+// When the theme follows the device, the toggle follows the device too.
+if (window.matchMedia) {
+  const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const onScheme = () => syncThemeToggle();
+  if (mqDark.addEventListener) mqDark.addEventListener('change', onScheme); else if (mqDark.addListener) mqDark.addListener(onScheme);
 }
 
 function loadUserWay() {
@@ -256,7 +264,6 @@ function createContext({ store, doc, config, services, scope }) {
       applyAppearance(presentation);
     },
     setTheme(theme) { actions.setPrefs({ theme }); toast(t('notice.theme_changed', { theme: t(`theme.${theme}`) })); },
-    cycleTheme() { const order = ['light', 'dark', 'system']; const cur = store.get().prefs.presentation.theme || 'system'; actions.setTheme(order[(order.indexOf(cur) + 1) % order.length]); },
     setDensity(density) { actions.setPrefs({ density }); },
     setLocale(locale) {
       if (!config.approvedLocales.includes(locale)) return;
@@ -336,7 +343,6 @@ function renderApp(ctx) {
     appEl.append(
       h('a', { class: 'pl-skip', href: '#pl-main', on: { click: (e) => { e.preventDefault(); const s = document.querySelector('#pl-section-host .pl-section') || document.getElementById('pl-main'); if (s) s.focus(); } } }, t('app.skip_to_content')),
       h('a', { class: 'pl-skip', href: '#pl-nav', on: { click: (e) => { e.preventDefault(); const tab = document.querySelector('.pl-tab[aria-selected="true"]'); const mobile = document.querySelector('.pl-nav-mobile .pl-btn'); const target = tab && tab.offsetParent ? tab : mobile; if (target) target.focus(); } } }, t('app.skip_to_nav')),
-      renderBanner(ctx),
       renderMasthead(ctx),
       renderNav(ctx),
       main,

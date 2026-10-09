@@ -93,7 +93,6 @@ export const content = {
     tfr_accrual_basis: 'La quote-part de TFR indiquée a été acquise ce mois-ci et est provisionnée par Avenlo conformément à l’article 2120 du Codice civile. Elle n’est pas payée avec votre salaire et n’est pas une retenue. Le cumul annuel indique ce qui a été acquis depuis le 1er janvier ; le fonds total provisionné et sa revalorisation sont communiqués en fin d’année.',
     ratei_basis: 'Les quotes-parts de tredicesima et de quattordicesima sont affichées pour information et ne sont pas payées ce mois-ci. La tredicesima est payée en décembre ; la quattordicesima avec le salaire de juin.',
     query_window: 'Si un montant vous paraît inexact, posez une question depuis ce bulletin. Le service paie s’efforce de répondre sous deux jours ouvrés ; c’est un objectif de service, non un engagement légal.',
-    constructed_notice: 'Ce bulletin a été construit à des fins de présentation et n’est pas émis par un employeur. Il ne constitue pas un justificatif de revenus.',
   },
   explanations: {
     'exp.paga_base': { title: 'Comment le salaire de base est calculé', body: 'Le salaire de base est le minimum conventionnel mensuel du 3e niveau du CCNL Terziario appliqué par Avenlo : 1 812,00 € pour un mois complet. Jusqu’en août 2026, il était de 1 777,00 € ; depuis le 1er juillet 2026, il a augmenté de 35,00 € par effet de la tranche du renouvellement de la convention, traitée en septembre. La différence pour juillet et août est payée sur la ligne « Rappel augmentation CCNL ».' },

@@ -96,7 +96,6 @@ export const content = {
     service_public_reference: 'Die Definition der verwendeten Begriffe finden Sie in der entsprechenden Rubrik des Portals www.service-public.fr.',
     net_social_notice: 'Der Montant net social (Netto-Referenzbetrag für Sozialleistungen) ist der Referenzbetrag, der für die Berechnung bestimmter Sozialleistungen anzugeben ist (zum Beispiel der Prime d’activité oder des RSA).',
     query_window: 'Wenn Ihnen ein Betrag unrichtig erscheint, können Sie aus dieser Abrechnung heraus eine Rückfrage stellen. Das Team der Entgeltabrechnung bemüht sich um eine Antwort innerhalb von zwei Arbeitstagen; das ist ein Serviceziel, keine rechtliche Zusage.',
-    constructed_notice: 'Dieses Dokument wurde zu Präsentationszwecken konstruiert. Es wurde nicht von einem Arbeitgeber ausgestellt und ist kein Einkommensnachweis.',
   },
   explanations: {
     'exp.base_salary': { title: 'So wird Ihr Grundgehalt berechnet', body: 'Ihr Monatsgehalt von 3.400,00 € entspricht 151,67 Stunden, der gesetzlichen Arbeitszeit von 35 Stunden pro Woche auf den Monat umgerechnet. Der Stundensatz beträgt 22,4171 € (3.400,00 € ÷ 151,67 h); er wird wie auf dem Bulletin de paie mit vier Nachkommastellen angezeigt, und nur der Betrag wird auf den Cent gerundet. Dank der Mensualisation (gleichbleibendes Monatsgehalt) ändert sich dieser Betrag nicht mit der Zahl der Arbeitstage im Monat.' },

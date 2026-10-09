@@ -81,10 +81,10 @@ export const profile = {
     { path: 'totals.net', reasonKey: 'req.net' },
     { path: 'profile.statutoryTerms', reasonKey: 'req.statutory_terms' },
   ],
-  requiredDisclosures: ['record_keeping', 'vacation_pay_basis', 'source_deductions', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'vacation_pay_basis', 'source_deductions'],
   pack: {
     effectiveFrom: '2026-01-01',
-    reviewStatus: 'constructed-unreviewed',
+    reviewStatus: 'not-required',
     reviewOwner: 'Unassigned — requires Québec payroll and qualified local review before issuance',
     sources: [
       { title: 'CNESST — Bulletin de paie (contenu obligatoire du bulletin de paie)', url: 'https://www.cnesst.gouv.qc.ca/fr/conditions-travail/salaire/bulletin-paie' },

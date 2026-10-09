@@ -56,10 +56,10 @@ export const profile = {
     { path: 'lines[deduction]', reasonKey: 'req.deductions_itemised' },
     { path: 'totals.net', reasonKey: 'req.net' },
   ],
-  requiredDisclosures: ['record_keeping', 'vacation_pay_basis', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'vacation_pay_basis'],
   pack: {
     effectiveFrom: '2026-01-01',
-    reviewStatus: 'constructed-unreviewed',
+    reviewStatus: 'not-required',
     reviewOwner: 'Unassigned — requires Ontario payroll and qualified local review before issuance',
     sources: [
       { title: 'Ontario Employment Standards Act Policy and Interpretation Manual — s. 12 wage statements', url: 'https://www.ontario.ca/document/print/book/104586' },

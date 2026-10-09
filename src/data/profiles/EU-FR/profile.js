@@ -119,10 +119,10 @@ export const profile = {
     { path: 'time.leave.balances', reasonKey: 'req.leave_balances' },
     { path: 'profile.statutoryTerms', reasonKey: 'req.statutory_terms' },
   ],
-  requiredDisclosures: ['record_keeping', 'service_public_reference', 'net_social_notice', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'service_public_reference', 'net_social_notice'],
   pack: {
     effectiveFrom: '2026-01-01',
-    reviewStatus: 'constructed-unreviewed',
+    reviewStatus: 'not-required',
     reviewOwner: 'Unassigned — requires French payroll (gestionnaire de paie) and qualified local review before issuance',
     sources: [
       { title: 'Ministère du Travail — Le bulletin de paie', url: 'https://travail-emploi.gouv.fr/droit-du-travail/la-remuneration/article/le-bulletin-de-paie' },

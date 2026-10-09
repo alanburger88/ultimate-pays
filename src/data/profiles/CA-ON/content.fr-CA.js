@@ -57,7 +57,6 @@ export const content = {
   disclosures: {
     record_keeping: 'Conservez ce relevé pour vos dossiers. Il indique la période de paie, le taux de salaire, le salaire brut, le montant et l’objet de chaque retenue, ainsi que le salaire net pour la période.',
     vacation_pay_basis: 'Les vacances sont accumulées en temps payé selon vos conditions d’emploi et inscrites dans la section Temps et congés. L’indemnité de vacances versée, le cas échéant, apparaît comme une ligne de gains distincte.',
-    constructed_notice: 'Ce document a été construit à des fins de présentation; il n’a pas été émis par un employeur. Il ne constitue pas une preuve de revenus.',
     query_window: 'Si vous croyez qu’un montant est inexact, soumettez une demande à partir de ce relevé. Le service de la paie vise à répondre dans les deux jours ouvrables; il s’agit d’un objectif de service et non d’un engagement légal.',
   },
   explanations: {

@@ -93,7 +93,6 @@ export const content = {
     tfr_accrual_basis: 'La quota TFR indicata è maturata in questo mese e accantonata da Avenlo ai sensi dell’articolo 2120 del Codice civile. Non è pagata in busta e non è una trattenuta. Il progressivo annuo mostra quanto è maturato dal 1° gennaio; il fondo complessivo accantonato e la rivalutazione sono comunicati a fine anno.',
     ratei_basis: 'I ratei di tredicesima e quattordicesima sono mostrati per informazione e non sono pagati in questo mese. La tredicesima è pagata a dicembre; la quattordicesima con lo stipendio di giugno.',
     query_window: 'Se ritieni che un importo sia errato, invia una richiesta di chiarimento da questo cedolino. L’ufficio paghe risponde di norma entro due giorni lavorativi: è un obiettivo di servizio, non un impegno di legge.',
-    constructed_notice: 'Questo cedolino è stato costruito a scopo dimostrativo e non è emesso dal datore di lavoro. Non costituisce prova di reddito.',
   },
   explanations: {
     'exp.paga_base': { title: 'Come si calcola la paga base', body: 'La paga base è il minimo tabellare mensile del 3° livello del CCNL Terziario applicato da Avenlo: € 1.812,00 per un mese intero. Fino ad agosto 2026 era di € 1.777,00; dal 1° luglio 2026 è aumentata di € 35,00 per effetto della tranche del rinnovo contrattuale, elaborata in settembre. La differenza per luglio e agosto è pagata nella riga «Arretrati aumento CCNL».' },

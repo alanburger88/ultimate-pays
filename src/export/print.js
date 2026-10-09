@@ -233,7 +233,6 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
   const kind = content.document('recordKind') || docTitle;
   const periodText = ctx.fmt.period(d.period);
   const prov = d.provenance || {};
-  const constructed = !prov.kind || prov.kind === 'constructed';
   const selection = (ctx.store && ctx.store.get && ctx.store.get().selection) || { lineIds: [], tags: {}, notes: {} };
   const personal = { tags: selection.tags || {}, notes: selection.notes || {} };
   const { order, lines } = orderedLines(record, profile);
@@ -268,7 +267,6 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
     version: d.version,
     versionText: t('masthead.version', { version: d.version }),
     currency: d.currency,
-    constructed,
     scopeText: selectedOnly ? t('export.scope_selected', { count: rows.length, total: record.lines.length }) : t('export.scope_full'),
     selectedCount: rows.length,
     totalLines: record.lines.length,
@@ -284,7 +282,7 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
     disclosures: (record.disclosures || []).map((x) => ({ id: x.id, key: x.key, required: Boolean(x.required), text: content.disclosure(x.key) || t('common.not_available') })),
     policies: (record.policies || []).map((id) => { const p = content.policy(id); return { id, title: p && p.title ? p.title : id }; }),
     provenance: joinLines([
-      constructed ? `${t('record.provenance_constructed')} ${t('app.not_proof')}.` : t('record.provenance_issued', { issuer: prov.issuer || '—' }),
+      prov.issuer ? t('record.provenance_issued', { issuer: prov.issuer }) : null,
       prov.generatedBy ? t('export.generated_by', { source: prov.generatedBy }) : null,
       integrity.status === 'not-verified' || !integrity.status ? t('record.integrity_not_verified') : `${t('export.field_integrity_status')}: ${integrity.status}${integrity.method ? ` (${integrity.method})` : ''}`,
     ]),
@@ -309,7 +307,7 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
         lines: pl.map((l) => lineRow(ctx, l)),
       };
     }),
-    notices: joinLines([constructed ? t('export.notice_constructed') : null, t('export.notice_convenience')]),
+    notices: joinLines([t('export.notice_convenience')]),
     footer: t('export.print_footer', { id: d.id, version: t('masthead.version', { version: d.version }), language, generated: t('export.generated', { date: generatedText }) }),
   };
 }
@@ -458,7 +456,6 @@ export function buildPrintView(ctx) {
     h('header', { class: 'pl-px-head' },
       h('h1', null, m.header),
       h('p', { class: 'pl-px-meta' }, [m.employerName, m.employeeName, m.recordId, m.versionText, m.language].filter(Boolean).join(' · ')),
-      m.constructed ? h('p', { class: 'pl-px-notice' }, t('export.notice_constructed')) : null,
     ),
     h('section', { class: 'pl-px-section' },
       h('h2', null, t('record.particulars')),

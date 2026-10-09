@@ -67,7 +67,6 @@ export const content = {
   disclosures: {
     record_keeping: "Hou hierdie salarisstrokie vir jou rekords. Dit toon die periode waarvoor betaling gemaak word, jou besoldiging in geld, die bedrag en doel van elke aftrekking, en die werklike bedrag betaal. Die struktuur volg artikel 33 van die Wet op Basiese Diensvoorwaardes (BCEA) as verwysing; dit is nie vir regsnakoming hersien nie.",
     bcea_hours_statement: 'Gewone ure gewerk, oortydure en enige ure op Sondae of openbare vakansiedae gewerk, word in die afdeling Tyd en verlof gewys, saam met die besoldigingstarief wat vir oortyd gebruik is.',
-    constructed_notice: 'Hierdie rekord is vir aanbiedingsdoeleindes saamgestel en is nie deur die werkgewer uitgereik nie. Dit is nie bewys van verdienste nie.',
     query_window: 'As jy meen ’n bedrag is verkeerd, dien ’n navraag vanaf hierdie salarisstrokie in. Avenlo People Services streef daarna om binne twee werksdae te antwoord; dit is ’n diensteiken, nie ’n regsverpligting nie.',
     benefits_pending: 'Lidmaatskap van die Avenlo-aftreefonds en die mediese skema begin op die eerste dag van die maand ná jou begindatum. Geen aftreefonds- of mediesefondsbydraes verskyn op hierdie salarisstrokie nie; dit sal vanaf Oktober 2026 verskyn.',
   },

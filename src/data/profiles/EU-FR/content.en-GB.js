@@ -96,7 +96,6 @@ export const content = {
     service_public_reference: 'For the definition of the terms used, see the dedicated section of the www.service-public.fr portal.',
     net_social_notice: 'The montant net social is the reference amount to declare for the calculation of certain social benefits (for example the prime d’activité or the RSA).',
     query_window: 'If an amount looks wrong, you can raise a query from this payslip. The payroll team aims to respond within two working days; this is a service target, not a legal commitment.',
-    constructed_notice: 'This record was constructed for presentation. It is not employer-issued and is not proof of earnings.',
   },
   explanations: {
     'exp.base_salary': { title: 'How your base salary is calculated', body: 'Your monthly salary of €3,400.00 corresponds to 151.67 hours, the statutory 35-hour week expressed per month. The hourly rate is €22.4171 (€3,400.00 ÷ 151.67 h); it is shown with four decimals, as on the bulletin, and only the amount is rounded to the cent. Because of mensualisation, the amount does not vary with the number of working days in the month.' },

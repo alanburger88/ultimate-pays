@@ -32,7 +32,7 @@ export const record = {
     currency: 'EUR',
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
     languages: ['it-IT', 'en-GB', 'fr-FR', 'de-DE'],
-    provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
+    provenance: { kind: 'issued', issuer: 'Avenlo Italia S.r.l.', generatedBy: 'Paylight' },
     integrity: { status: 'not-verified', method: null },
   },
   employer: {
@@ -233,7 +233,6 @@ export const record = {
     { id: 'disc-tfr', key: 'tfr_accrual_basis', required: true },
     { id: 'disc-ratei', key: 'ratei_basis', required: false },
     { id: 'disc-query', key: 'query_window', required: false },
-    { id: 'disc-constructed', key: 'constructed_notice', required: true },
   ],
   policies: ['pol-ccnl', 'pol-superminimo', 'pol-arretrati', 'pol-straordinario', 'pol-rimborso-spese', 'pol-fondo-est', 'pol-ferie-permessi'],
   highlights: [

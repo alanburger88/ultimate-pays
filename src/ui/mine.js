@@ -20,8 +20,11 @@ registerStrings({
   'mine.group_privacy': 'Privacy and data',
   'mine.required': 'Required',
   'mine.position': 'Position {position} of {count}',
-  'mine.move_up_section': 'Move {section} up',
-  'mine.move_down_section': 'Move {section} down',
+  'mine.drag_handle': 'Reorder {section}',
+  'mine.drag_hint': 'Drag a section by its handle to reorder. With a keyboard, focus the handle, press Space, use the arrow keys, then press Space again.',
+  'mine.picked_up': '{section} picked up, position {position} of {count}. Use the arrow keys to move it, Space to drop, Escape to cancel.',
+  'mine.dropped': '{section} dropped at position {position} of {count}.',
+  'mine.drag_cancelled': 'Reorder cancelled. {section} is back at position {position}.',
   'mine.moved': '{section} is now position {position} of {count}.',
   'mine.start_section_hint': 'The section shown first the next time this statement opens.',
   'mine.language_hint': 'Applied when you save. The statement reopens in the chosen language.',
@@ -227,23 +230,113 @@ export function openMine(ctx) {
     startSelect.value = form.startSection;
   }
 
-  function move(id, dir) {
-    const i = form.order.indexOf(id);
-    const j = i + dir;
-    if (i < 0 || j < 0 || j >= form.order.length) return;
-    const next = form.order.slice();
-    [next[i], next[j]] = [next[j], next[i]];
+  // Reordering: drag a row by its handle (mouse, pen or touch), or use the handle from the keyboard
+  // (Space to pick up, arrow keys to move, Space or Enter to drop, Escape to cancel).
+  const hintId = uid('mine-order-hint');
+  let grabbed = null; // { id, from: order before the keyboard pick-up }
+  let rerendering = false; // re-rendering removes the focused handle; that blur is not the user leaving
+
+  function commitOrder(next, focusId) {
     form.order = next;
-    renderOrder();
-    renderStartOptions();
-    const row = orderList.querySelector(`[data-id="${CSS.escape(id)}"]`);
-    if (row) {
-      const same = row.querySelector(dir < 0 ? '[data-move="up"]' : '[data-move="down"]');
-      const other = row.querySelector(dir < 0 ? '[data-move="down"]' : '[data-move="up"]');
-      const target = same && !same.disabled ? same : other;
-      if (target) target.focus();
-    }
+    rerendering = true;
+    try {
+      renderOrder();
+      renderStartOptions();
+      const handle = orderList.querySelector(`[data-id="${CSS.escape(focusId)}"] .pl-mine-grip`);
+      if (handle) handle.focus();
+    } finally { rerendering = false; }
+  }
+
+  function moveBy(id, dir) {
+    const i = form.order.indexOf(id);
+    const j = Math.max(0, Math.min(form.order.length - 1, i + dir));
+    if (i < 0 || i === j) return;
+    const next = form.order.slice();
+    next.splice(j, 0, next.splice(i, 1)[0]);
+    commitOrder(next, id);
+    if (grabbed) orderList.querySelector(`[data-id="${CSS.escape(id)}"]`).classList.add('is-grabbed');
     announce(t('mine.moved', { section: title(id), position: j + 1, count: form.order.length }));
+  }
+
+  function onHandleKey(e, id) {
+    const key = e.key;
+    if (key === ' ' || key === 'Enter') {
+      e.preventDefault();
+      if (grabbed && grabbed.id === id) {
+        grabbed = null;
+        commitOrder(form.order.slice(), id);
+        announce(t('mine.dropped', { section: title(id), position: form.order.indexOf(id) + 1, count: form.order.length }));
+      } else {
+        grabbed = { id, from: form.order.slice() };
+        e.currentTarget.closest('li').classList.add('is-grabbed');
+        e.currentTarget.setAttribute('aria-pressed', 'true');
+        announce(t('mine.picked_up', { section: title(id), position: form.order.indexOf(id) + 1, count: form.order.length }));
+      }
+    } else if (grabbed && grabbed.id === id && (key === 'ArrowUp' || key === 'ArrowDown' || key === 'Home' || key === 'End')) {
+      e.preventDefault();
+      const i = form.order.indexOf(id);
+      moveBy(id, key === 'ArrowUp' ? -1 : key === 'ArrowDown' ? 1 : key === 'Home' ? -i : form.order.length - 1 - i);
+      const handle = orderList.querySelector(`[data-id="${CSS.escape(id)}"] .pl-mine-grip`);
+      if (handle) handle.setAttribute('aria-pressed', 'true');
+    } else if (key === 'Escape' && grabbed && grabbed.id === id) {
+      e.preventDefault();
+      e.stopPropagation(); // cancel the move, not the dialog
+      const from = grabbed.from;
+      grabbed = null;
+      commitOrder(from, id);
+      announce(t('mine.drag_cancelled', { section: title(id), position: from.indexOf(id) + 1 }));
+    }
+  }
+
+  function onHandleBlur(id) {
+    // Leaving the handle while carrying a section drops it where it is.
+    if (rerendering) return;
+    if (grabbed && grabbed.id === id) {
+      grabbed = null;
+      const row = orderList.querySelector(`[data-id="${CSS.escape(id)}"]`);
+      if (row) { row.classList.remove('is-grabbed'); const hd = row.querySelector('.pl-mine-grip'); if (hd) hd.setAttribute('aria-pressed', 'false'); }
+    }
+  }
+
+  function startPointerDrag(e, id) {
+    if (e.button !== undefined && e.button !== 0) return;
+    const row = e.currentTarget.closest('li');
+    const handle = e.currentTarget;
+    e.preventDefault();
+    handle.focus({ preventScroll: true });
+    try { handle.setPointerCapture(e.pointerId); } catch (err) { /* capture is best effort */ }
+    const startOrder = form.order.slice();
+    const grabOffset = e.clientY - row.getBoundingClientRect().top;
+    row.classList.add('is-dragging');
+    orderList.classList.add('is-sorting');
+    const place = (clientY) => {
+      // Move the row in the DOM when the pointer passes a neighbour's midpoint; translate it to follow the pointer.
+      let prev = row.previousElementSibling;
+      while (prev && clientY < prev.getBoundingClientRect().top + prev.offsetHeight / 2) { orderList.insertBefore(row, prev); prev = row.previousElementSibling; }
+      let next = row.nextElementSibling;
+      while (next && clientY > next.getBoundingClientRect().top + next.offsetHeight / 2) { orderList.insertBefore(next, row); next = row.nextElementSibling; }
+      row.style.transform = 'none';
+      const natural = row.getBoundingClientRect().top;
+      row.style.transform = `translateY(${clientY - grabOffset - natural}px)`;
+    };
+    const onMove = (ev) => { ev.preventDefault(); place(ev.clientY); };
+    const finish = (cancelled) => {
+      handle.removeEventListener('pointermove', onMove);
+      handle.removeEventListener('pointerup', onUp);
+      handle.removeEventListener('pointercancel', onCancel);
+      row.style.transform = '';
+      row.classList.remove('is-dragging');
+      orderList.classList.remove('is-sorting');
+      const next = cancelled ? startOrder : Array.from(orderList.children).map((li) => li.dataset.id);
+      commitOrder(next, id);
+      const pos = next.indexOf(id);
+      if (!cancelled && pos !== startOrder.indexOf(id)) announce(t('mine.dropped', { section: title(id), position: pos + 1, count: next.length }));
+    };
+    const onUp = () => finish(false);
+    const onCancel = () => finish(true);
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+    handle.addEventListener('pointercancel', onCancel);
   }
 
   function renderOrder() {
@@ -253,16 +346,14 @@ export function openMine(ctx) {
       const name = title(id);
       const required = Boolean(def.required);
       orderList.appendChild(h('li', { class: 'pl-mine-order-row', dataset: { id } },
+        h('button', { class: 'pl-mine-grip', type: 'button', dataset: { focusKey: `mine-grip-${id}` }, aria: { label: t('mine.drag_handle', { section: name }), describedby: hintId, pressed: 'false' }, title: t('mine.drag_handle', { section: name }),
+          on: { keydown: (e) => onHandleKey(e, id), blur: () => onHandleBlur(id), pointerdown: (e) => startPointerDrag(e, id) } }, icon('grip', { size: 20 })),
         h('span', { class: 'pl-mine-order-num tabular', aria: { hidden: 'true' } }, String(i + 1)),
         h('span', { class: 'pl-mine-order-text' },
           h('span', { class: 'sr-only' }, `${t('mine.position', { position: i + 1, count: form.order.length })}: `),
           icon(def.icon || 'dot', { size: 16 }),
           h('b', null, name),
           required ? h('span', { class: 'pl-chip pl-chip-outline xs pl-mine-required', title: t('mine.cannot_hide') }, icon('lock', { size: 12 }), t('mine.required'), h('span', { class: 'sr-only' }, `. ${t('mine.cannot_hide')}`)) : null,
-        ),
-        h('span', { class: 'pl-mine-order-actions' },
-          h('button', { class: 'pl-btn pl-btn-quiet pl-btn-icon', type: 'button', disabled: i === 0 ? true : null, dataset: { move: 'up', focusKey: `mine-up-${id}` }, aria: { label: t('mine.move_up_section', { section: name }) }, title: t('common.move_up'), on: { click: () => move(id, -1) } }, icon('up')),
-          h('button', { class: 'pl-btn pl-btn-quiet pl-btn-icon', type: 'button', disabled: i === form.order.length - 1 ? true : null, dataset: { move: 'down', focusKey: `mine-down-${id}` }, aria: { label: t('mine.move_down_section', { section: name }) }, title: t('common.move_down'), on: { click: () => move(id, 1) } }, icon('down')),
         ),
       ));
     });
@@ -338,6 +429,7 @@ export function openMine(ctx) {
         h('div', { class: 'pl-field pl-mine-field' },
           h('span', { class: 'pl-label' }, t('mine.section_order')),
           h('span', { class: 'pl-hint' }, t('mine.required_note')),
+          h('span', { class: 'pl-hint', id: hintId }, t('mine.drag_hint')),
           orderList),
         startField,
         renderPins(),

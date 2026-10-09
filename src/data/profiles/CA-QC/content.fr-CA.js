@@ -84,7 +84,6 @@ export const content = {
     source_deductions: 'L’impôt fédéral, l’impôt du Québec et les cotisations au RRQ, au RQAP et à l’assurance-emploi sont calculés par le service de la paie à partir des tables officielles de Revenu Québec et de l’Agence du revenu du Canada. Paylight affiche les montants fournis et ne les recalcule pas.',
     overtime_basis: 'Les heures supplémentaires sont établies à partir de vos quarts de travail enregistrés et payées à 150 % de votre taux horaire, conformément à la convention collective.',
     query_window: 'Si vous croyez qu’un montant est inexact, soumettez une demande à partir de ce bulletin. Le service de la paie vise à répondre dans les deux jours ouvrables; il s’agit d’un objectif de service et non d’un engagement légal.',
-    constructed_notice: 'Ce document a été construit à des fins de présentation; il n’a pas été émis par un employeur. Il ne constitue pas une preuve de revenus.',
   },
   explanations: {
     'exp.salaire_regulier': { title: 'Comment votre salaire régulier est calculé', body: 'Vos heures régulières enregistrées pendant la période (80,00 h sur 10 quarts de travail) sont multipliées par votre taux horaire de 27,40 $. Vos heures varient d’une période à l’autre ; vous êtes payé selon les heures enregistrées.' },

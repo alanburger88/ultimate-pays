@@ -67,7 +67,6 @@ export const content = {
   disclosures: {
     record_keeping: "Conservi questo cedolino. Riporta il periodo di paga, il lordo complessivo compresa la retribuzione in natura, lo Steuerbrutto e l’SV-Brutto, le trattenute di legge per tipo e importo, la retribuzione netta e l’importo pagato. La struttura fa riferimento al § 108 GewO e all’Entgeltbescheinigungsverordnung; la conformità legale non è stata verificata.",
     noncash_benefit_basis: 'La retribuzione in natura per l’auto aziendale è compresa nel lordo complessivo ed è stata assoggettata a imposte e contributi. Poiché non viene pagata in denaro, viene dedotta di nuovo dopo la retribuzione netta. La valutazione segue il metodo previsto dalla legge, sulla base del prezzo di listino lordo.',
-    constructed_notice: 'Questo cedolino è stato costruito a scopo di presentazione e non è emesso dal datore di lavoro. Non costituisce prova di reddito.',
     query_window: 'Se un importo Le sembra errato, invii una richiesta di chiarimento da questo cedolino. L’ufficio paghe si impegna a rispondere entro due giorni lavorativi: è un obiettivo di servizio, non un impegno di legge.',
   },
   explanations: {

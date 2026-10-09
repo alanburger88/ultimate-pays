@@ -93,7 +93,6 @@ export const content = {
     tfr_accrual_basis: 'Der ausgewiesene TFR-Anteil wurde in diesem Monat erworben und wird von Avenlo nach Artikel 2120 des Codice civile zurückgestellt. Er wird nicht mit dem Gehalt ausgezahlt und ist kein Abzug. Der Jahreswert zeigt, was seit dem 1. Januar aufgelaufen ist; der insgesamt zurückgestellte Betrag und seine Aufwertung werden zum Jahresende mitgeteilt.',
     ratei_basis: 'Die Monatsanteile des 13. und 14. Monatsgehalts werden zur Information gezeigt und in diesem Monat nicht ausgezahlt. Das 13. Monatsgehalt wird im Dezember gezahlt, das 14. mit dem Juni-Gehalt.',
     query_window: 'Wenn Ihnen ein Betrag unrichtig erscheint, stellen Sie aus dieser Abrechnung heraus eine Rückfrage. Die Lohnbuchhaltung antwortet in der Regel innerhalb von zwei Arbeitstagen; das ist ein Serviceziel, keine rechtliche Zusage.',
-    constructed_notice: 'Diese Abrechnung wurde zu Präsentationszwecken konstruiert und nicht vom Arbeitgeber ausgestellt. Sie ist kein Einkommensnachweis.',
   },
   explanations: {
     'exp.paga_base': { title: 'So wird das Grundgehalt berechnet', body: 'Das Grundgehalt ist das tarifliche Monatsmindestgehalt der 3. Stufe des von Avenlo angewandten CCNL Terziario: 1.812,00 € für einen vollen Monat. Bis August 2026 betrug es 1.777,00 €; seit dem 1. Juli 2026 ist es durch die Tranche aus der Erneuerung des CCNL, die im September verarbeitet wurde, um 35,00 € gestiegen. Die Differenz für Juli und August wird in der Zeile „Nachzahlung CCNL-Erhöhung“ gezahlt.' },

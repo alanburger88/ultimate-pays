@@ -96,7 +96,6 @@ export const content = {
     service_public_reference: 'Per la definizione dei termini utilizzati, consulti la rubrica dedicata sul portale www.service-public.fr.',
     net_social_notice: 'Il montant net social è l’importo di riferimento da dichiarare per il calcolo di alcune prestazioni sociali (per esempio la prime d’activité o il RSA).',
     query_window: 'Se un importo Le sembra inesatto, può inviare una richiesta di chiarimento da questo cedolino. L’ufficio paghe si adopera per rispondere entro due giorni lavorativi; è un obiettivo di servizio, non un impegno di legge.',
-    constructed_notice: 'Questo documento è stato costruito a scopo di presentazione. Non è emesso da un datore di lavoro e non costituisce prova di reddito.',
   },
   explanations: {
     'exp.base_salary': { title: 'Come viene calcolata la Sua retribuzione base', body: 'La Sua retribuzione mensile di 3.400,00 € corrisponde a 151,67 ore, cioè l’orario legale di 35 ore settimanali rapportato al mese. La paga oraria è di 22,4171 € (3.400,00 € ÷ 151,67 h); è indicata con quattro decimali, come sul bulletin de paie, e solo l’importo viene arrotondato al centesimo. Grazie alla mensualisation, questo importo non varia con il numero di giorni lavorativi del mese.' },

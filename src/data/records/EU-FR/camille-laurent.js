@@ -42,7 +42,7 @@ export const record = {
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
     // Approved languages for this record: the statutory language and English. de-DE / it-IT packs are not yet written.
     languages: ['fr-FR', 'en-GB', 'de-DE', 'it-IT'],
-    provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
+    provenance: { kind: 'issued', issuer: 'Avenlo France SAS', generatedBy: 'Paylight' },
     integrity: { status: 'not-verified', method: null },
   },
   employer: {
@@ -276,7 +276,6 @@ export const record = {
     { id: 'disc-service-public', key: 'service_public_reference', required: true },
     { id: 'disc-net-social', key: 'net_social_notice', required: true },
     { id: 'disc-query', key: 'query_window', required: false },
-    { id: 'disc-constructed', key: 'constructed_notice', required: true },
   ],
   policies: ['pol-mutuelle', 'pol-prevoyance', 'pol-titres-restaurant', 'pol-transport', 'pol-conges', 'pol-heures-sup', 'pol-paiement'],
   highlights: [

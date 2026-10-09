@@ -96,7 +96,6 @@ export const content = {
     service_public_reference: 'Pour la définition des termes employés, consultez la rubrique dédiée sur le portail www.service-public.fr.',
     net_social_notice: 'Le montant net social est le montant de référence à déclarer pour le calcul de certaines prestations sociales (par exemple la prime d’activité ou le RSA).',
     query_window: 'Si un montant vous paraît inexact, vous pouvez poser une question depuis ce bulletin. Le service paie s’efforce de répondre sous deux jours ouvrés ; c’est un objectif de service, non un engagement légal.',
-    constructed_notice: 'Ce document a été construit à des fins de présentation. Il n’est pas émis par un employeur et ne constitue pas un justificatif de revenus.',
   },
   explanations: {
     'exp.base_salary': { title: 'Comment votre salaire de base est calculé', body: 'Votre salaire mensuel de 3 400,00 € correspond à 151,67 heures, la durée légale de 35 heures par semaine ramenée au mois. Le taux horaire est de 22,4171 € (3 400,00 € ÷ 151,67 h) ; il est affiché avec quatre décimales, comme sur le bulletin, et seul le montant est arrondi au centime. Grâce à la mensualisation, ce montant ne varie pas avec le nombre de jours ouvrés du mois.' },

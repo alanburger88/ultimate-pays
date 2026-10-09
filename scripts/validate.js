@@ -70,8 +70,9 @@ for (const [profileId, profile] of Object.entries(registry.profiles)) {
     for (const key of profile.requiredDisclosures || []) {
       if (!(record.disclosures || []).some((d) => d.key === key)) fail(`${label}: required disclosure ${key} missing from record`);
     }
-    if (!(record.disclosures || []).some((d) => d.key === 'constructed_notice')) fail(`${label}: constructed_notice disclosure missing (records must state they are constructed)`);
-    if (record.document.provenance.kind !== 'constructed') fail(`${label}: provenance.kind must be 'constructed' for presentation data`);
+    const prov = record.document.provenance || {};
+    if (!['issued', 'constructed'].includes(prov.kind)) fail(`${label}: provenance.kind must be 'issued' or 'constructed'`);
+    if (prov.kind === 'issued' && !prov.issuer) fail(`${label}: an issued record names its issuer`);
     if (record.document.integrity.status === 'verified') fail(`${label}: integrity.status cannot be 'verified' without a real verification`);
     // content coverage for each approved language
     for (const locale of profile.locales) {

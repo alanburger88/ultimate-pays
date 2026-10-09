@@ -67,7 +67,6 @@ export const content = {
   disclosures: {
     record_keeping: "Gcina eli phepha lomvuzo kwiirekhodi zakho. Libonisa ixesha ekuhlawulelwa lona, umvuzo wakho ngemali, isixa nenjongo yemali nganye etsalwayo, kunye nesixa esihlawulwe ngokwenene. Ulwakhiwo lwalo lulandela icandelo 33 le-Basic Conditions of Employment Act njengesikhokelo; alikahlolwa ukuba liyahambelana na nomthetho.",
     bcea_hours_statement: 'Iiyure eziqhelekileyo ezisetyenziweyo, iiyure ze-ovathayim kunye nazo naziphi na iiyure ezisetyenzwe ngeCawa okanye ngeeholide zikawonke-wonke ziboniswa kwicandelo elithi Ixesha nekhefu, kunye nereyithi yomvuzo esetyenziselwe i-ovathayim.',
-    constructed_notice: 'Le rekhodi yakhelwe ukuboniswa kwaye ayikhutshwanga ngumqeshi. Ayibobungqina bengeniso.',
     query_window: 'Ukuba ukholelwa ukuba isixa asichanekanga, faka umbuzo usuka kweli phepha lomvuzo. I-Avenlo People Services izama ukuphendula zingekapheli iintsuku ezimbini zokusebenza; le yinjongo yenkonzo, hayi isibophelelo esisemthethweni.',
     benefits_pending: 'Ubulungu beNgxowa-mali yoMhlala-phantsi ye-Avenlo nobesikimu sonyango buqala ngosuku lokuqala lwenyanga elandela umhla wakho wokuqala. Akukho magalelo engxowa-mali yomhlala-phantsi okanye oncedo lwezonyango avela kweli phepha lomvuzo; aya kuqala ukuvela ngo-Okthoba 2026.',
   },

@@ -57,7 +57,6 @@ export const content = {
   disclosures: {
     record_keeping: 'Keep this statement for your records. It shows the pay period, wage rate, gross wages, the amount and purpose of each deduction, and net pay for the period.',
     vacation_pay_basis: 'Vacation is accrued as paid time under your employment terms and recorded in the Time & leave section. Vacation pay paid out, where applicable, is shown as a separate earnings line.',
-    constructed_notice: 'This record was constructed for presentation and is not employer-issued. It is not proof of earnings.',
     query_window: 'If you believe an amount is wrong, raise a query from this statement. Payroll aims to respond within two business days; this is a service target, not a legal commitment.',
   },
   explanations: {

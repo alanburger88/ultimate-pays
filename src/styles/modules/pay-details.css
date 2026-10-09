@@ -47,7 +47,8 @@
 .pl-dchange { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .pl-dchange .pl-chip.xs { padding: 0 6px; min-height: 0; line-height: 1.5; }
 .pl-dact { display: flex; gap: 4px; align-items: center; justify-content: flex-end; }
-.pl-dact .pl-btn-icon { width: 36px; min-height: 36px; }
+.pl-dact .pl-btn-icon { width: 40px; min-width: 40px; min-height: 40px; border: 1px solid var(--pl-control-border); }
+.pl-dact .pl-btn-icon svg { width: 18px; height: 18px; }
 .pl-dact .pl-btn-sm { gap: 6px; }
 
 @media (max-width: 1120px) {
@@ -120,5 +121,5 @@
    If a table still cannot fit, pay-details.js falls back to cards for that language and width. */
 .pl-dtable thead th, .pl-dtable thead th button.sort { white-space: normal; overflow-wrap: break-word; hyphens: auto; text-align: inherit; }
 .pl-dtable thead th.num { text-align: right; }
-.pl-dtable .col-actions { white-space: normal; }
-.pl-dtable td.col-actions > * { flex-wrap: wrap; }
+/* Row actions stay on one line; when the table cannot fit, the view switches to cards instead of squeezing them. */
+.pl-dtable .col-actions, .pl-dtable td.col-actions .pl-btn { white-space: nowrap; }

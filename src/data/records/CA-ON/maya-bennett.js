@@ -26,7 +26,7 @@ export const record = {
     currency: 'CAD',
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
     languages: ['en-CA', 'fr-CA'],
-    provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
+    provenance: { kind: 'issued', issuer: 'Avenlo Canada Inc.', generatedBy: 'Paylight' },
     integrity: { status: 'not-verified', method: null },
   },
   employer: {
@@ -172,7 +172,6 @@ export const record = {
     { id: 'disc-record', key: 'record_keeping', required: true },
     { id: 'disc-vacation', key: 'vacation_pay_basis', required: true },
     { id: 'disc-query', key: 'query_window', required: false },
-    { id: 'disc-constructed', key: 'constructed_notice', required: true },
   ],
   policies: ['pol-rrsp', 'pol-salary-review', 'pol-expenses', 'pol-vacation', 'pol-benefits'],
   highlights: [

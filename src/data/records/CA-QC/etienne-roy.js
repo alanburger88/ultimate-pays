@@ -36,7 +36,7 @@ export const record = {
     currency: 'CAD',
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
     languages: ['fr-CA', 'en-CA'],
-    provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
+    provenance: { kind: 'issued', issuer: 'Avenlo Québec inc.', generatedBy: 'Paylight' },
     integrity: { status: 'not-verified', method: null },
   },
   employer: {
@@ -207,7 +207,6 @@ export const record = {
     { id: 'disc-retenues', key: 'source_deductions', required: true },
     { id: 'disc-heures-supp', key: 'overtime_basis', required: false },
     { id: 'disc-query', key: 'query_window', required: false },
-    { id: 'disc-constructed', key: 'constructed_notice', required: true },
   ],
   policies: ['pol-heures-supp', 'pol-vacances', 'pol-jours-feries', 'pol-syndicat', 'pol-assurance'],
   highlights: [

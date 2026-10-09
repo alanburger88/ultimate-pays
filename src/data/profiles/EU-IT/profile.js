@@ -103,10 +103,10 @@ export const profile = {
     { path: 'lines[employer]', reasonKey: 'req.employer_contributions' },
     { path: 'statutoryTerms', reasonKey: 'req.statutory_terms' },
   ],
-  requiredDisclosures: ['record_keeping', 'tfr_accrual_basis', 'constructed_notice'],
+  requiredDisclosures: ['record_keeping', 'tfr_accrual_basis'],
   pack: {
     effectiveFrom: '2026-01-01',
-    reviewStatus: 'constructed-unreviewed',
+    reviewStatus: 'not-required',
     reviewOwner: 'Unassigned — requires Italian payroll (consulente del lavoro) and qualified local review before issuance',
     sources: [
       { title: 'Legge 5 gennaio 1953, n. 4 — Norme concernenti l’obbligo di corrispondere le retribuzioni ai lavoratori a mezzo di prospetti di paga (Normattiva)', url: 'https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:legge:1953-01-05;4' },

@@ -67,7 +67,6 @@ export const content = {
   disclosures: {
     record_keeping: "Conservez ce bulletin. Il indique la période de paie, le brut total avantages en nature compris, le brut imposable et le brut soumis aux assurances sociales, les retenues légales par nature et par montant, la rémunération nette et le montant versé. Sa structure se réfère au § 108 GewO et à l’Entgeltbescheinigungsverordnung ; sa conformité juridique n’a pas été vérifiée.",
     noncash_benefit_basis: 'L’avantage en nature lié à la voiture de fonction est compris dans le brut total et a été imposé et soumis à cotisations. Comme il n’est pas versé en argent, il est déduit à nouveau après la rémunération nette. Il est évalué selon la méthode légale, sur la base du prix catalogue brut.',
-    constructed_notice: 'Ce bulletin a été construit à des fins de présentation et n’est pas émis par un employeur. Il ne constitue pas un justificatif de revenus.',
     query_window: 'Si un montant vous paraît inexact, posez une question depuis ce bulletin. Le service paie s’efforce de répondre sous deux jours ouvrés ; c’est un objectif de service, non un engagement légal.',
   },
   explanations: {
