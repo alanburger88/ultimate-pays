@@ -359,7 +359,7 @@ function lineCard(ctx, line, sel) {
       h('span', { class: 'meta' },
         h('span', null, ctx.content.category(line.category)),
         line.group ? h('span', null, ctx.content.group(line.group)) : null,
-        hours !== null ? h('span', null, `${t('common.hours')}: ${hours}`) : null,
+        hours !== null ? h('span', null, `${t(line.calc && line.calc.type === 'units_rate' ? 'common.units' : 'common.hours')}: ${hours}`) : null,
         rate !== null && !rate.money ? h('span', null, `${t('common.rate')}: ${rate.text}`) : null,
       ),
     ),
