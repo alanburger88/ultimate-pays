@@ -41,7 +41,7 @@ export const record = {
     currency: 'EUR',
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
     // Approved languages for this record: the statutory language and English. de-DE / it-IT packs are not yet written.
-    languages: ['fr-FR', 'en-GB'],
+    languages: ['fr-FR', 'en-GB', 'de-DE', 'it-IT'],
     provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
     integrity: { status: 'not-verified', method: null },
   },

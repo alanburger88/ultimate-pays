@@ -26,7 +26,7 @@ export const record = {
     payDate: '2026-09-30',
     currency: 'EUR',
     taxYear: { label: '2026', start: '2026-01-01', end: '2026-12-31' },
-    languages: ['de-DE', 'en-GB'],
+    languages: ['de-DE', 'en-GB', 'fr-FR', 'it-IT'],
     provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
     integrity: { status: 'not-verified', method: null },
   },

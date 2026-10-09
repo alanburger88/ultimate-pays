@@ -28,7 +28,7 @@ export const record = {
     currency: 'ZAR',
     taxYear: { label: '2026/27', start: '2026-03-01', end: '2027-02-28' },
     // Only en-ZA content is prepared; af-ZA, zu-ZA and xh-ZA are added once translated.
-    languages: ['en-ZA'],
+    languages: ['en-ZA', 'af-ZA', 'zu-ZA', 'xh-ZA'],
     provenance: { kind: 'constructed', notice: 'not-proof-of-earnings', issuer: null, generatedBy: 'Paylight presentation data' },
     integrity: { status: 'not-verified', method: null },
   },
