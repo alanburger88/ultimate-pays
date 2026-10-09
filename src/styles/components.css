@@ -91,7 +91,7 @@ fieldset.pl-fieldset legend { font-weight: 600; padding: 0 6px; }
 
 /* Line cards (mobile) ------------------------------------------------------------------- */
 .pl-cards { display: grid; gap: var(--pl-space-2); grid-template-columns: 1fr; }
-.pl-line-card { display: grid; grid-template-columns: auto 1fr auto; gap: var(--pl-space-2) var(--pl-space-3); align-items: start; padding: var(--pl-space-3); border: 1px solid var(--pl-line); border-radius: var(--pl-radius); background: var(--pl-surface); min-width: 0; }
+.pl-line-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--pl-space-2) var(--pl-space-3); align-items: start; padding: var(--pl-space-3); border: 1px solid var(--pl-line); border-radius: var(--pl-radius); background: var(--pl-surface); min-width: 0; }
 .pl-line-card.is-selected { border-color: var(--pl-accent); background: var(--pl-accent-soft); }
 .pl-line-card .title { font-weight: 600; overflow-wrap: anywhere; }
 .pl-line-card .meta { color: var(--pl-muted); font-size: var(--pl-size-xs); display: flex; flex-wrap: wrap; gap: 4px 10px; }
@@ -276,3 +276,10 @@ details.pl-details[open] > summary::before { transform: rotate(45deg); }
   .pl-dialog-foot { justify-content: stretch; }
   .pl-dialog-foot > * { flex: 1 1 auto; }
 }
+
+/* Large text and long words (WCAG 1.4.4 / 1.4.10): text inside cards, notices and dialogs breaks rather than
+   pushing the page sideways; buttons wrap their label; card figures may wrap as a last resort. */
+.pl-btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: center; height: auto; }
+.pl-card, .pl-line-card, .pl-notice, .pl-dialog-body, .pl-popover, .pl-tray, .pl-empty { overflow-wrap: anywhere; }
+.pl-notice > div { min-width: 0; }
+.pl-line-card .ytd, .pl-line-card .amt { white-space: normal; }

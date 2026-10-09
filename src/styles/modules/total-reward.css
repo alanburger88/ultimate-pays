@@ -124,13 +124,14 @@ button.pl-rw-legend-btn:hover .lbl { color: var(--pl-accent); text-decoration: u
 .pl-rw-card .title { font-weight: 600; padding: 2px 0; }
 .pl-rw-card .meta { align-items: center; }
 .pl-rw-card .meta .pl-chip { white-space: normal; }
-.pl-rw-card .nums { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
+.pl-rw-card .nums { min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
 .pl-rw-card.is-excluded { color: var(--pl-muted); border-style: dashed; }
 .pl-rw-card.is-focus { border-color: var(--pl-accent); box-shadow: inset 3px 0 0 var(--pl-accent); }
 .pl-rw-card-subtotal { display: flex; justify-content: space-between; gap: var(--pl-space-3); padding: var(--pl-space-2) var(--pl-space-3); font-weight: 700; border-top: 2px solid var(--pl-line-strong); }
 .pl-rw-card-subtotal .amt { white-space: nowrap; }
+.pl-rw-card-subtotal { flex-wrap: wrap; }
 @media (max-width: 360px) {
-  .pl-rw-card { grid-template-columns: 1fr; }
+  .pl-rw-card { grid-template-columns: minmax(0, 1fr); }
   .pl-rw-card .nums { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: baseline; gap: 2px var(--pl-space-3); text-align: left; }
 }
 

@@ -83,6 +83,16 @@ for (const combo of combos) {
         check(`${label} ${id} no missing keys`, missingInSection.length === 0, missingInSection.join(', '));
         if (width === 320 && combo.lang === registry.profiles[combo.region].defaultLocale) await page.screenshot({ path: path.join(outDir, `${combo.region}-${combo.scenario}-${combo.lang}-${id}-${width}.png`), fullPage: true });
       }
+      // Large text (WCAG 1.4.4 / 1.4.10): at 320 px with 200 % root text, nothing may scroll sideways.
+      if (width === 320 && combo.lang === registry.profiles[combo.region].defaultLocale) {
+        await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+        for (const id of ids) {
+          await goSection(page, id);
+          const big = await noHorizontalScroll(page);
+          check(`${label} ${id} no horizontal scroll at 200% text`, big.ok, big.reason);
+        }
+        await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
+      }
       check(`${label} no page errors after navigation`, errors.length === 0, errors.join(' | '));
     } catch (err) { check(`${label} navigation`, false, err.message); }
     await session.close();

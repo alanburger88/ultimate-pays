@@ -147,7 +147,7 @@
 .pl-ra-wallet a { display: inline-flex; align-items: center; gap: 4px; min-height: 36px; }
 .pl-ra-pass-wrap { display: grid; gap: var(--pl-space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); align-items: start; }
 .pl-ra-pass { border-radius: var(--pl-radius-lg); padding: var(--pl-space-4); background: linear-gradient(135deg, var(--pl-accent), var(--pl-accent-strong)); color: var(--pl-accent-ink); max-width: 360px; display: grid; gap: 4px; box-shadow: var(--pl-shadow); min-width: 0; }
-.pl-ra-pass .brand { font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: var(--pl-space-2); }
+.pl-ra-pass .brand { font-weight: 800; letter-spacing: -0.01em; display: flex; flex-wrap: wrap; align-items: center; gap: var(--pl-space-2); min-width: 0; overflow-wrap: anywhere; }
 .pl-ra-pass .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--pl-accent-ink); color: var(--pl-accent); display: inline-grid; place-items: center; font-weight: 800; font-size: 15px; flex: none; }
 .pl-ra-pass .label { font-size: var(--pl-size-lg); font-weight: 600; margin-top: var(--pl-space-2); }
 .pl-ra-pass dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px var(--pl-space-3); margin-top: var(--pl-space-2); font-size: var(--pl-size-sm); }
