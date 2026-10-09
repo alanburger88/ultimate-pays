@@ -1,3 +1,4 @@
+import { opaqueRef } from '../../app/persist.js';
 /** Shared behaviour for wallet providers. */
 export class WalletProvider {
   constructor({ id, endpoint, record, profile, tokenProvider }) { this.id = id; this.endpoint = endpoint || null; this.record = record; this.profile = profile; this.tokenProvider = tokenProvider; this.state = 'idle'; }
@@ -22,7 +23,7 @@ export class WalletProvider {
     if (a.state !== 'ready') { const e = new Error('unavailable'); e.code = 'unavailable'; e.reasons = a.reasons; throw e; }
     const token = this.tokenProvider ? await this.tokenProvider() : null;
     if (!token) { const e = new Error('no credential'); e.code = 'no_token'; throw e; }
-    const res = await fetch(this.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ provider: this.id, documentRef: this.record.document.id, version: this.record.document.version }) });
+    const res = await fetch(this.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ provider: this.id, documentRef: opaqueRef(this.record) }) });
     if (!res.ok) { const e = new Error(`http ${res.status}`); e.code = `http_${res.status}`; throw e; }
     const data = await res.json();
     if (!data || typeof data.url !== 'string') { const e = new Error('bad response'); e.code = 'bad_response'; throw e; }

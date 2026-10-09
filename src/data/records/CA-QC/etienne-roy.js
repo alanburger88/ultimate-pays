@@ -18,7 +18,7 @@
 export const record = {
   schemaVersion: 1,
   scenario: {
-    id: 'etienne-roy',
+    id: 'qc-hourly',
     summary: 'Hourly pay with variable hours and overtime at 150 % reconciled to shifts, a separate vacation-indemnity accrual with a prior-period vacation payout, and Québec source deductions supplied by payroll.',
     tags: ['variable-hours', 'overtime', 'leave'],
   },

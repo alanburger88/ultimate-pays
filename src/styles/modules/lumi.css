@@ -86,3 +86,7 @@
 @media (prefers-reduced-motion: reduce) { .pl-lumi-spinner { animation: none; } .pl-lumi .pl-msg { animation: none; } }
 :root[data-motion="off"] .pl-lumi-spinner { animation: none; }
 :root[data-motion="off"] .pl-lumi .pl-msg { animation: none; }
+
+/* Connected answers: figures not found in the record are flagged. */
+.pl-msg-warning { display: flex; gap: 6px; align-items: flex-start; margin-top: 8px; padding: 6px 8px; border-radius: var(--pl-radius-sm); background: var(--pl-warn-soft); color: var(--pl-ink); font-size: var(--pl-size-sm); }
+.pl-msg-warning .pl-icon { flex: none; margin-top: 2px; color: var(--pl-warn); }

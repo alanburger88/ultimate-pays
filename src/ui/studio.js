@@ -17,7 +17,7 @@ import { registerStrings, LANGUAGE_NAMES } from '../app/i18n.js';
 import { openDialog, confirmDialog, toast } from './components/overlay.js';
 import { notice } from './components/common.js';
 import { loadStudioSettings, saveStudioSettings, clearAllSessions } from '../app/persist.js';
-import { validatePresentation, encodeShared, orderSections, SECTION_IDS, OPTIONAL_MODULES, DEFAULT_PRESENTATION, requiredModules } from '../app/config.js';
+import { validatePresentation, encodeShared, orderSections, SECTION_IDS, OPTIONAL_MODULES, DEFAULT_PRESENTATION, requiredModules, safeEndpoint } from '../app/config.js';
 import { PRESETS } from '../app/presets.js';
 import { verifyRecord } from '../app/calc.js';
 import * as registry from '../data/index.js';
@@ -38,7 +38,7 @@ registerStrings({
   'studio.branding_accent_invalid': 'Enter a six-digit hex colour such as #0e6e6b, or leave empty for the default.',
   'studio.branding_note': 'Branding changes labels and the accent colour only. No employer logo is used.',
   'studio.integration_wallet_provider': '{wallet} issuing service',
-  'studio.integration_invalid': 'Enter an https:// address or leave the field empty.',
+  'studio.integration_invalid': 'Enter a plain https:// address without passwords, keys or tokens, or leave the field empty.',
   'studio.readiness_pending': 'Not yet loaded',
   'studio.readiness_capability': 'Capability',
   'studio.readiness_state': 'State',
@@ -67,7 +67,7 @@ registerStrings({
   'studio.record_document': 'Record reference',
   'studio.record_none': 'No record is available for this selection.',
   'studio.verify_running': 'Checking the record arithmetic…',
-  'studio.verify_result_announce': 'Record integrity check complete.',
+  'studio.verify_result_announce': 'Arithmetic check complete.',
   'studio.export_download': 'Download JSON',
   'studio.export_downloaded': 'Configuration file downloaded.',
   'studio.export_copy_failed': 'The clipboard is not available here. Copy the text below instead.',
@@ -100,7 +100,8 @@ const NAV_KEYS = { 'my-pay': 'nav.my_pay', 'pay-details': 'nav.pay_details', 'wh
 const INTEGRATIONS = ['assistant', 'queries', 'identity', 'verification'];
 const WALLETS = ['apple', 'google', 'samsung'];
 const HEX = /^#[0-9a-fA-F]{6}$/;
-const HTTPS = /^https:\/\/\S+$/;
+/** Endpoints: plain HTTPS only, never with embedded credentials (see safeEndpoint in config.js). */
+const HTTPS = { test: (v) => Boolean(safeEndpoint(v)) };
 
 /* ----------------------------------------------------------------------------
  * Form state
@@ -171,7 +172,7 @@ function effectiveModules(form, locks) {
 function collectSettings(ctx, form) {
   const locks = locksFor(ctx, form);
   const modules = effectiveModules(form, locks);
-  const ep = (v) => (HTTPS.test(v || '') ? { endpoint: v.trim() } : null);
+  const ep = (v) => { const ok = safeEndpoint(v || ''); return ok ? { endpoint: ok } : null; };
   const wallet = {};
   for (const w of WALLETS) { const e = ep(form.integrations.wallet[w]); if (e) wallet[w] = e; }
   return {
@@ -464,7 +465,7 @@ export function openStudio(ctx) {
         verifyResult = { record, result };
         clear(resultHost); resultHost.appendChild(verifyNotice(ctx, result));
         announce(`${t('studio.verify_result_announce')} ${result.ok ? t('studio.verify_ok') : t('studio.verify_fail', { count: problemCount(result) })}`);
-      } } }, icon('shield', { size: 16 }), t('studio.verify'));
+      } } }, icon('check', { size: 16 }), t('studio.verify'));
       recordBlock = h('div', { class: 'stack' }, dl, verifyBtn, resultHost);
     } else recordBlock = notice(ctx, t('studio.record_none'), { kind: 'warn' });
 

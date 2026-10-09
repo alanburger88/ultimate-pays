@@ -189,7 +189,7 @@ test('PDF text is searchable: employee name, net pay and labels extract with pdf
   assert.ok(out.includes('Convenience copy'), 'convenience notice');
   assert.ok(out.includes('Keep this statement for your records'), 'required disclosure text');
   assert.ok(out.includes('Avenlo Group RRSP plan'), 'policy title');
-  assert.ok(out.includes('This is the current version'), 'version lineage');
+  assert.ok(out.includes('No later version is recorded'), 'version lineage');
   assert.ok(out.includes('AVN-CA-ON-2026-20-0412'), 'record id');
   assert.ok(out.includes('English (Canada)'), 'language');
   assert.match(out, /Page 1 of \d+/);
@@ -274,7 +274,7 @@ test('full workbook is a valid typed .xlsx with every sheet and every line', () 
   assert.match(doc, /Constructed presentation record/);
   assert.match(doc, /Convenience copy/);
   assert.match(doc, /Keep this statement for your records/);
-  assert.match(doc, /This is the current version/);
+  assert.match(doc, /No later version is recorded/);
   assert.match(parts['docProps/core.xml'], /<dc:creator>Paylight<\/dc:creator>/);
   assert.match(parts['docProps/core.xml'], /<dc:language>en-CA<\/dc:language>/);
   assert.doesNotMatch(all, /⟦/, 'no missing interface keys');

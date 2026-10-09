@@ -11,7 +11,7 @@
  */
 export const record = {
   schemaVersion: 1,
-  scenario: { id: 'maya-bennett', summary: 'Regular pay plus a retroactive adjustment, an expense reimbursement and an employer RRSP match', tags: ['regular', 'adjustment'] },
+  scenario: { id: 'on-salaried', summary: 'Regular pay plus a retroactive adjustment, an expense reimbursement and an employer RRSP match', tags: ['regular', 'adjustment'] },
   document: {
     id: 'AVN-CA-ON-2026-20-0412',
     version: 1,

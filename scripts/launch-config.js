@@ -46,7 +46,7 @@ export async function validateLaunch(flags, { allowEmpty = false } = {}) {
   const errors = [];
   const warnings = [];
   const launch = {};
-  const known = ['region', 'lang', 'preset', 'scenario', 'studio', 'employee', 'out', 'port', 'host', 'open', 'all', 'help'];
+  const known = ['region', 'lang', 'preset', 'scenario', 'studio', 'employee', 'out', 'port', 'host', 'open', 'all', 'help', 'endpoints'];
   for (const key of Object.keys(flags)) {
     if (!known.includes(key)) errors.push(`Unknown flag --${key}.`);
   }
@@ -92,6 +92,20 @@ export async function validateLaunch(flags, { allowEmpty = false } = {}) {
       if (!list.some((s) => s.id === scenario)) {
         errors.push(`Unknown scenario "${scenario}" for ${launch.region}. Available: ${list.map((s) => s.id).join(', ')}.`);
       } else launch.scenario = scenario;
+    }
+  }
+  if (flags.endpoints !== undefined) {
+    // Deployment endpoints for connected services, embedded in the build (never taken from a link).
+    try {
+      const fs = await import('node:fs');
+      const { validatePresentation } = await import('../src/app/config.js');
+      const raw = JSON.parse(fs.readFileSync(String(flags.endpoints), 'utf8'));
+      const notices = [];
+      const v = validatePresentation({ integrations: raw.integrations || raw }, notices);
+      for (const n of notices) errors.push(`--endpoints: ignored invalid field ${n.params && n.params.field}. Endpoints must be plain https:// URLs without credentials.`);
+      if (v.integrations) launch.integrations = v.integrations;
+    } catch (err) {
+      errors.push(`--endpoints: could not read ${flags.endpoints}: ${err.message}`);
     }
   }
   if (flags.studio) launch.studio = true;

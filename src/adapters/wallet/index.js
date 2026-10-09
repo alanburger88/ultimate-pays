@@ -6,6 +6,7 @@
 import { AppleWallet } from './apple.js';
 import { GoogleWallet } from './google.js';
 import { SamsungWallet } from './samsung.js';
+import { opaqueRef } from '../../app/persist.js';
 
 export function walletProviders({ integration = {}, record, profile, tokenProvider = null }) {
   const common = { record, profile, tokenProvider };
@@ -16,7 +17,10 @@ export function walletProviders({ integration = {}, record, profile, tokenProvid
   ];
 }
 
-/** Minimal pass content: brand + neutral label + record reference. No amounts, identifiers or bank details. */
+/**
+ * Minimal pass content: brand, neutral label and an opaque reference. No amounts, period, identifiers,
+ * employee numbers or bank details (the document id can embed employee-number digits, so it is not used).
+ */
 export function passPreview(record, { brand = 'Paylight', label = 'Pay statement' } = {}) {
-  return { brand, label, reference: record.document.id, version: record.document.version, period: record.document.period };
+  return { brand, label, reference: opaqueRef(record) };
 }

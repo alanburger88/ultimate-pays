@@ -45,6 +45,6 @@ Measured on 9 October 2026 with `node scripts/measure.js` (headless Chromium 141
 | Bundle | Raw | gzip | brotli | App ready | First contentful paint | DOM nodes |
 |---|---|---|---|---|---|---|
 | `dist/paylight.html` (presenter: 6 profiles, 7 records, 10 languages) | 1 515 KiB | 355 KiB | 266 KiB | ≈ 1.1 s | ≈ 220 ms | 338 |
-| `dist/paylight-ZA-sipho-khumalo.html` (employee package) | 831 KiB | — | — | ≈ 0.8 s | ≈ 160 ms | 299 |
+| `dist/paylight-ZA-za-new-starter.html` (employee package) | 831 KiB | — | — | ≈ 0.8 s | ≈ 160 ms | 299 |
 
 Section mounts after load (same profile): Pay details ≈ 100 ms, What changed ≈ 250 ms, Time & leave ≈ 160–180 ms, Total reward ≈ 100–120 ms, Record & actions ≈ 155–190 ms. The record is readable before any optional media or connected enhancement loads; the UserWay script is appended asynchronously after first render and cannot block the statement.

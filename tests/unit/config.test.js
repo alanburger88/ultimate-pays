@@ -56,3 +56,38 @@ test('required sections survive any order and module choice', () => {
   const ordered = orderSections(['total-reward'], { whatChanged: false, timeLeave: false, totalReward: false });
   assert.deepEqual(ordered, ['my-pay', 'pay-details', 'record-actions']);
 });
+
+test('endpoints must be plain HTTPS without embedded credentials', async () => {
+  const { safeEndpoint } = await import('../../src/app/config.js');
+  assert.equal(safeEndpoint('https://payroll.example/queries'), 'https://payroll.example/queries');
+  assert.equal(safeEndpoint('http://payroll.example/queries'), null);
+  assert.equal(safeEndpoint('https://user:pw@payroll.example/'), null);
+  assert.equal(safeEndpoint('https://payroll.example/q?api_key=1'), null);
+  assert.equal(safeEndpoint('https://payroll.example/q?access_token=1'), null);
+  assert.equal(safeEndpoint('javascript:alert(1)'), null);
+});
+
+test('a shared link can never set service endpoints; an employee link can only change appearance', () => {
+  const shared = { theme: 'dark', branding: { name: 'Evil' }, modules: { story: false }, accessGate: true, integrations: { queries: { endpoint: 'https://attacker.example/collect' } } };
+  const launch = { shared: validatePresentation(shared, []) };
+  delete launch.shared.integrations; // readLaunch strips them; resolveConfig must not re-admit them either
+  const employeeRegistry = { ...registry, packageKind: 'employee', defaultProfileId: 'CA-ON' };
+  const emp = resolveConfig({ launch: { ...launch, shared: { ...launch.shared, integrations: shared.integrations } }, prefs: {}, studioSettings: null, registry: employeeRegistry });
+  assert.equal(emp.presentation.integrations.queries, null);
+  assert.equal(emp.presentation.theme, 'dark');
+  assert.notEqual(emp.presentation.branding.name, 'Evil');
+  assert.equal(emp.presentation.accessGate, false);
+  assert.equal(emp.modules.story !== false, true);
+  const pres = resolveConfig({ launch: { shared: { integrations: shared.integrations } }, prefs: {}, studioSettings: null, registry });
+  assert.equal(pres.presentation.integrations.queries, null);
+  const built = resolveConfig({ launch: { integrations: { queries: { endpoint: 'https://payroll.example/q' } } }, prefs: {}, studioSettings: null, registry });
+  assert.deepEqual(built.presentation.integrations.queries, { endpoint: 'https://payroll.example/q' });
+});
+
+test('required time particulars keep Time & leave on in every preset', () => {
+  const c = resolveConfig({ launch: { region: 'ZA', preset: 'core' }, prefs: {}, studioSettings: null, registry });
+  assert.equal(c.modules.timeLeave, true);
+  assert.equal(c.locked.timeLeave, 'config.lock.required_section');
+  const on = resolveConfig({ launch: { region: 'CA-ON', preset: 'core' }, prefs: {}, studioSettings: null, registry });
+  assert.equal(on.modules.timeLeave, false);
+});

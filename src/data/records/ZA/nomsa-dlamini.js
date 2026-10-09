@@ -10,7 +10,7 @@
 export const record = {
   schemaVersion: 1,
   scenario: {
-    id: 'nomsa-dlamini',
+    id: 'za-overtime',
     summary: 'Monthly salary with overtime reconciled to time entries, two days of annual leave, a public holiday, retirement fund and medical aid contributions, and PAYE, UIF and SDL supplied by payroll on a March tax year',
     tags: ['regular', 'overtime', 'leave'],
   },

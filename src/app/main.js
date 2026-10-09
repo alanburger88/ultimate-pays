@@ -7,7 +7,7 @@ import { createStore } from './store.js';
 import { setLanguage, t, LANGUAGE_NAMES } from './i18n.js';
 import { createContent } from './content.js';
 import { readLaunch, resolveConfig, orderSections, SECTION_IDS } from './config.js';
-import { loadPrefs, savePrefs, loadStudioSettings, documentScope, loadSession, saveSession, clearSession, hasRetained } from './persist.js';
+import { loadPrefs, savePrefs, loadStudioSettings, documentScope, loadSession, saveSession, clearSession, hasRetained, clearAllSessions } from './persist.js';
 import { createRouter } from './router.js';
 import { computeTotals, verifyRecord, rewardSummary, grossToNetFlow, varianceBridge, timeSummary } from './calc.js';
 import * as money from './money.js';
@@ -33,6 +33,7 @@ import { createVerification } from '../adapters/verification.js';
 
 const appEl = document.getElementById('app');
 let current = null; // { ctx, unsubscribe[] }
+let lastScope = null; // document scope shown last in this page
 
 function applyAppearance(presentation) {
   const root = document.documentElement;
@@ -117,6 +118,10 @@ export function boot() {
   if (!config.ok) { renderConfigError(config, launch); if (config.studio && hasStudio) openStudio(makeMinimalCtx(config)); return; }
   const doc = buildDocument(config);
   const scope = documentScope(doc.record);
+  // Switching to another recipient's record in this page (fragment or Studio) clears the previous
+  // recipient's selections, notes, drafts and chat. A language change keeps the same record and scope.
+  if (lastScope && lastScope !== scope && registry.packageKind !== 'employee') clearAllSessions();
+  lastScope = scope;
   const restored = loadSession(scope);
   // A deep-linked section wins; a line without a section opens Pay details; otherwise return to where the employee was.
   const restoredNav = (restored && restored.nav) || {};

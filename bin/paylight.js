@@ -42,6 +42,8 @@ Flags:
   --studio    Open Presenter Studio on launch (present only)
   --employee  Build an employee package: one recipient, no Studio, no other recipients' data
   --out       Output file for build (default dist/paylight.html or dist/paylight-<region>-<scenario>.html)
+  --endpoints JSON file with HTTPS endpoints for connected services (assistant, queries, identity,
+              verification, wallet.apple|google|samsung); embedded in the build, never read from a link
   --all       Build the presenter bundle plus one employee package per scenario
 
 Fragment equivalent (any build or dev server):

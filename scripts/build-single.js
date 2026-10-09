@@ -28,11 +28,22 @@ export async function buildSingle({ root, launch = {}, employee = false, out }) 
   }
   const dataIndex = generateIndex(manifest, filter);
   const replacements = employee ? { 'src/ui/studio.js': 'src/ui/studio.stub.js' } : {};
+  // Employee packages carry no Studio: its code is replaced above and its interface strings are removed here.
+  const virtual = { 'src/data/index.js': dataIndex };
+  if (employee) {
+    const STUDIO_KEYS = (k) => k.startsWith('studio.') || ['config.open_studio', 'app.studio_shortcut_hint', 'app.presenter'].includes(k);
+    for (const [tag, file] of Object.entries(manifest.languages)) {
+      const id = `src/data/${file.replace(/^\.\//, '')}`;
+      const { pack } = await import(path.join(root, id));
+      const kept = Object.fromEntries(Object.entries(pack).filter(([k]) => !STUDIO_KEYS(k)));
+      virtual[id] = `export const pack = ${JSON.stringify(kept)};\n`;
+    }
+  }
   const { code, modules } = bundle({
     root,
     entry: path.join(srcDir, 'app/main.js'),
     replacements,
-    virtual: { 'src/data/index.js': dataIndex },
+    virtual,
   });
 
   let html = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');

@@ -9,7 +9,7 @@
 export const record = {
   schemaVersion: 1,
   scenario: {
-    id: 'sipho-khumalo',
+    id: 'za-new-starter',
     summary: 'A new starter’s first partial month: pro rata salary per working day, statutory PAYE and UIF only, no benefits yet, no history and leave balances starting from zero',
     tags: ['sparse', 'first-period'],
   },

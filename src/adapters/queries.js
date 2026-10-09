@@ -19,7 +19,7 @@ export class HttpQueryService {
   /**
    * @param payload { documentRef:{id,version}, lineIds, amounts:{lineId:minor}, currency, entryIds, entries:[{id,date}], tag, tags:{lineId:tagId}, notes:{lineId:text}, subject, message, locale, idempotencyKey }
    * @param options { idempotencyKey }
-   * @returns {Promise<{caseReference:string, acknowledgedAt:string, nextStep?:string}>}
+   * @returns {Promise<{caseReference:string, acknowledgedAt:string|null, nextStep?:string}>}  (acknowledgedAt only as stated by the service)
    */
   async submit(payload, { idempotencyKey, signal } = {}) {
     if (typeof navigator !== 'undefined' && navigator.onLine === false) { const e = new Error('offline'); e.code = 'offline'; throw e; }
@@ -33,6 +33,6 @@ export class HttpQueryService {
     if (!res.ok) { const e = new Error(`Service responded ${res.status}`); e.code = `http_${res.status}`; throw e; }
     const data = await res.json();
     if (!data || typeof data.caseReference !== 'string' || !data.caseReference) { const e = new Error('No case reference in acknowledgement'); e.code = 'no_ack'; throw e; }
-    return { caseReference: data.caseReference, acknowledgedAt: typeof data.acknowledgedAt === 'string' ? data.acknowledgedAt : new Date().toISOString(), nextStep: typeof data.nextStep === 'string' ? data.nextStep : null };
+    return { caseReference: data.caseReference, acknowledgedAt: typeof data.acknowledgedAt === 'string' ? data.acknowledgedAt : null, nextStep: typeof data.nextStep === 'string' ? data.nextStep : null };
   }
 }

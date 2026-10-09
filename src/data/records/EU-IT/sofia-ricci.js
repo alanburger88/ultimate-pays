@@ -17,7 +17,7 @@
  */
 export const record = {
   schemaVersion: 1,
-  scenario: { id: 'sofia-ricci', summary: 'Monthly cedolino for a 3° livello CCNL Terziario employee showing the contractual pay elements, arretrati for a CCNL increase, supplied INPS/IRPEF/addizionali, ratei of tredicesima and quattordicesima, the monthly TFR accrual and leave balances in hours', tags: ['regular', 'adjustment', 'overtime'] },
+  scenario: { id: 'it-ccnl', summary: 'Monthly cedolino for a 3° livello CCNL Terziario employee showing the contractual pay elements, arretrati for a CCNL increase, supplied INPS/IRPEF/addizionali, ratei of tredicesima and quattordicesima, the monthly TFR accrual and leave balances in hours', tags: ['regular', 'adjustment', 'overtime'] },
   document: {
     id: 'AVN-EU-IT-2026-09-30712',
     version: 1,

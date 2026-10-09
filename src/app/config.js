@@ -61,16 +61,36 @@ function sanitizeLaunch(obj, notices, source) {
   if (typeof obj.theme === 'string' && ['light', 'dark', 'system'].includes(obj.theme)) out.theme = obj.theme;
   if (typeof obj.density === 'string' && ['comfortable', 'compact'].includes(obj.density)) out.density = obj.density;
   if (typeof obj.package === 'string') out.package = obj.package;
+  if (source === 'embedded' && obj.integrations && typeof obj.integrations === 'object') {
+    // Build-time deployment configuration (paylight build --endpoints=…), validated like an import.
+    const v = validatePresentation({ integrations: obj.integrations }, notices);
+    if (v.integrations) out.integrations = v.integrations;
+  }
   if (typeof obj.config === 'string') {
     // Shareable preset link: base64url JSON of presentation settings only. Validated, never executed.
     try {
       const json = JSON.parse(decodeURIComponent(escape(atob(obj.config.replace(/-/g, '+').replace(/_/g, '/')))));
       out.shared = validatePresentation(json, notices);
+      // A link can never configure where data is sent: endpoints are deployment configuration only.
+      if (out.shared.integrations) { delete out.shared.integrations; notices.push({ level: 'warning', key: 'config.link_endpoints_ignored' }); }
     } catch (err) {
       notices.push({ level: 'warning', key: 'config.shared_invalid', source });
     }
   }
   return out;
+}
+
+/**
+ * An integration endpoint is acceptable only as a plain HTTPS URL: no embedded username or password and no
+ * query parameter that looks like a credential. Credentials belong to the identity service, never to configuration.
+ */
+export function safeEndpoint(value) {
+  if (typeof value !== 'string') return null;
+  let url;
+  try { url = new URL(value.trim()); } catch (err) { return null; }
+  if (url.protocol !== 'https:' || url.username || url.password) return null;
+  for (const key of url.searchParams.keys()) if (/key|token|secret|sig|pass|auth|cred/i.test(key)) return null;
+  return url.toString();
 }
 
 /** Whitelist-validate a presentation settings object (Studio import / shared link). Returns only known, well-typed fields. */
@@ -104,14 +124,15 @@ export function validatePresentation(input, notices = []) {
     for (const k of ['assistant', 'queries', 'identity', 'verification']) {
       const v = input.integrations[k];
       if (v === null) out.integrations[k] = null;
-      else if (v && typeof v === 'object' && typeof v.endpoint === 'string' && /^https:\/\//.test(v.endpoint)) out.integrations[k] = { endpoint: v.endpoint };
+      else if (v && typeof v === 'object' && safeEndpoint(v.endpoint)) out.integrations[k] = { endpoint: safeEndpoint(v.endpoint) };
       else if (v !== undefined) notices.push({ level: 'warning', key: 'config.import_field_ignored', params: { field: `integrations.${k}` } });
     }
     if (input.integrations.wallet && typeof input.integrations.wallet === 'object') {
       out.integrations.wallet = {};
       for (const p of ['apple', 'google', 'samsung']) {
         const v = input.integrations.wallet[p];
-        if (v && typeof v === 'object' && typeof v.endpoint === 'string' && /^https:\/\//.test(v.endpoint)) out.integrations.wallet[p] = { endpoint: v.endpoint };
+        if (v && typeof v === 'object' && safeEndpoint(v.endpoint)) out.integrations.wallet[p] = { endpoint: safeEndpoint(v.endpoint) };
+        else if (v !== undefined && v !== null) notices.push({ level: 'warning', key: 'config.import_field_ignored', params: { field: `integrations.wallet.${p}` } });
       }
     }
   }
@@ -143,13 +164,18 @@ export function resolveConfig({ launch, prefs, studioSettings, registry }) {
   const errors = [];
   const notices = [];
   const locked = {};
-  const presentation = { ...DEFAULT_PRESENTATION, ...(prefs.presentation || {}), ...(studioSettings || {}), ...(launch.shared || {}) };
+  const employee = registry.packageKind === 'employee';
+  const APPEARANCE = ['theme', 'density', 'emphasis', 'lowData', 'privacyMode', 'animation', 'narration'];
+  const shared = launch.shared ? (employee ? Object.fromEntries(Object.entries(launch.shared).filter(([k]) => APPEARANCE.includes(k))) : launch.shared) : null;
+  const presentation = { ...DEFAULT_PRESENTATION, ...(prefs.presentation || {}), ...(studioSettings || {}), ...(shared || {}) };
+  // Integrations come only from the build (embedded launch JSON) or, in presenter bundles, from Studio.
+  presentation.integrations = { ...DEFAULT_PRESENTATION.integrations, ...(employee ? {} : ((studioSettings && studioSettings.integrations) || {})), ...(launch.integrations || {}) };
   if (launch.theme) presentation.theme = launch.theme;
   if (launch.density) presentation.density = launch.density;
 
   // --- Profile (jurisdiction) -------------------------------------------------
   let profileId = registry.defaultProfileId;
-  const requested = launch.region || (studioSettings && studioSettings.region) || (launch.shared && launch.shared.region);
+  const requested = launch.region || (studioSettings && studioSettings.region) || (shared && shared.region);
   if (registry.packageKind === 'employee') {
     // Issued-record constraint: an employee package is bound to one record. A URL parameter cannot change it.
     if (requested && requested !== registry.defaultProfileId) notices.push({ level: 'info', key: 'config.region_locked_employee', params: { region: registry.defaultProfileId } });
@@ -196,7 +222,7 @@ export function resolveConfig({ launch, prefs, studioSettings, registry }) {
   const preset = PRESETS.find((p) => p.id === presetId);
   if (!preset) { errors.push({ key: 'config.unknown_preset', params: { preset: presetId, available: PRESETS.map((p) => p.id).join(', ') } }); presetId = 'complete'; }
   const presetDef = PRESETS.find((p) => p.id === presetId);
-  const modules = { ...presetDef.modules, ...((studioSettings && studioSettings.modules) || {}), ...((launch.shared && launch.shared.modules) || {}) };
+  const modules = { ...presetDef.modules, ...((studioSettings && studioSettings.modules) || {}), ...((shared && shared.modules) || {}) };
   // Modules the profile or record cannot support are disabled with a visible reason.
   if (record && (!record.time || !(record.time.entries || []).length) && !(record.time && record.time.leave)) { modules.timeLeave = false; locked.timeLeave = 'config.lock.no_time_data'; }
   if (record && !(record.history || []).length) { modules.whatChanged = false; locked.whatChanged = 'config.lock.no_history'; }

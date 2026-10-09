@@ -112,7 +112,7 @@ test('duplicate with a returned reference → submitted with that reference; wit
 
 test('other errors → failed, draft kept, idempotency key unchanged for retry', () => {
   const before = draftFor({ status: 'sending' });
-  for (const code of ['network', 'http_500', 'no_token', undefined]) {
+  for (const code of ['network', 'http_500', undefined]) {
     const d = applySubmitResult(before, { ok: false, error: { code, message: 'boom' } }, 'now');
     assert.equal(d.status, 'failed', String(code));
     assert.equal(d.lastError, code || 'unknown');
@@ -167,4 +167,29 @@ test('placeDraft moves submitted queries out of drafts and keeps the lists free 
   assert.deepEqual(gone.drafts, []);
   assert.deepEqual(gone.submitted.map((d) => d.id), ['q-1', 'q-0']);
   assert.deepEqual(placeDraft(undefined, { id: 'n', status: 'draft' }).drafts.map((d) => d.id), ['n']);
+});
+
+test('no signed-in session means nothing was sent: saved on this device, not a service failure', () => {
+  const before = draftFor({ status: 'sending' });
+  for (const code of ['no_token', 'signed_out']) {
+    const d = applySubmitResult(before, { ok: false, error: { code } }, 'now');
+    assert.equal(d.status, 'saved_offline');
+    assert.equal(d.lastError, 'no_token');
+    assert.equal(d.caseReference, null);
+    assert.equal(d.idempotencyKey, before.idempotencyKey);
+  }
+});
+
+test('the acknowledgement time is only what the service stated', () => {
+  const d = applySubmitResult(draftFor({ status: 'sending' }), { ok: true, ack: { caseReference: 'PAY-9' } }, '2026-10-01T10:05:01Z');
+  assert.equal(d.status, 'submitted');
+  assert.equal(d.acknowledgedAt, null);
+});
+
+test('a stored sending draft is only treated as interrupted when no send is in flight', async () => {
+  const { normaliseDraft: norm, isInFlight } = await import('../../src/ui/query.js');
+  const d = norm({ ...draftFor({ status: 'sending' }) });
+  assert.equal(isInFlight(d.id), false);
+  assert.equal(d.status, 'failed');
+  assert.equal(d.lastError, 'interrupted');
 });

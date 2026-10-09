@@ -34,9 +34,23 @@ export function saveStudioSettings(settings) {
   else safe(() => localStorage.setItem(STUDIO_KEY, JSON.stringify(settings)));
 }
 
-/** Document scope key: a hash-free opaque identifier using the document id and version only (no personal data). */
+/**
+ * Opaque reference for a document version. Document ids can embed employee-number digits, so storage keys
+ * and the wallet pass use this instead (FNV-1a over id@version, base36). It identifies the document to a
+ * service that holds the mapping, and reveals nothing by itself.
+ */
+export function opaqueRef(record) {
+  const text = `${record.document.id}@${record.document.version}`;
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  let h2 = 0x01000193;
+  for (let i = text.length - 1; i >= 0; i--) { h2 ^= text.charCodeAt(i); h2 = Math.imul(h2, 0x811c9dc5) >>> 0; }
+  return `PL-${h.toString(36).toUpperCase().padStart(7, '0')}${h2.toString(36).toUpperCase().padStart(7, '0')}`;
+}
+
+/** Document scope key for interaction state: the opaque reference (no identifiers in storage key names). */
 export function documentScope(record) {
-  return `${record.document.id}@${record.document.version}`;
+  return opaqueRef(record);
 }
 
 export function loadSession(scope) {

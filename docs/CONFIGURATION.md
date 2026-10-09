@@ -8,7 +8,7 @@ The wrapper validates its flags against the bundled data registry before serving
 npm run present -- --region=CA-QC --lang=fr-CA --preset=complete --studio
 npm run present -- --region=ZA --lang=zu-ZA --preset=hourly
 npm run build:single -- --region=EU-DE --lang=de-DE
-npm run build:single -- --region=EU-DE --lang=de-DE --scenario=lina-hoffmann --employee
+npm run build:single -- --region=EU-DE --lang=de-DE --scenario=de-company-car --employee
 npm run build                                  # presenter bundle + one employee package per scenario
 node bin/paylight.js list                      # profiles, languages and scenarios
 ```
@@ -18,7 +18,7 @@ node bin/paylight.js list                      # profiles, languages and scenari
 | `--region=ID` | Profile identifier: `CA-ON`, `CA-QC`, `ZA`, `EU-FR`, `EU-DE`, `EU-IT`. Selects a complete, coherent record/profile, never just a currency symbol. |
 | `--lang=TAG` | Interface language approved for that profile (see table below). |
 | `--preset=NAME` | `core`, `complete`, `hourly`, `total-reward`. Chooses optional modules, starting section and table/chart emphasis. |
-| `--scenario=ID` | Record within the profile (e.g. `nomsa-dlamini`, `sipho-khumalo`). Defaults to the first. |
+| `--scenario=ID` | Record within the profile (e.g. `za-overtime`, `za-new-starter`). Defaults to the first. |
 | `--studio` | Open Presenter Studio on launch (`present` only). |
 | `--employee` | Build an employee package: one recipient, no Studio, no other recipients' data. Requires `--region`. |
 | `--out=FILE` | Output path for `build`. |

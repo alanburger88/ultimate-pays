@@ -66,6 +66,10 @@ export function createDraft({ lineIds = [], entryIds = [], notes = {}, lineTags 
 }
 
 /** Bring a stored draft to the current shape. A draft stored as 'sending' was never acknowledged, so it resumes as failed/interrupted. */
+/** Drafts whose submission is still awaiting the service in this page. Only a reload can interrupt them. */
+const inFlight = new Set();
+export function isInFlight(id) { return inFlight.has(id); }
+
 export function normaliseDraft(stored) {
   const d = { ...createDraft({ id: stored.id, idempotencyKey: stored.idempotencyKey || newId('idem'), documentRef: stored.documentRef || {}, locale: stored.locale || 'en-CA' }), ...stored };
   d.lineIds = Array.isArray(d.lineIds) ? d.lineIds : [];
@@ -75,7 +79,7 @@ export function normaliseDraft(stored) {
   d.subject = typeof d.subject === 'string' ? d.subject : '';
   d.message = typeof d.message === 'string' ? d.message : '';
   if (!DRAFT_STATUSES.includes(d.status)) d.status = 'draft';
-  if (d.status === 'sending') { d.status = 'failed'; d.lastError = 'interrupted'; }
+  if (d.status === 'sending' && !inFlight.has(d.id)) { d.status = 'failed'; d.lastError = 'interrupted'; }
   if (d.status === 'submitted' && !d.caseReference) { d.status = 'failed'; d.lastError = 'no_ack'; }
   return d;
 }
@@ -129,12 +133,13 @@ export function applySubmitResult(draft, result, now = new Date().toISOString())
   const base = { ...draft, updatedAt: now };
   const ack = result && result.ok ? result.ack : null;
   if (ack && typeof ack.caseReference === 'string' && ack.caseReference.trim()) {
-    return { ...base, status: 'submitted', caseReference: ack.caseReference, acknowledgedAt: typeof ack.acknowledgedAt === 'string' && ack.acknowledgedAt ? ack.acknowledgedAt : now, nextStep: typeof ack.nextStep === 'string' && ack.nextStep.trim() ? ack.nextStep : null, lastError: null };
+    return { ...base, status: 'submitted', caseReference: ack.caseReference, acknowledgedAt: typeof ack.acknowledgedAt === 'string' && ack.acknowledgedAt ? ack.acknowledgedAt : null, nextStep: typeof ack.nextStep === 'string' && ack.nextStep.trim() ? ack.nextStep : null, lastError: null };
   }
   const error = (result && !result.ok && result.error) || { code: result && result.ok ? 'no_ack' : 'unknown' };
   const code = typeof error.code === 'string' && error.code ? error.code : 'unknown';
   if (draft.status === 'submitted') return { ...base, lastError: code };
-  if (code === 'no_service' || code === 'offline') return { ...base, status: 'saved_offline', lastError: code, caseReference: null, acknowledgedAt: null, nextStep: null };
+  // Nothing left the device: no service, offline, or no signed-in session to authorise the request.
+  if (code === 'no_service' || code === 'offline' || code === 'no_token' || code === 'signed_out') return { ...base, status: 'saved_offline', lastError: code === 'signed_out' ? 'no_token' : code, caseReference: null, acknowledgedAt: null, nextStep: null };
   if (code === 'duplicate') {
     if (typeof error.caseReference === 'string' && error.caseReference.trim()) return { ...base, status: 'submitted', caseReference: error.caseReference, acknowledgedAt: draft.acknowledgedAt || null, nextStep: draft.nextStep || null, lastError: 'duplicate' };
     return { ...base, status: 'failed', lastError: 'duplicate', caseReference: null };
@@ -165,7 +170,7 @@ export function statusText(ctx, draft) {
   const t = ctx.t;
   switch (draft.status) {
     case 'submitted': return draft.lastError === 'duplicate' ? t('query.duplicate_blocked', { reference: draft.caseReference }) : `${t('query.submitted')}. ${t('query.case_reference', { reference: draft.caseReference })}`;
-    case 'saved_offline': return draft.lastError === 'offline' ? t('query.offline_saved') : t('query.no_service');
+    case 'saved_offline': return draft.lastError === 'offline' ? t('query.offline_saved') : draft.lastError === 'no_token' ? t('query.not_signed_in') : t('query.no_service');
     case 'failed': return draft.lastError === 'interrupted' ? t('query.interrupted') : draft.lastError === 'duplicate' ? t('query.duplicate_blocked', { reference: '—' }) : t('query.failed');
     case 'sending': return t('query.sending');
     default: return t('query.status_draft');
@@ -195,7 +200,7 @@ export function openQuery(ctx, opts = {}) {
     const sel = ctx.store.get().selection;
     draft = createDraft({ lineIds: opts.lineIds || sel.lineIds, entryIds: opts.entryIds || sel.entryIds, notes: sel.notes || {}, lineTags: sel.tags || {}, documentRef: { id: record.document.id, version: record.document.version }, locale: ctx.locale });
   }
-  const state = { step, saved, sending: false, dirty: false, closed: false, deleted: false, errors: {} };
+  const state = { step, saved, sending: inFlight.has(draft.id), dirty: false, closed: false, deleted: false, errors: {} };
   const readOnly = () => draft.status === 'submitted';
 
   const stepHeading = h('h3', { class: 'pl-query-step-title', id: uid('qh'), tabindex: '-1' });
@@ -269,12 +274,23 @@ export function openQuery(ctx, opts = {}) {
   function stepName(n) { return n === 1 ? t('query.step_lines') : n === 2 ? t('query.step_details') : t('query.step_review'); }
 
   async function send() {
-    if (state.sending) return;
+    if (state.sending || inFlight.has(draft.id)) return;
     if (readOnly()) { announce(t('query.duplicate_blocked', { reference: draft.caseReference })); return; }
     if (!online()) { announce(t('query.send_offline')); return; }
     if (!validateDraft(draft).ok) { state.step = validateDraft(draft).errors.includes('no_lines') ? 1 : 2; validateStep(); render(); announce(state.errors.lines ? t('query.no_lines') : t('query.message_required')); return; }
+    if (!service.connected) {
+      // No payroll query service: nothing can be sent, so save on this device and say so (no confirm, no 'retry').
+      draft = applySubmitResult(draft, { ok: false, error: { code: 'no_service' } });
+      persist();
+      render();
+      const panel = host.querySelector('.pl-query-result');
+      if (panel) panel.focus({ preventScroll: true });
+      announce(statusText(ctx, draft));
+      return;
+    }
     const ok = await confirmDialog({ title: t('query.confirm_title'), body: t('query.confirm_body'), confirmLabel: t('query.submit'), cancelLabel: t('common.cancel') });
-    if (!ok) return;
+    if (!ok || inFlight.has(draft.id)) return;
+    inFlight.add(draft.id);
     state.sending = true;
     draft = { ...draft, status: 'sending', lastError: null };
     persist();
@@ -287,6 +303,8 @@ export function openQuery(ctx, opts = {}) {
       result = { ok: true, ack };
     } catch (err) {
       result = { ok: false, error: { code: (err && err.code) || 'unknown', message: (err && err.message) || '', caseReference: (err && err.caseReference) || null } };
+    } finally {
+      inFlight.delete(draft.id);
     }
     state.sending = false;
     draft = applySubmitResult(draft, result);
@@ -395,7 +413,7 @@ export function openQuery(ctx, opts = {}) {
       body.push(draft.nextStep ? h('p', null, `${t('query.next_step')}: `, h('span', { class: 'pl-query-next-step' }, draft.nextStep)) : h('p', { class: 'muted small' }, t('query.response_time_unknown')));
     } else if (s === 'saved_offline') {
       kind = 'warn';
-      body.push(h('p', { class: 'strong' }, draft.lastError === 'offline' ? t('query.offline_saved') : t('query.no_service')));
+      body.push(h('p', { class: 'strong' }, draft.lastError === 'offline' ? t('query.offline_saved') : draft.lastError === 'no_token' ? t('query.not_signed_in') : t('query.no_service')));
       if (draft.lastError !== 'offline') body.push(h('p', { class: 'muted small' }, t('query.offline_saved')));
       body.push(h('p', { class: 'muted small' }, t('query.saved_at', { date: ctx.fmt.dateTime(draft.updatedAt) })));
     } else if (s === 'failed') {
@@ -475,7 +493,9 @@ export function openQuery(ctx, opts = {}) {
     btnSend.disabled = busy;
     btnSend.setAttribute('aria-disabled', String(busy || !online()));
     clear(btnSend);
-    btnSend.append(icon('send', { size: 16 }), busy ? t('query.sending') : (draft.status === 'failed' || draft.status === 'saved_offline') ? t('query.retry') : t('query.submit'));
+    const retryable = draft.status === 'failed' || (draft.status === 'saved_offline' && (draft.lastError === 'offline' || draft.lastError === 'no_token'));
+    const label = busy ? t('query.sending') : !service.connected ? t('query.save_local') : retryable ? t('query.retry') : t('query.submit');
+    btnSend.append(icon(service.connected ? 'send' : 'check', { size: 16 }), label);
   }
 
   dlg = openDialog({
@@ -493,6 +513,13 @@ export function openQuery(ctx, opts = {}) {
       if (state.dirty && (state.saved || hasText)) { persist(); toast(t('query.draft_saved')); }
     },
   });
-  unsub = ctx.store.subscribe(() => { if (!state.closed && state.step === 3) render(); else syncFooter(); }, ['online']);
+  unsub = ctx.store.subscribe((st, changed) => {
+    if (changed.has('queries') && state.sending && !inFlight.has(draft.id)) {
+      const all = [...(st.queries.drafts || []), ...(st.queries.submitted || [])];
+      const latest = all.find((d) => d.id === draft.id);
+      if (latest) { draft = normaliseDraft(latest); state.sending = false; }
+    }
+    if (!state.closed && state.step === 3) render(); else syncFooter();
+  }, ['online', 'queries']);
   return dlg;
 }

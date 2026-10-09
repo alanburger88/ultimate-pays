@@ -20,7 +20,7 @@ import { h, clear, announce, icon, uid } from '../app/dom.js';
 import { registerStrings } from '../app/i18n.js';
 import { amount, notice } from './components/common.js';
 import { openDrawer, closePopover } from './components/overlay.js';
-import { answerLocally, STARTERS } from './lumi-local.js';
+import { answerLocally, STARTERS, guardCheck, unverifiedFigures } from './lumi-local.js';
 
 registerStrings({
   'lumi.answer_local_tag': 'From this document',
@@ -306,6 +306,7 @@ function messageNode(ctx, m) {
   const article = h('article', { class: 'pl-msg', dataset: { role: m.role, kind: 'text', origin: m.origin || null }, aria: { label: t('lumi.message_from', { who }) } },
     h('span', { class: 'who' }, who, origin),
     sensitiveBlock(ctx, [text, items], m.sensitive),
+    m.warning ? h('p', { class: 'pl-msg-warning', role: 'note' }, icon('warn', { size: 14 }), h('span', null, m.warning)) : null,
     sources,
     actions,
   );
@@ -457,6 +458,9 @@ export async function send(ctx, question) {
   push(ctx, { role: 'user', text: q });
   const caps = capabilities(ctx);
   const online = ctx.store.get().online !== false;
+  // The same refusals apply whether or not a model is connected; such questions never leave the device.
+  const guarded = guardCheck(ctx, q);
+  if (guarded) { push(ctx, { role: 'lumi', ...guarded, origin: 'local', question: q }); return; }
   if (caps.connected && online) {
     patchLumi(ctx, { busy: true });
     const thinking = push(ctx, { role: 'lumi', kind: 'status', status: 'thinking', text: t('lumi.thinking') });
@@ -467,7 +471,9 @@ export async function send(ctx, question) {
     remove(ctx, thinking);
     patchLumi(ctx, { busy: false });
     if (res && res.status === 'ok' && typeof res.text === 'string') {
-      push(ctx, { role: 'lumi', text: res.text, sources: resolveSources(ctx, res.sources), suggestions: (res.suggestions || []).filter((s) => typeof s === 'string').slice(0, 4), origin: 'connected', service: caps.service || caps.name || '', sensitive: true, question: q });
+      // Figures in a generated answer are checked against the record; any that are not in it are flagged.
+      const unmatched = unverifiedFigures(ctx, res.text);
+      push(ctx, { role: 'lumi', text: res.text, sources: resolveSources(ctx, res.sources), suggestions: (res.suggestions || []).filter((s) => typeof s === 'string').slice(0, 4), origin: 'connected', service: caps.service || caps.name || '', sensitive: true, question: q, warning: unmatched.length ? t('lumi.unverified_figures', { figures: unmatched.slice(0, 5).join(', ') }) : null });
       return;
     }
     push(ctx, { role: 'lumi', kind: 'status', status: 'error', text: t('lumi.service_error') });

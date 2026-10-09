@@ -12,7 +12,7 @@
  */
 export const record = {
   schemaVersion: 1,
-  scenario: { id: 'lina-hoffmann', summary: 'Monthly salary with a company-car non-cash benefit (geldwerter Vorteil) that is taxed in gross and deducted again before payment, plus a tax-free travel reimbursement', tags: ['regular', 'noncash'] },
+  scenario: { id: 'de-company-car', summary: 'Monthly salary with a company-car non-cash benefit (geldwerter Vorteil) that is taxed in gross and deducted again before payment, plus a tax-free travel reimbursement', tags: ['regular', 'noncash'] },
   document: {
     id: 'AVN-EU-DE-2026-09-20481',
     version: 1,

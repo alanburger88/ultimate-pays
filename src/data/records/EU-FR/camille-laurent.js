@@ -23,7 +23,7 @@
 export const record = {
   schemaVersion: 1,
   scenario: {
-    id: 'camille-laurent',
+    id: 'fr-monthly',
     summary: 'Monthly French bulletin de paie with the distinct net concepts (montant net social, net imposable, net à payer avant impôt, net payé), income tax withheld at source, employer-funded health cover, prévoyance and titres-restaurant, and 4 h of heures supplémentaires reconciled to the timesheet.',
     tags: ['regular', 'overtime', 'leave'],
   },

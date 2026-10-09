@@ -515,14 +515,14 @@ function integrityBody(ctx) {
   }
   body.push(h('p', { class: 'muted small' }, t('record.integrity_service', { service: serviceName })));
   if (st.status === 'checking') body.push(h('p', { role: 'status', class: 'small' }, t('record.integrity_checking', { service: serviceName })));
-  else if (st.status === 'verified') body.push(notice(ctx, t('record.integrity_verified', { service: st.service || serviceName, date: ctx.fmt.dateTime(st.at) }), { kind: 'success' }));
+  else if (st.status === 'verified') body.push(notice(ctx, st.at ? t('record.integrity_verified', { service: st.service || serviceName, date: ctx.fmt.dateTime(st.at) }) : t('record.integrity_verified_nodate', { service: st.service || serviceName }), { kind: 'success' }));
   else if (st.status === 'failed') body.push(notice(ctx, [h('p', { class: 'strong' }, t('record.integrity_failed')), st.reason ? h('p', { class: 'muted small' }, t('record.integrity_reason', { code: st.reason })) : null], { kind: 'error' }));
   else if (st.status === 'unavailable') body.push(notice(ctx, [h('p', null, t('record.integrity_unavailable')), st.reason ? h('p', { class: 'muted small' }, t('record.integrity_reason', { code: st.reason })) : null], { kind: 'warn' }));
-  else body.push(notice(ctx, t('record.integrity_not_verified'), { kind: 'neutral' }));
+  else body.push(notice(ctx, t('record.integrity_not_checked', { service: serviceName }), { kind: 'neutral' }));
   const busy = st.status === 'checking';
   body.push(h('div', { class: 'pl-btn-group' },
     h('button', { class: 'pl-btn pl-btn-primary', type: 'button', disabled: busy, aria: { busy: String(busy) }, dataset: { focusKey: 'ra-verify' }, on: { click: () => runVerification(ctx) } },
-      icon('shield', { size: 16 }), t(st.status === 'failed' ? 'common.retry' : 'record.integrity_verify'))));
+      icon('shield', { size: 16 }), t(st.status === 'failed' || st.status === 'unavailable' ? 'common.retry' : 'record.integrity_verify'))));
   return body;
 }
 
@@ -536,15 +536,16 @@ async function runVerification(ctx) {
   refreshIntegrity(ctx);
   announce(t('record.integrity_checking', { service: serviceName }));
   let result;
-  try { result = await service.verify(ctx.doc.record); } catch (err) { result = { status: 'failed', reason: 'network' }; }
+  // A thrown error means no check happened; only the service's explicit answer can be 'failed'.
+  try { result = await service.verify(ctx.doc.record); } catch (err) { result = { status: 'unavailable', reason: 'network' }; }
   const r = result || {};
   const next = r.status === 'verified'
-    ? { status: 'verified', service: r.service || serviceName, at: r.at || new Date().toISOString() }
-    : r.status === 'unavailable' ? { status: 'unavailable', reason: r.reason || null }
-      : { status: 'failed', reason: r.reason || 'unknown' };
+    ? { status: 'verified', service: r.service || serviceName, at: r.at || null }
+    : r.status === 'failed' ? { status: 'failed', reason: r.reason || 'not_confirmed' }
+      : { status: 'unavailable', reason: r.reason || null };
   verifyState.set(scope, next);
   refreshIntegrity(ctx, pressed);
-  const msg = next.status === 'verified' ? t('record.integrity_verified', { service: next.service, date: ctx.fmt.dateTime(next.at) })
+  const msg = next.status === 'verified' ? (next.at ? t('record.integrity_verified', { service: next.service, date: ctx.fmt.dateTime(next.at) }) : t('record.integrity_verified_nodate', { service: next.service }))
     : next.status === 'unavailable' ? t('record.integrity_unavailable') : t('record.integrity_failed');
   announce(msg, { assertive: next.status !== 'verified' });
 }
@@ -828,7 +829,7 @@ function refreshWallet(ctx, provider, preferKey = null) {
   if (host) refreshPanel(host, () => walletProvider(ctx, provider), 'h3', preferKey);
 }
 
-/** Minimal pass: brand, neutral label, reference and period. Nothing else, by design. */
+/** Minimal pass: brand, neutral label and an opaque reference. Nothing else, by design (PRD §8). */
 function passCard(ctx, preview) {
   const t = ctx.t;
   return h('div', { class: 'pl-ra-pass', role: 'group', aria: { label: t('wallet.preview_title') } },
@@ -836,7 +837,6 @@ function passCard(ctx, preview) {
     h('div', { class: 'label' }, preview.label),
     h('dl', null,
       h('dt', null, t('masthead.reference')), h('dd', null, preview.reference),
-      h('dt', null, t('masthead.period')), h('dd', null, preview.period ? ctx.fmt.period(preview.period) : '—'),
     ),
   );
 }

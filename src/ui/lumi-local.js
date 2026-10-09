@@ -67,6 +67,91 @@ const GUARD = [
   /\b(my|the|our) (manager|boss|team|director|supervisor)('s|s)? (pay|salary|statement|payslip|wages|earnings)\b/,
 ];
 
+// --- Language-aware guard ------------------------------------------------------------
+// Vocabulary lives in the interface packs (lumi.guard_*), as '|'-separated, lower-case stems or phrases,
+// so every language refuses the same things. A stem matches any word that starts with it; a phrase
+// (containing a space) matches as a substring. The English regexes above remain as a second net.
+
+function packTerms(ctx, key) {
+  const v = ctx.t(key);
+  if (!v || v.charAt(0) === '\u27e6') return [];
+  return v.split('|').map((x) => norm(x)).filter(Boolean);
+}
+function words(q) { return q.split(/[^\p{L}\p{N}*]+/u).filter(Boolean); }
+/**
+ * term forms: 'stem' matches a word starting with it; '*stem' matches a word containing it (languages with
+ * prefixes, e.g. isiZulu u-khuphul-e); 'two words' matches that word sequence.
+ */
+function hasTerm(q, ws, terms) {
+  const joined = ` ${ws.join(' ')} `;
+  return terms.some((term) => {
+    const parts = words(term);
+    if (parts.length > 1) return joined.includes(` ${parts.join(' ')} `); // phrases, incl. hyphenated 'pouvez-vous'
+    if (term.charAt(0) === '*') { const core = term.slice(1); return core.length > 2 && ws.some((w) => w.includes(core)); }
+    return ws.some((w) => w.startsWith(term));
+  });
+}
+function startsWithTerm(ws, terms) { const first = ws[0] || ''; return terms.some((t) => words(t).length === 1 && (t.charAt(0) === '*' ? first.includes(t.slice(1)) : first.startsWith(t))); }
+
+/**
+ * Requests Lumi must decline or redirect, in any bundled language.
+ * Returns { intent, text, offerQuery } or null. Exported so the connected path applies it too.
+ */
+export function guardCheck(ctx, question) {
+  const q = norm(question);
+  if (!q) return null;
+  const ws = words(q);
+  const t = ctx.t;
+  if (QUERY.test(q) || hasTerm(q, ws, packTerms(ctx, 'lumi.guard_query'))) return { intent: 'query', text: t('lumi.not_submitted'), sources: [], offerQuery: true, sensitive: false };
+  const explaining = hasTerm(q, ws, packTerms(ctx, 'lumi.guard_explain'));
+  const requesting = hasTerm(q, ws, packTerms(ctx, 'lumi.guard_request'));
+  const verbs = packTerms(ctx, 'lumi.guard_change_verbs');
+  const imperative = startsWithTerm(ws, verbs);
+  const changeAsked = (requesting || imperative) && !explaining && hasTerm(q, ws, verbs) && hasTerm(q, ws, packTerms(ctx, 'lumi.guard_pay_nouns'));
+  const approveTerms = packTerms(ctx, 'lumi.guard_approve');
+  const approveAsked = !explaining && (requesting || startsWithTerm(ws, approveTerms)) && hasTerm(q, ws, approveTerms);
+  const english = GUARD.some((re) => re.test(q));
+  const name = (ctx.doc && ctx.doc.record && ctx.doc.record.employee) || {};
+  const own = [name.givenName, name.familyName].filter(Boolean).map((x) => norm(x));
+  const possessive = String(question).match(/\b(\p{Lu}[\p{L}-]+)(?:'s|’s)\s+(pay|salary|wage|wages|payslip|statement|earnings)\b/u);
+  const otherNamed = possessive && !own.includes(norm(possessive[1]));
+  if (changeAsked || approveAsked || english || otherNamed || hasTerm(q, ws, packTerms(ctx, 'lumi.guard_tax')) || hasTerm(q, ws, packTerms(ctx, 'lumi.guard_others'))) {
+    return { intent: 'guard', text: t('lumi.cannot_change'), sources: [], offerQuery: true, sensitive: false };
+  }
+  if (hasTerm(q, ws, packTerms(ctx, 'lumi.guard_hypothetical'))) return { intent: 'hypothetical', text: t('lumi.no_hypothetical'), sources: [], offerQuery: false, sensitive: false };
+  return null;
+}
+
+/**
+ * Money figures in a connected answer that do not appear anywhere in this record (line amounts, YTD,
+ * rates, totals, payment, changes between periods). Only figures written with two decimals are checked.
+ * Returns the unmatched figures as written.
+ */
+export function unverifiedFigures(ctx, text) {
+  const { record, computed } = ctx.doc;
+  const known = new Set();
+  const add = (v) => { if (typeof v === 'number' && Number.isFinite(v)) known.add(Math.abs(Math.round(v))); };
+  for (const l of record.lines) { add(l.amountMinor); add(l.ytdMinor); if (l.calc) { add(l.calc.rateMinor); add(l.calc.basisMinor); add(l.calc.baseMinor); add(l.calc.amountMinor); } }
+  for (const hst of record.history || []) for (const l of hst.lines || []) { add(l.amountMinor); add(l.ytdMinor); }
+  for (const v of Object.values(computed.totals || {})) add(v);
+  if (record.payment) add(record.payment.amountMinor);
+  if (computed.flow) { add(computed.flow.deductionsTotal); add(computed.flow.additionsTotal); for (const g of [...computed.flow.deductions, ...computed.flow.additions]) add(g.amount); }
+  if (computed.reward) { add(computed.reward.total); add(computed.reward.employer); add(computed.reward.cash); add(computed.reward.noncash); }
+  if (computed.bridge) { add(computed.bridge.change); add(computed.bridge.from); add(computed.bridge.to); for (const st of computed.bridge.steps) { add(st.delta); add(st.effect); add(st.current); add(st.prior); } }
+  for (const b of record.benefits || []) { add(b.employerAmountMinor); add(b.employeeAmountMinor); }
+  const out = [];
+  const re = /\d[\d\s.,'\u00a0\u202f]*[.,]\d{2}(?!\d)/g;
+  let m;
+  while ((m = re.exec(String(text || '')))) {
+    const raw = m[0].trim();
+    const digits = raw.replace(/[^\d]/g, '');
+    const minor = Number(digits);
+    if (!Number.isFinite(minor) || known.has(minor)) continue;
+    out.push(raw);
+  }
+  return out;
+}
+
 function norm(s) {
   return String(s || '').toLowerCase().replace(/[’']/g, '\'').replace(/\s+/g, ' ').trim();
 }
@@ -391,8 +476,8 @@ export function answerLocally(ctx, question, contextLineIds = []) {
   const starter = STARTERS.find((s) => q && norm(ctx.t(s.key)) === q);
 
   if (!starter && q) {
-    if (QUERY.test(q)) return { intent: 'query', text: ctx.t('lumi.not_submitted'), sources: [], offerQuery: true, sensitive: false };
-    if (GUARD.some((re) => re.test(q))) return { intent: 'guard', text: ctx.t('lumi.cannot_change'), sources: [], offerQuery: true, sensitive: false };
+    const guarded = guardCheck(ctx, question);
+    if (guarded) return guarded;
   }
 
   const intent = starter ? starter.intent : null;
