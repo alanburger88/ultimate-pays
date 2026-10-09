@@ -184,8 +184,8 @@ export function resolveConfig({ launch, prefs, studioSettings, registry }) {
   if (record && (!record.time || !(record.time.entries || []).length) && !(record.time && record.time.leave)) { modules.timeLeave = false; locked.timeLeave = 'config.lock.no_time_data'; }
   if (record && !(record.history || []).length) { modules.whatChanged = false; locked.whatChanged = 'config.lock.no_history'; }
 
-  const sectionOrder = (prefs.presentation && prefs.presentation.sectionOrder) || (studioSettings && studioSettings.sectionOrder) || presetDef.sectionOrder || SECTION_IDS;
-  const startSection = launch.section || (prefs.presentation && prefs.presentation.startSection) || (studioSettings && studioSettings.startSection) || presetDef.startSection || 'my-pay';
+  const sectionOrder = (studioSettings && studioSettings.sectionOrder) || (prefs.presentation && prefs.presentation.sectionOrder) || presetDef.sectionOrder || SECTION_IDS;
+  const startSection = launch.section || (studioSettings && studioSettings.startSection) || (prefs.presentation && prefs.presentation.startSection) || presetDef.startSection || 'my-pay';
 
   return {
     ok: errors.length === 0,

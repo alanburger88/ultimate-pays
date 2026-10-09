@@ -50,7 +50,7 @@ ctx.locale, ctx.theme(), ctx.privacy(), ctx.lowData(), ctx.reducedMotion(), ctx.
 ctx.actions:
   go(sectionId, {lineId, view, push})   focusLine(lineId)   showEntries(entryIds, {date})
   toggleSelect(lineId) select(ids) deselect(ids) clearSelection() toggleSelectEntry(entryId) setTag(lineId, tagId) setNote(lineId, note)
-  openLumi({question, contextLineIds}) lumiClosed() openStory({chapter}) openQuery({lineIds, entryIds, draftId}) openCalc(lineId) openTerm(key, anchorEl) openMine() openStudio()
+  openLumi({question, contextLineIds}) lumiClosed() openStory({chapter: 'greeting'|'money'|'changes'|'benefits'|'next' | index}) openQuery({lineIds, entryIds, draftId}) openCalc(lineId) openTerm(key, anchorEl) openMine() openStudio()
   toast(msg,{kind,action}) setPrefs(partial) resetPrefs() setTheme() cycleTheme() setDensity() setLocale(locale) setRetainDrafts(bool) clearLocal() saveQueries(queries)
   exportPdf() exportXlsx({selectedOnly}) exportSelected() exportIcs() print() reboot() reconfigure(cfg)
 ```

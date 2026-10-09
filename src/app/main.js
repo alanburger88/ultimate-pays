@@ -91,12 +91,12 @@ function renderConfigError(config, launch) {
   const actions = h('div', { class: 'pl-btn-group' });
   const hasLangError = config.errors.some((e) => e.key === 'config.unsupported_language' || e.key === 'config.language_pack_missing');
   if (hasLangError) {
-    actions.appendChild(h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.set('lang', profile.defaultLocale); location.hash = p.toString(); } } }, t('config.continue_default', { lang: LANGUAGE_NAMES[profile.defaultLocale] || profile.defaultLocale })));
+    actions.appendChild(h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.set('lang', profile.defaultLocale); location.hash = p.toString(); boot(); } } }, t('config.continue_default', { lang: LANGUAGE_NAMES[profile.defaultLocale] || profile.defaultLocale })));
   }
   if (config.errors.some((e) => e.key === 'config.unknown_region' || e.key === 'config.unknown_scenario' || e.key === 'config.unknown_preset')) {
-    actions.appendChild(h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.delete('region'); p.delete('scenario'); p.delete('preset'); p.delete('lang'); p.set('region', registry.defaultProfileId); location.hash = p.toString(); } } }, t('config.continue_with', { region: registry.defaultProfileId })));
+    actions.appendChild(h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.delete('region'); p.delete('scenario'); p.delete('preset'); p.delete('lang'); p.set('region', registry.defaultProfileId); location.hash = p.toString(); boot(); } } }, t('config.continue_with', { region: registry.defaultProfileId })));
   }
-  if (hasStudio) actions.appendChild(h('button', { class: 'pl-btn', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.delete('region'); p.delete('lang'); p.delete('scenario'); p.set('studio', '1'); location.hash = p.toString(); } } }, t('config.open_studio')));
+  if (hasStudio) actions.appendChild(h('button', { class: 'pl-btn', type: 'button', on: { click: () => { const p = new URLSearchParams(location.hash.slice(1)); p.delete('region'); p.delete('lang'); p.delete('scenario'); p.set('studio', '1'); location.hash = p.toString(); boot(); } } }, t('config.open_studio')));
   appEl.appendChild(h('div', { class: 'pl-wrap', style: { padding: '48px 16px' } },
     h('div', { class: 'pl-card pl-card-lg stack', role: 'alert', style: { maxWidth: '560px', margin: '0 auto' } },
       h('h1', null, t('config.error_title')), list, actions,
@@ -153,7 +153,8 @@ export function boot() {
 }
 
 function makeMinimalCtx(config) {
-  return { t, config, store: createStore({ config, prefs: { presentation: config.presentation } }), doc: null, actions: { reboot: boot, toast } };
+  const write = (cfg) => { const p = new URLSearchParams(location.hash.slice(1)); for (const [k, v] of Object.entries(cfg)) { if (v === null || v === undefined || v === false || v === '') p.delete(k); else p.set(k, v === true ? '1' : v); } history.replaceState(null, '', `#${p.toString()}`); };
+  return { t, config, registry, services: null, store: createStore({ config, prefs: { presentation: config.presentation } }), doc: null, actions: { reboot: boot, toast, reconfigure: (cfg) => { write(cfg); boot(); } } };
 }
 
 function createContext({ store, doc, config, services, scope }) {
@@ -224,17 +225,20 @@ function createContext({ store, doc, config, services, scope }) {
     openMine() { if (!config.modules.personalise) return; openMine(ctx); },
     openStudio() { if (hasStudio) openStudio(ctx); },
     toast(message, opts) { return toast(message, opts); },
-    setPrefs(partial) {
+    setPrefs(partial, { persist = true } = {}) {
       const prefs = store.get().prefs;
       const presentation = { ...prefs.presentation, ...partial };
       store.set({ prefs: { ...prefs, presentation } });
-      savePrefs({ presentation: pickPersistable(presentation), acknowledged: prefs.acknowledged });
+      if (persist) savePrefs({ presentation: pickPersistable(presentation), acknowledged: prefs.acknowledged });
       applyAppearance(presentation);
       if ('privacyMode' in partial && partial.privacyMode) toast(t('notice.privacy_on'));
     },
     resetPrefs() {
+      // Defaults are what the launch configuration, Studio settings and bundled defaults give WITHOUT any saved preference.
       const prefs = store.get().prefs;
-      const presentation = { ...config.presentation };
+      const { launch } = readLaunch();
+      const fresh = resolveConfig({ launch, prefs: {}, studioSettings: registry.packageKind === 'employee' ? null : loadStudioSettings(), registry });
+      const presentation = { ...fresh.presentation };
       store.set({ prefs: { ...prefs, presentation } });
       savePrefs({ presentation: {}, acknowledged: prefs.acknowledged });
       applyAppearance(presentation);
@@ -341,8 +345,10 @@ function renderApp(ctx) {
   current.unsubscribe.push(() => document.removeEventListener('keydown', onKey));
 
   const onBeforePrint = () => { const host = document.getElementById('pl-print-host'); if (!host) return; clear(host); const view = buildPrintView(ctx); if (view) host.appendChild(view); };
+  const onAfterPrint = () => { const host = document.getElementById('pl-print-host'); if (host) clear(host); };
   window.addEventListener('beforeprint', onBeforePrint);
-  current.unsubscribe.push(() => window.removeEventListener('beforeprint', onBeforePrint));
+  window.addEventListener('afterprint', onAfterPrint);
+  current.unsubscribe.push(() => { window.removeEventListener('beforeprint', onBeforePrint); window.removeEventListener('afterprint', onAfterPrint); });
   const onResize = () => measureMasthead();
   window.addEventListener('resize', onResize);
   current.unsubscribe.push(() => window.removeEventListener('resize', onResize));

@@ -1,1 +1,70 @@
-/* Styles owned by src/ui module: exports. Use tokens from tokens.css; no hard-coded colours. */
+/* Styles owned by src/export: the print view (#pl-print-host > .pl-px). Tokens only; no hard-coded colours. */
+
+/* The print view is a complete document on its own: plain type, full-width tables, no controls. */
+.pl-px { color: var(--pl-ink); background: var(--pl-surface); font-family: var(--pl-font); font-size: 10.5pt; line-height: 1.4; max-width: 100%; }
+.pl-px * { box-sizing: border-box; }
+.pl-px h1 { font-size: 17pt; line-height: 1.2; margin: 0 0 3pt; letter-spacing: -0.01em; }
+.pl-px h2 { font-size: 13pt; line-height: 1.25; margin: 10mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 1.5pt solid var(--pl-ink); break-after: avoid; }
+.pl-px h3 { font-size: 10.5pt; margin: 4mm 0 1.5mm; break-after: avoid; }
+.pl-px p { margin: 0 0 2mm; }
+.pl-px-head { padding-bottom: 3mm; border-bottom: 1.5pt solid var(--pl-ink); }
+.pl-px-meta { color: var(--pl-muted); font-size: 8.5pt; }
+.pl-px-notice { font-weight: 650; font-size: 9.5pt; border: 1pt solid var(--pl-ink); padding: 2mm 3mm; margin: 3mm 0; break-inside: avoid; }
+.pl-px-section { margin-bottom: 2mm; }
+.pl-px-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3mm 8mm; }
+.pl-px-group { min-width: 0; break-inside: avoid; }
+.pl-px-dl { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 1mm 3mm; margin: 0; font-size: 9pt; }
+.pl-px-dl dt { color: var(--pl-muted); font-weight: 600; }
+.pl-px-dl dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.pl-px-table { width: 100%; border-collapse: collapse; table-layout: auto; font-size: 9pt; margin: 0 0 5mm; }
+.pl-px-table caption { caption-side: top; text-align: left; font-weight: 650; font-size: 10pt; padding: 0 0 1.5mm; break-after: avoid; }
+.pl-px-table thead { display: table-header-group; }
+.pl-px-table tfoot { display: table-footer-group; }
+.pl-px-table th, .pl-px-table td { padding: 1.2mm 1.5mm; border-bottom: 0.5pt solid var(--pl-line); text-align: left; vertical-align: top; overflow-wrap: break-word; }
+.pl-px-table td:first-child, .pl-px-table tbody th { min-width: 9em; }
+.pl-px-table th { color: var(--pl-muted); font-size: 8pt; font-weight: 650; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1pt solid var(--pl-ink); }
+.pl-px-table tbody th { color: var(--pl-ink); font-size: 9pt; font-weight: 500; text-transform: none; letter-spacing: 0; border-bottom: 0.5pt solid var(--pl-line); }
+.pl-px-table tfoot th, .pl-px-table tfoot td { font-weight: 700; border-top: 1pt solid var(--pl-ink); border-bottom: 0; }
+.pl-px-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pl-px-table tr { break-inside: avoid; }
+.pl-px-label { font-weight: 550; }
+.pl-px-statutory { color: var(--pl-ink-2); }
+.pl-px-sub { display: block; color: var(--pl-muted); font-size: 8pt; }
+.pl-px-totals tr.is-prominent th, .pl-px-totals tr.is-prominent td { font-weight: 700; }
+.pl-px-list { margin: 0 0 2mm; padding-left: 5mm; }
+.pl-px-list li { margin-bottom: 1mm; break-inside: avoid; }
+.pl-px-req { color: var(--pl-muted); font-size: 8.5pt; }
+.pl-px-notices { margin-top: 6mm; padding-top: 3mm; border-top: 1pt solid var(--pl-ink); }
+.pl-px-foot { margin-top: 4mm; padding-top: 1.5mm; border-top: 0.5pt solid var(--pl-line-strong); color: var(--pl-muted); font-size: 8pt; }
+.pl-px-foot p { margin: 0; }
+.pl-px .pl-amount { filter: none; }
+
+/* Print: only the complete record is printed. The shell fills #pl-print-host on beforeprint; if a browser prints without that event, the screen statement remains as the fallback. */
+@media print {
+  #pl-section-host, .pl-masthead, .pl-footer, #pl-tray-host, .pl-tray, .pl-launcher, .pl-userway-reserve, .pl-toasts, .pl-scrim, .pl-popover, .pl-banner { display: none !important; }
+  #pl-print-host { display: block !important; }
+  .pl-main { padding: 0; margin: 0; max-width: none; }
+  .pl-app:has(#pl-print-host:empty) #pl-section-host, .pl-app:has(#pl-print-host:empty) .pl-masthead { display: block !important; }
+  /* Paper: a dark screen theme must not print a dark canvas (print.css only resets :root tokens, not the dark theme's color-scheme). */
+  :root[data-theme="dark"], :root[data-theme="system"] { color-scheme: light; }
+  /* Paper tokens: the print view is always dark ink on white, whatever the screen theme. */
+  .pl-px { --pl-ink: #000; --pl-ink-2: #222; --pl-muted: #333; --pl-line: #999; --pl-line-strong: #666; --pl-surface: #fff; color: var(--pl-ink); background: var(--pl-surface); font-size: 10pt; }
+  .pl-px-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pl-px-table { page-break-inside: auto; }
+  .pl-px-table thead { display: table-header-group; }
+  .pl-px-table tr { page-break-inside: avoid; }
+  .pl-px h2 { page-break-after: avoid; }
+  .pl-px .pl-amount, .pl-px .pl-amount:not(.is-revealed) { filter: none !important; color: inherit !important; }
+}
+
+/* Narrow screens (print preview on a phone, or a browser that renders the print view on screen). */
+@media (max-width: 480px) {
+  .pl-px-groups { grid-template-columns: minmax(0, 1fr); }
+  .pl-px-dl { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .pl-px-dl dt { margin-top: 1.5mm; }
+  .pl-px-table { font-size: 7.5pt; }
+  .pl-px-table th, .pl-px-table td { padding: 0.8mm 0.6mm; overflow-wrap: anywhere; }
+  .pl-px-table td:first-child, .pl-px-table tbody th { min-width: 5em; }
+  .pl-px-table th { letter-spacing: 0; text-transform: none; font-size: 7pt; }
+  .pl-px-table th.num { white-space: normal; }
+}

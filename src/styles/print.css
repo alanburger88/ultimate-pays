@@ -1,6 +1,7 @@
 /* Print: a clean, complete, pagination-aware record. Controls, chat, animation and launchers are removed. */
 @page { margin: 16mm 14mm; }
 @media print {
+  :root, :root[data-theme="dark"], :root[data-theme="system"] { color-scheme: light; --pl-bg: #fff; --pl-surface: #fff; --pl-surface-2: #f3f3f3; --pl-surface-3: #e8e8e8; --pl-ink: #000; --pl-ink-2: #111; --pl-muted: #333; --pl-line: #999; --pl-line-strong: #666; --pl-accent: #0a5553; --pl-accent-soft: #eef4f4; --pl-accent-ink: #fff; }
   :root { --pl-bg: #fff; --pl-surface: #fff; --pl-ink: #000; --pl-muted: #333; --pl-line: #999; --pl-line-strong: #666; }
   html, body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
   .pl-skip, .pl-nav, .pl-launcher, .pl-tray, .pl-toasts, .pl-scrim, .pl-popover, .pl-banner, .pl-masthead-tools, .pl-section-actions, .pl-no-print, [data-no-print], #userwayAccessibilityIcon, .uwy, .pl-userway-reserve { display: none !important; }

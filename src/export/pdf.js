@@ -242,19 +242,24 @@ class Layout {
   }
 
   /** Label/value rows (two columns; values may span several lines). */
-  keyValues(rows, { size = 9, labelWidth = 0.32, x = this.left, width = this.width, after = 6 } = {}) {
+  keyValues(rows, { size = 9, labelWidth = 0.32, x = this.left, width = this.width, after = 6, title = null, titleSize = 10.5 } = {}) {
     const lh = size * LINE;
     const lw = width * labelWidth;
     const vw = width - lw - 8;
-    for (const r of rows) {
+    const prepared = rows.map((r) => {
       const labelLines = wrap(r.label, lw - 6, size, true);
       const valueLines = (Array.isArray(r.lines) ? r.lines : [String(r.lines)]).flatMap((v) => wrap(v, vw, size, false));
-      const n = Math.max(labelLines.length, valueLines.length);
-      const h = n * lh + 2;
-      this.ensure(h);
-      labelLines.forEach((ln, i) => this.drawBytes(ln.bytes, { x, top: this.y + i * lh, size, bold: true, gray: GRAY_TEXT }));
-      valueLines.forEach((ln, i) => this.drawBytes(ln.bytes, { x: x + lw + 8, top: this.y + i * lh, size }));
-      this.y += h;
+      return { labelLines, valueLines, h: Math.max(labelLines.length, valueLines.length) * lh + 2 };
+    });
+    // Keep a short group (title + rows) on one page; long groups flow and break between rows.
+    const total = prepared.reduce((s, r) => s + r.h, 0) + (title ? titleSize * LINE + 2 : 0);
+    if (total < (this.bottom - MARGIN.top) * 0.45) this.ensure(total);
+    if (title) this.paragraph(title, { size: titleSize, bold: true, after: 2 });
+    for (const r of prepared) {
+      this.ensure(r.h);
+      r.labelLines.forEach((ln, i) => this.drawBytes(ln.bytes, { x, top: this.y + i * lh, size, bold: true, gray: GRAY_TEXT }));
+      r.valueLines.forEach((ln, i) => this.drawBytes(ln.bytes, { x: x + lw + 8, top: this.y + i * lh, size }));
+      this.y += r.h;
     }
     this.y += after;
   }
@@ -406,7 +411,7 @@ function totalsTable(ctx, L, m) {
   const t = ctx.t;
   L.table({
     caption: t('export.totals'),
-    columns: [{ label: t('export.totals'), width: 0.72 }, { label: t('details.col_amount'), width: 0.28, align: 'right' }],
+    columns: [{ label: t('details.col_description'), width: 0.72 }, { label: t('details.col_amount'), width: 0.28, align: 'right' }],
     rows: m.totals.map((x) => ({
       cells: [`${x.label}${x.primary ? ` (${t('masthead.net_pay')})` : x.payable ? ` (${t('masthead.amount_paid')})` : ''}`, ctx.fmt.money(x.minor)],
       bold: x.prominent,
@@ -496,9 +501,7 @@ export function buildPdf(ctx, { generatedAt = new Date().toISOString() } = {}) {
   L.heading(t('record.particulars'));
   for (const g of [m.particulars.employer, m.particulars.employee, m.particulars.document, m.particulars.payment]) {
     if (!g.rows.length) continue;
-    L.ensure(10.5 * LINE + 9 * LINE * 2);
-    L.paragraph(g.title, { size: 10.5, bold: true, after: 2 });
-    L.keyValues(kvRows(g));
+    L.keyValues(kvRows(g), { title: g.title });
   }
 
   // Lines by category, then totals
@@ -542,9 +545,11 @@ export function buildPdf(ctx, { generatedAt = new Date().toISOString() } = {}) {
   L.pages.forEach((page, i) => {
     const top = L.pageH - MARGIN.bottom + 14;
     L.rule(L.left, L.left + L.width, top - 4, { width: 0.3, page });
-    const left = toWinAnsi(`${m.recordId} · ${m.versionText} · ${m.language} · ${t('export.generated', { date: m.generatedText })}`);
     const right = toWinAnsi(t('export.page_of', { page: i + 1, total }));
     const rw = textWidth(right, 7.5);
+    const parts = [m.recordId, m.versionText, m.language, t('export.generated', { date: m.generatedText })];
+    let left = toWinAnsi(parts.join(' · '));
+    while (parts.length > 1 && textWidth(left, 7.5) > L.width - rw - 12) { parts.pop(); left = toWinAnsi(parts.join(' · ')); }
     L.drawBytes(left, { x: L.left, top, size: 7.5, gray: GRAY_TEXT, page });
     L.drawBytes(right, { x: L.left + L.width - rw, top, size: 7.5, gray: GRAY_TEXT, page });
   });

@@ -59,6 +59,9 @@
   --pl-chart-5: #6b4fa0;
   --pl-chart-6: #3d7a3a;
   --pl-chart-neutral: #8a9099;
+  --pl-stage-bg: #1b1f24;
+  --pl-stage-ink: #f6f4ef;
+  --pl-stage-caption: rgba(0, 0, 0, 0.25);
   color-scheme: light;
 }
 
@@ -94,6 +97,9 @@
   --pl-chart-5: #b79cf0;
   --pl-chart-6: #8ed286;
   --pl-chart-neutral: #7d8591;
+  --pl-stage-bg: #0b1a19;
+  --pl-stage-ink: #eceef1;
+  --pl-stage-caption: rgba(0, 0, 0, 0.35);
   color-scheme: dark;
 }
 
@@ -130,6 +136,9 @@
     --pl-chart-5: #b79cf0;
     --pl-chart-6: #8ed286;
     --pl-chart-neutral: #7d8591;
+    --pl-stage-bg: #0b1a19;
+    --pl-stage-ink: #eceef1;
+    --pl-stage-caption: rgba(0, 0, 0, 0.35);
     color-scheme: dark;
   }
 }

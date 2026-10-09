@@ -1,1 +1,70 @@
 /* Styles owned by src/ui module: mine. Use tokens from tokens.css; no hard-coded colours. */
+
+.pl-mine-dialog { width: min(760px, 100%); }
+.pl-mine { min-width: 0; }
+.pl-mine > * + * { margin-top: var(--pl-space-4); }
+.pl-mine-intro { margin: 0; }
+
+.pl-mine-group { border-top: 1px solid var(--pl-line); padding-top: var(--pl-space-4); min-width: 0; }
+.pl-mine-group > * + * { margin-top: var(--pl-space-3); }
+.pl-mine-group-title { margin: 0; font-size: var(--pl-size-md); }
+.pl-mine-field { min-width: 0; }
+.pl-mine-grid { display: grid; gap: var(--pl-space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); align-items: start; }
+
+/* Section order list */
+.pl-mine-order { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--pl-space-1); }
+.pl-mine-order-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--pl-space-2); align-items: center; padding: 4px 6px 4px 10px; border: 1px solid var(--pl-line); border-radius: var(--pl-radius-sm); background: var(--pl-surface-2); min-width: 0; }
+.pl-mine-order-num { color: var(--pl-muted); font-size: var(--pl-size-sm); font-weight: 600; min-width: 1.4em; }
+.pl-mine-order-text { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-width: 0; overflow-wrap: anywhere; }
+.pl-mine-order-text > .pl-icon { color: var(--pl-muted); flex: none; }
+.pl-mine-order-text b { font-weight: 600; }
+.pl-mine-required { display: inline-flex; align-items: center; gap: 4px; }
+.pl-mine-order-actions { display: flex; gap: 2px; flex: none; }
+.pl-mine-order-actions .pl-btn:disabled { opacity: 0.35; }
+
+/* Pins */
+.pl-mine-pins { min-width: 0; }
+.pl-mine-pins .pl-hint { margin: 0 0 var(--pl-space-2); }
+.pl-mine-pins-grid { display: grid; gap: 0 var(--pl-space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.pl-mine-pin { cursor: pointer; min-width: 0; }
+
+/* Segmented radio groups */
+.pl-mine-seg { display: flex; flex-wrap: wrap; max-width: 100%; }
+.pl-mine-seg button { flex: 1 1 auto; min-height: var(--pl-touch); min-width: 0; overflow-wrap: anywhere; }
+.pl-mine-seg button:focus-visible { outline: 3px solid var(--pl-focus); outline-offset: -3px; }
+
+/* Read-only language row (single approved language) */
+.pl-mine-readonly { display: inline-flex; align-items: center; min-height: var(--pl-touch); padding: 8px 12px; border: 1px dashed var(--pl-line-strong); border-radius: var(--pl-radius-sm); background: var(--pl-surface-2); color: var(--pl-ink-2); }
+
+/* Switch rows */
+.pl-mine-switches { display: grid; gap: var(--pl-space-2); grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.pl-mine-switch { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; min-width: 0; }
+.pl-mine-switch .pl-switch { position: relative; }
+.pl-mine-switch .pl-switch input:disabled + .track { opacity: 0.5; }
+.pl-mine-switch.is-disabled .pl-switch { cursor: not-allowed; }
+.pl-mine-switch-label { font-weight: 550; }
+.pl-mine-switch-desc { padding-left: 54px; white-space: normal; overflow-wrap: anywhere; }
+
+/* Notes */
+.pl-mine-notes { border-top: 1px solid var(--pl-line); padding-top: var(--pl-space-3); }
+.pl-mine-notes p { margin: 0; display: flex; gap: 6px; align-items: flex-start; }
+.pl-mine-notes p + p { margin-top: 6px; }
+.pl-mine-notes .pl-icon { flex: none; margin-top: 3px; }
+
+/* Footer status line sits with the actions so it is visible without scrolling */
+.pl-mine-status { flex: 1 1 220px; margin: 0; align-self: center; min-width: 0; }
+.pl-mine-dialog .pl-dialog-foot .pl-btn { flex: 0 1 auto; }
+
+@media (max-width: 480px) {
+  .pl-mine-seg { flex-direction: column; border-radius: var(--pl-radius); }
+  .pl-mine-seg button { width: 100%; border-radius: var(--pl-radius-sm); }
+  .pl-mine-switch-desc { padding-left: 0; }
+  /* Compact footer: status, then Preview | Cancel, then Save full width, then a quiet Reset */
+  .pl-mine-dialog .pl-dialog-foot { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pl-space-2); padding: var(--pl-space-2) var(--pl-space-3); }
+  .pl-mine-status { grid-column: 1 / -1; font-size: var(--pl-size-xs); }
+  .pl-mine-dialog .pl-dialog-foot .pl-btn { width: 100%; padding-left: var(--pl-space-3); padding-right: var(--pl-space-3); }
+  .pl-mine-btn-preview { order: 1; }
+  .pl-mine-btn-cancel { order: 2; }
+  .pl-mine-btn-save { order: 3; grid-column: 1 / -1; }
+  .pl-mine-btn-reset { order: 4; grid-column: 1 / -1; min-height: 36px; font-size: var(--pl-size-sm); }
+}
