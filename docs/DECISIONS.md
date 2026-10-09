@@ -36,9 +36,11 @@ The PRD (v0.1) states its decisions are recommended defaults pending confirmatio
 | Performance budget | Not applicable for now. | — |
 | Brand | Fine for now. | — |
 | PDF character coverage | Not required. | The PDF keeps the standard font and its refusal message for unsupported characters. |
+| German and Afrikaans voices | Keep the stand-ins (Yvonne, Cheyenne). | No change; swapping later is a one-line change in `narration/voices.json`. |
+| isiZulu and isiXhosa voices | Keep the best-effort voice (Cheyenne). | No change. |
+| Header | Remove the currency and the net pay amount from the header. | Header shows employer, employee, employee number, period and payment date only; currency stays in Record & actions and every export. |
+| Story voice | The voice plays by default; no need to press Voice. | Voice starts with the story in every motion mode; stale saved "captions" settings from earlier versions are ignored. |
 
 ## Still open
 
-1. **Two narration voice IDs.** The API key available to the build cannot search the voice library, and the IDs for **Mrs. Sophie** (German) and **Anneke** (Afrikaans) could not be confirmed. Stand-ins are in use: Yvonne (German female) and Cheyenne (South African female). Supplying the two voice IDs, or a key with `voices_read`, is a one-line change in `narration/voices.json` followed by `node scripts/narrate.js`.
-2. **isiZulu and isiXhosa narration.** ElevenLabs does not officially support either language. The clips were generated with Cheyenne without a language code and should be listened to before they are shown; set `"enabled": false` for a language to fall back to captions.
-3. **Record corrections.** When payroll corrects a statement after issue, the fix is a new version of the record that replaces the earlier one (for example "Version 2 replaces version 1, issued 30 September"). The app already models this: Record & actions shows the version lineage and the older version stays available. No bundled sample shows it yet. Should one record include a corrected version 2, so the flow can be demonstrated?
+1. **Record corrections.** When payroll corrects a statement after issue, the fix is a new version of the record that replaces the earlier one (for example "Version 2 replaces version 1, issued 30 September"). The app already models this: Record & actions shows the version lineage and the older version stays available. No bundled sample shows it yet. Should one record include a corrected version 2, so the flow can be demonstrated?

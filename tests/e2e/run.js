@@ -197,12 +197,13 @@ if (!args.only || args.only === 'CA-ON') {
     const text = await s.page.evaluate(() => document.body.innerText);
     check(`${label} has no demo wording`, !/constructed|construit|konstruiert|costruit|saamgestel|presentation record|not employer-issued|proof of earnings|preuve de revenu/i.test(text));
     check(`${label} header shows the employee number, not the record reference`, await s.page.evaluate(() => { const f = document.querySelector('.pl-masthead-facts').innerText; return /\d{4,}/.test(f) && !/AVN-/.test(f); }));
+    check(`${label} header carries no currency or net pay`, await s.page.evaluate(() => !document.querySelector('.pl-masthead-net') && !/\b(CAD|EUR|ZAR)\b/.test(document.querySelector('.pl-masthead').innerText)));
     check(`${label} print and story actions in the tab row`, await s.page.isVisible('.pl-nav-actions .pl-tool-print') && await s.page.isVisible('.pl-nav-actions .pl-tool-story'));
     check(`${label} story invitation leads My pay`, await s.page.evaluate(() => { const c = document.querySelector('#section-my-pay .pl-mp-story'); const k = document.querySelector('#section-my-pay .pl-kpi'); return Boolean(c && k && (c.compareDocumentPosition(k) & Node.DOCUMENT_POSITION_FOLLOWING)); }));
     await s.close();
   }
   const phone = await openPage({ url, width: 390, height: 844, hash: '#region=CA-ON&lang=en-CA' });
-  check('phone header stays compact (<= 140 px)', await phone.page.evaluate(() => document.querySelector('.pl-masthead').offsetHeight <= 140));
+  check('phone header stays compact (<= 120 px)', await phone.page.evaluate(() => document.querySelector('.pl-masthead').offsetHeight <= 120));
   await phone.page.click('.pl-mh-details');
   check('phone Details reveals the particulars', await phone.page.isVisible('.pl-masthead-facts'));
   await phone.close();
@@ -211,6 +212,7 @@ if (!args.only || args.only === 'CA-ON') {
   await voiceRun.page.click('[data-focus-key="mypay-story"]'); await voiceRun.page.waitForSelector('.pl-story-narration');
   const hasNarration = await voiceRun.page.evaluate(() => Boolean(document.getElementById('pl-narration')));
   check('story offers the bundled voice when clips are embedded', !hasNarration || /ElevenLabs/.test(await voiceRun.page.locator('.pl-story-narration').innerText()));
+  check('story voice is on without pressing Voice', !hasNarration || (await voiceRun.page.locator('.pl-story-narration button[aria-pressed]').getAttribute('aria-pressed')) === 'true');
   await voiceRun.close();
   // Wallet: emulated add flow
   const w = await openPage({ url, width: 1200, hash: '#region=EU-DE&lang=en-GB&section=record-actions' });

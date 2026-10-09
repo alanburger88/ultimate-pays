@@ -1,15 +1,11 @@
 /** Shell chrome: masthead, section navigation (tabs / mobile selector), footer, Lumi launcher. */
 import { h, icon, announce, replaceChildren } from '../app/dom.js';
-import { amount } from './components/common.js';
 import { openSheet } from './components/overlay.js';
 import { LANGUAGE_NAMES } from '../app/i18n.js';
 
 export function renderMasthead(ctx) {
-  const { record, profile, content } = ctx.doc;
+  const { record, content } = ctx.doc;
   const t = ctx.t;
-  const totals = ctx.doc.computed.totals;
-  const payable = totals[profile.payableTotal || profile.primaryTotal];
-  const net = totals[profile.primaryTotal];
   const branding = ctx.store.get().prefs.presentation.branding || {};
   const employeeNumberLabel = (() => { const v = content.employeeField('employeeNumber'); return v && v !== 'employeeNumber' ? v : t('record.field_employee_number'); })();
   const factsId = 'pl-mh-facts';
@@ -19,11 +15,6 @@ export function renderMasthead(ctx) {
     record.employee.employeeNumber ? fact(employeeNumberLabel, record.employee.employeeNumber) : null,
     fact(t('masthead.period'), ctx.fmt.period(record.document.period)),
     fact(t('masthead.pay_date'), ctx.fmt.date(record.document.payDate)),
-    fact(t('masthead.currency'), record.document.currency),
-  );
-  const netBlock = h('div', { class: 'pl-masthead-net' },
-    h('span', { class: 'lbl' }, payable !== net ? t('masthead.amount_paid') : t('masthead.net_pay')),
-    amount(ctx, payable, { cls: 'val', tag: 'span' }),
   );
   const header = h('header', { class: 'pl-masthead', role: 'banner', dataset: { expanded: 'false' } });
   // Phone summary: who and which period, with the remaining particulars one tap away.
@@ -49,7 +40,7 @@ export function renderMasthead(ctx) {
       h('span', { class: 'pl-brand-mark', aria: { hidden: 'true' } }, (branding.name || 'Paylight').slice(0, 1)),
       h('span', { class: 'pl-brand-text' }, branding.name || t('app.name'), h('small', null, content.document('title'))),
     ),
-    summary, facts, netBlock, tools,
+    summary, facts, tools,
   ));
   return header;
   function fact(label, value) { return h('span', { role: 'listitem' }, `${label}: `, h('b', null, value)); }

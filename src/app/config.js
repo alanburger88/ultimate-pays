@@ -139,7 +139,7 @@ export function validatePresentation(input, notices = []) {
     }
   }
   for (const k of Object.keys(input)) {
-    if (['region', 'lang', 'scenario', 'preset', 'theme', 'density', 'emphasis', 'narration', 'startSection', 'lowData', 'privacyMode', 'animation', 'accessGate', 'studio', 'modules', 'sectionOrder', 'pins', 'branding', 'integrations', 'version', 'kind'].includes(k)) continue;
+    if (['region', 'lang', 'scenario', 'preset', 'theme', 'density', 'emphasis', 'narration', 'startSection', 'lowData', 'privacyMode', 'animation', 'accessGate', 'studio', 'modules', 'sectionOrder', 'pins', 'branding', 'integrations', 'version', 'kind', 'settingsVersion'].includes(k)) continue;
     notices.push({ level: 'warning', key: 'config.import_field_ignored', params: { field: k } });
   }
   return out;
@@ -162,7 +162,21 @@ export function requiredModules(profile, record) {
  * Resolve the effective configuration.
  * @param registry  the data registry (profiles, languages, records, packageKind, defaultProfileId)
  */
-export function resolveConfig({ launch, prefs, studioSettings, registry }) {
+/**
+ * Earlier versions saved the then-default narration ("captions") with every preference change, which would
+ * keep the voice muted after the default became voice-on. Saved preferences no longer carry narration, and
+ * Studio settings carry it only when saved by a Studio that marks settingsVersion 2.
+ */
+function currentSettings(prefs, studioSettings) {
+  const prefPresentation = { ...((prefs && prefs.presentation) || {}) };
+  delete prefPresentation.narration;
+  let studio = studioSettings || null;
+  if (studio && studio.settingsVersion !== 2 && 'narration' in studio) { studio = { ...studio }; delete studio.narration; }
+  return { prefs: { ...(prefs || {}), presentation: prefPresentation }, studioSettings: studio };
+}
+
+export function resolveConfig({ launch, prefs: rawPrefs, studioSettings: rawStudio, registry }) {
+  const { prefs, studioSettings } = currentSettings(rawPrefs, rawStudio);
   const errors = [];
   const notices = [];
   const locked = {};

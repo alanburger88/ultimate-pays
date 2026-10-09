@@ -312,7 +312,8 @@ function createContext({ store, doc, config, services, scope }) {
 
 function pickPersistable(p) {
   const out = {};
-  for (const k of ['theme', 'density', 'emphasis', 'lang', 'sectionOrder', 'startSection', 'pins', 'privacyMode', 'lowData', 'animation', 'narration']) if (p[k] !== undefined) out[k] = p[k];
+  // Narration is a presenter setting (Studio), not a personal preference: it is never saved from here.
+  for (const k of ['theme', 'density', 'emphasis', 'lang', 'sectionOrder', 'startSection', 'pins', 'privacyMode', 'lowData', 'animation']) if (p[k] !== undefined) out[k] = p[k];
   return out;
 }
 

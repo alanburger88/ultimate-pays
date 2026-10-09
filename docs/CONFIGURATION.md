@@ -99,6 +99,7 @@ npm run build                                            # embeds narration/audi
 
 - `narration/voices.json` holds the model (`eleven_v4`), the output format (`mp3_22050_32`) and one voice per language: name, library `voiceId`, `languageCode` and `enabled`.
 - The script opens the app in headless Chromium and reads each chapter's exact spoken text, so audio always matches the captions. Clips are cached in `narration/audio/<hash>.mp3`; the same text and voice are never generated twice.
+- The voice plays as soon as the story opens, in every motion mode; the Voice button mutes it. Presenter Studio's narration setting can start stories muted (captions only). Personal preferences never store narration, and settings saved by earlier versions without `settingsVersion: 2` are ignored for narration.
 - At runtime a clip plays only if its recorded text still matches what the statement says; otherwise that chapter falls back to captions and the device voice.
 - Behind an HTTPS proxy the script relaunches Node with `NODE_USE_ENV_PROXY=1` so requests use it.
 

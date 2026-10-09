@@ -182,6 +182,7 @@ function collectSettings(ctx, form) {
     density: form.density, theme: form.theme, emphasis: form.emphasis, animation: form.animation, narration: form.narration,
     lowData: form.lowData, privacyMode: form.privacyMode, accessGate: form.accessGate,
     integrations: { assistant: ep(form.integrations.assistant), queries: ep(form.integrations.queries), identity: ep(form.integrations.identity), verification: ep(form.integrations.verification), wallet },
+    settingsVersion: 2,
   };
 }
 

@@ -99,3 +99,16 @@ test('wallet emulation can be switched off by deployment configuration', async (
   const off = validatePresentation({ integrations: { wallet: { emulate: false } } });
   assert.equal(off.integrations.wallet.emulate, false);
 });
+
+test('narration: stale saved "captions" from earlier versions no longer mutes the voice', () => {
+  const base = { launch: { region: 'CA-ON' }, registry };
+  const fresh = resolveConfig({ ...base, prefs: {}, studioSettings: null });
+  assert.equal(fresh.presentation.narration, 'audio-when-available', 'voice is the default');
+  const stalePrefs = resolveConfig({ ...base, prefs: { presentation: { narration: 'captions', theme: 'dark' } }, studioSettings: null });
+  assert.equal(stalePrefs.presentation.narration, 'audio-when-available', 'personal preferences do not carry narration');
+  assert.equal(stalePrefs.presentation.theme, 'dark', 'other preferences still apply');
+  const staleStudio = resolveConfig({ ...base, prefs: {}, studioSettings: { narration: 'captions' } });
+  assert.equal(staleStudio.presentation.narration, 'audio-when-available', 'unversioned Studio narration is ignored');
+  const chosen = resolveConfig({ ...base, prefs: {}, studioSettings: { narration: 'captions', settingsVersion: 2 } });
+  assert.equal(chosen.presentation.narration, 'captions', 'a current Studio choice is honoured');
+});

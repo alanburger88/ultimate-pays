@@ -429,8 +429,7 @@ export function openStory(ctx, { chapter = null } = {}) {
     const c = chapters[state.index];
     const clip = clips[c.id];
     if (stepped) {
-      // Reduced motion: nothing sounds on open; each step the person takes plays that chapter.
-      if (!voice.armed) { voice.lastIndex = state.index; return; }
+      // Reduced motion: the voice reads the chapter on screen, and each step the person takes plays that chapter.
       if (voice.lastIndex !== state.index) { voice.lastIndex = state.index; if (clip) startClip(clip, 0); else stopVoice(); }
       return;
     }
