@@ -8,7 +8,7 @@ Paylight separates three layers. Only the first is authoritative.
 | Experience | `src/app/config.js`, presets, prefs | Changes how the record is explored, never its meaning or values. |
 | Interaction state | `src/app/persist.js` | Tags, selections, drafts, acknowledgements. Scoped to recipient/document. Never contains payroll content. |
 
-All money values are **integer minor units** (cents). Hours are **integer hundredths** (8000 = 80.00 h). Day balances are integer hundredths of days. Rates are minor units per unit (`rateMinor`) or permyriad (`ratePermyriad`, 500 = 5.00 %). Rounding: half away from zero, once, at the end of each calculation (`src/app/money.js`).
+All money values are **integer minor units** (cents). Hours are **integer hundredths** (8000 = 80.00 h). Day balances are integer hundredths of days. Rates are minor units per unit (`rateMinor`) or permyriad (`ratePermyriad`, 500 = 5.00 %). A `rateMinor` may carry up to two extra decimal places where the jurisdiction states hourly rates at four decimals (France: 3 400,00 € ÷ 151,67 h = 22,4171 €/h → `rateMinor: 2241.71`); the formatter then shows four decimals and the calculation still rounds once at the end. Rounding: half away from zero, once, at the end of each calculation (`src/app/money.js`).
 
 ## Profile (jurisdiction pack) — `profile.js`
 

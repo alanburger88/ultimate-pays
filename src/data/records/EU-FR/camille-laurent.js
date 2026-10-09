@@ -10,7 +10,14 @@
  * August (congés payés), July (heures supplémentaires), June (prime de vacances).
  * All statutory contribution and tax amounts are 'supplied' by payroll with
  * their basis; no legal rate is encoded. All amounts are integer minor units
- * (cents). All identities, addresses and bank details are fictitious.
+ * (cents). One deliberate deviation from docs/DATA-CONTRACT.md, documented
+ * here and disclosed to the reader (exp.rate_precision): the hourly rate on
+ * e-base and e-hs125 is stored as rateMinor: 2241.71 (22,4171 €/h), two
+ * decimals beyond the cent, because French bulletins print the taux horaire
+ * at four decimals and 3 400,00 € ÷ 151,67 h has no exact value in cents.
+ * money.formatRate prints the stored precision and hoursTimesRate rounds once
+ * at the end, so every amountMinor remains an integer.
+ * All identities, addresses and bank details are fictitious.
  * Not employer-issued. Not proof of earnings.
  */
 export const record = {
@@ -65,12 +72,14 @@ export const record = {
   payment: { method: 'virement', amountMinor: 248138, date: '2026-09-30', bankMasked: 'FR76 •••• •••• •••• •••• •••• 318', reference: 'VIR-2026-09-2041' },
   lines: [
     { id: 'e-base', category: 'earning', group: 'regular', key: 'base_salary', amountMinor: 340000, cash: true, taxable: true, ytdMinor: 3060000,
-      // 151,67 h × 22,4171 €/h (3 400,00 € ÷ 151,67 h; rate kept at four decimals as on French bulletins). Mensualisation: not reconciled to the days worked in the month.
-      calc: { type: 'hours_rate', hoursHundredths: 15167, rateMinor: 2241.71, multiplier100: 100 }, glossaryKey: 'mensualisation',
+      // 151,67 h × 22,4171 €/h (3 400,00 € ÷ 151,67 h). rateMinor carries two extra decimals (four-decimal taux horaire as on French bulletins):
+      // display and recompute use the stored precision and the amount is rounded once to the cent (see exp.rate_precision). Mensualisation: not reconciled to the days worked in the month.
+      calc: { type: 'hours_rate', hoursHundredths: 15167, rateMinor: 2241.71, multiplier100: 100, noteKey: 'exp.rate_precision' }, glossaryKey: 'mensualisation',
       sourceRef: 'payroll:run-2026-09', explanationKey: 'exp.base_salary', policyIds: [] },
     { id: 'e-hs125', category: 'earning', group: 'overtime', key: 'overtime_125', amountMinor: 11209, cash: true, taxable: false, ytdMinor: 28022, statutoryKey: 'heures_supplementaires',
-      // 4,00 h beyond 35 h in the weeks of 14–18 and 21–25 September, paid at ×1,25. Exempt from income tax within the annual limit (taxable: false), still subject to contributions and inside the montant net social.
-      calc: { type: 'hours_rate', hoursHundredths: 400, rateMinor: 2241.71, multiplier100: 125 },
+      // 4,00 h beyond 35 h in the weeks of 14–18 and 21–25 September, paid at ×1,25 on the same four-decimal taux horaire as e-base (4,00 h × 22,4171 € × 1,25 = 112,0855 € → 112,09 €).
+      // Exempt from income tax within the annual limit (taxable: false), still subject to contributions and inside the montant net social.
+      calc: { type: 'hours_rate', hoursHundredths: 400, rateMinor: 2241.71, multiplier100: 125, noteKey: 'exp.rate_precision' },
       timeEntryIds: ['t-11', 't-18'], timeBucket: 'overtimeMinutes', glossaryKey: 'heures_supplementaires',
       sourceRef: 'time:2026-09', explanationKey: 'exp.overtime', policyIds: ['pol-heures-sup'] },
     { id: 'd-mutuelle', category: 'deduction', group: 'health', key: 'mutuelle_employee', amountMinor: 2850, cash: true, taxable: false, ytdMinor: 25650,
