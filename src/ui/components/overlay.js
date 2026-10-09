@@ -5,6 +5,7 @@
 import { h, clear, trapFocus, focusFirst, icon, uid } from '../../app/dom.js';
 
 const open = [];
+let currentPopover = null;
 
 function lockScroll() { document.documentElement.style.overflow = open.length ? 'hidden' : ''; }
 
@@ -40,7 +41,8 @@ export function openOverlay({ title, body, actions = null, size = 'md', align = 
     if (previouslyFocused && document.contains(previouslyFocused) && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
   }
   function onKey(e) {
-    if (e.key === 'Escape' && open[open.length - 1] === api) { e.preventDefault(); close('escape'); }
+    // A definition popover above the overlay takes the Escape first (its own handler closes it).
+    if (e.key === 'Escape' && !currentPopover && open[open.length - 1] === api) { e.preventDefault(); close('escape'); }
   }
   const api = { close, el: dialog, body: bodyEl, setTitle: (t) => { head.querySelector('h2').textContent = t; } };
   const content = typeof body === 'function' ? body(api) : body;
@@ -86,7 +88,6 @@ export function confirmDialog({ title, body, confirmLabel, cancelLabel, danger =
 }
 
 /** Anchored popover (definitions). Closes on Escape, outside click, or scroll away. */
-let currentPopover = null;
 export function openPopover({ anchor, title, body, closeLabel = 'Close' }) {
   closePopover();
   const id = uid('pop');
@@ -103,9 +104,9 @@ export function openPopover({ anchor, title, body, closeLabel = 'Close' }) {
   if (r.bottom + hgt + 12 > window.innerHeight && r.top - hgt - 6 > 0) top = r.top + window.scrollY - hgt - 6;
   pop.style.left = `${left}px`; pop.style.top = `${top}px`;
   function onDoc(e) { if (!pop.contains(e.target) && e.target !== anchor) closePopover(); }
-  function onKey(e) { if (e.key === 'Escape') { closePopover(); anchor.focus(); } }
+  function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); closePopover(); anchor.focus(); } }
   document.addEventListener('mousedown', onDoc, true);
-  document.addEventListener('keydown', onKey);
+  document.addEventListener('keydown', onKey, true);
   currentPopover = { el: pop, anchor, cleanup: () => { document.removeEventListener('mousedown', onDoc, true); document.removeEventListener('keydown', onKey); } };
   anchor.setAttribute('aria-expanded', 'true');
   pop.focus();

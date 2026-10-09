@@ -38,8 +38,9 @@ export async function buildSingle({ root, launch = {}, employee = false, out }) 
   let html = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');
   html = inlineStyles(html, srcDir);
   const launchJson = JSON.stringify({ ...launch, package: employee ? 'employee' : 'presenter', builtAt: new Date().toISOString() });
-  html = html.replace(/<script id="paylight-launch" type="application\/json">[\s\S]*?<\/script>/, `<script id="paylight-launch" type="application/json">${launchJson.replace(/</g, '\\u003c')}</script>`);
-  html = html.replace(/<script type="module" src="app\/main.js"><\/script>/, `<script>\n${code.replace(/<\/script/gi, '<\\/script')}\n</script>`);
+  // Function replacements: a string replacement would expand $&, $1, $' patterns that occur inside the bundled code.
+  html = html.replace(/<script id="paylight-launch" type="application\/json">[\s\S]*?<\/script>/, () => `<script id="paylight-launch" type="application/json">${launchJson.replace(/</g, '\\u003c')}</script>`);
+  html = html.replace(/<script type="module" src="app\/main.js"><\/script>/, () => `<script>\n${code.replace(/<\/script/gi, '<\\/script')}\n</script>`);
   html = html.replace('<html', '<html data-build="single"');
 
   const file = out

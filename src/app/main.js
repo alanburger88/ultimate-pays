@@ -360,7 +360,7 @@ function syncNav(ctx) {
   if (mobile) { const s = ctx.sections().find((x) => x.id === current); const b = mobile.querySelector('b'); if (b && s) b.textContent = t(s.titleKey); }
 }
 
-const LISTENERS = { 'pay-details': ['selection'], 'time-leave': ['selection'], 'record-actions': ['queries', 'selection'], 'my-pay': ['selection'] };
+const LISTENERS = { 'pay-details': ['selection'], 'time-leave': ['selection'], 'record-actions': ['queries', 'selection'] };
 function remountIfListens(ctx, key) {
   const section = ctx.store.get().nav.section;
   if ((LISTENERS[section] || []).includes(key)) mountSection(ctx);
