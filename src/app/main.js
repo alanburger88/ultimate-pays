@@ -133,7 +133,7 @@ export function boot() {
     notices: [...launchNotices, ...config.notices],
   });
 
-  const identity = createIdentity({ integration: config.presentation.integrations.identity });
+  const identity = createIdentity({ integration: config.presentation.integrations.identity, documentRef: { id: doc.record.document.id, version: doc.record.document.version } });
   const tokenProvider = () => identity.token();
   const services = {
     assistant: createAssistant({ integration: config.presentation.integrations.assistant, tokenProvider }),

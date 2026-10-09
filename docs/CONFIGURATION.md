@@ -68,7 +68,16 @@ Open with `--studio`, the fragment `studio=1`, the keyboard shortcut **Ctrl+Shif
 
 ## Integration endpoints
 
-Studio accepts HTTPS endpoints for the assistant (Lumi), payroll query, identity, verification and wallet issuing services. Only endpoints are stored. Bearer tokens come from the identity adapter at runtime; no signing key, certificate or credential is ever embedded in the HTML or written to browser storage. Without an endpoint each capability shows its truthful local/unavailable state.
+Studio accepts HTTPS endpoints for the assistant (Lumi), payroll query, identity, verification and wallet issuing services. Only endpoints are stored. Without an endpoint each capability shows its truthful local/unavailable state.
+
+Bearer tokens come from the identity adapter at runtime. Its endpoint is a backend token service behind the organisation's approved sign-in: the browser sends a credentialed `GET <endpoint>?document=<id>&version=<n>` (the sign-in session travels as an HttpOnly cookie) and receives `{ "access_token": "…", "expires_in": 300 }`. The token is kept in memory for this document only and refreshed before it expires. No signing key, certificate, client secret or token is ever embedded in the HTML, placed in a URL, or written to browser storage.
+
+| Service | Request from the browser | Required response |
+|---|---|---|
+| Assistant | `POST` `{ question, documentRef, lineIds, sectionId, locale }` with `Authorization: Bearer` | `{ answer, sources: [{ type, id }], suggestions? }` |
+| Payroll queries | `POST` the reviewed payload with `Idempotency-Key` | `{ caseReference, acknowledgedAt, nextStep? }`; `409` with `caseReference` for a duplicate |
+| Verification | `POST` `{ documentRef, version, lines, totals }` | `{ verified: true, verifiedAt }` only after a real check with keys held outside the package |
+| Wallet (per provider) | `POST` `{ provider, documentRef, version }` | `{ url, state: 'requested' \| 'issued' \| 'added' }`; "added" only on provider confirmation |
 
 ## Storage
 

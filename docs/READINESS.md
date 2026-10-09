@@ -28,7 +28,7 @@ Status vocabulary: **Local** — works in the portable file with no network. **C
 | Wallet: Apple | Unavailable → Connected | `adapters/wallet/apple.js`; needs pass type ID + signing certificate on an issuing server |
 | Wallet: Google | Unavailable → Awaiting approval | `adapters/wallet/google.js`; needs issuer account with sensitive-data pass approval |
 | Wallet: Samsung | Unavailable → Awaiting approval | `adapters/wallet/samsung.js`; needs partner onboarding and credentials |
-| Identity / authentication | Unavailable | `adapters/identity.js`; the local access screen is presentation only |
+| Identity / authentication | Unavailable → Connected | `adapters/identity.js`: with an endpoint, fetches a short-lived, document-scoped bearer token from a backend token endpoint behind the approved sign-in (credentialed request, HttpOnly session cookie), keeps it in memory only and refreshes before expiry; `tests/unit/identity.test.js`. Without an endpoint nothing authenticates and the local access screen says it is presentation only |
 | Record integrity verification ("Verified") | Unavailable → Connected | `adapters/verification.js`; shown only after a real successful check |
 | UserWay widget, bottom left | Connected (unverified) | Script injected once from `accessibilityserver.org` with `data-position="5"`; the host was unreachable from the build environment, so entitlement, domain configuration and live placement are unverified |
 | Native accessibility (keyboard, focus, structure, reduced motion) | Local (to be tested) | WCAG 2.2 AA conformance must be evaluated with assistive technology, not assumed |
