@@ -16,11 +16,11 @@
  *
  * Contract: export function render(ctx) -> HTMLElement
  */
-import { h, icon, announce, uid, replaceChildren } from '../../app/dom.js';
+import { h, icon, announce, uid, replaceChildren, clear } from '../../app/dom.js';
 import { registerStrings, LANGUAGE_NAMES, has } from '../../app/i18n.js';
 import { computeTotals, priorLines } from '../../app/calc.js';
 import { amount, lineTitle, notice, sectionHeader, isNarrow, emptyState } from '../components/common.js';
-import { confirmDialog } from '../components/overlay.js';
+import { confirmDialog, openDialog } from '../components/overlay.js';
 import { passPreview } from '../../adapters/wallet/index.js';
 import { hoursText, rateText, sensitiveText } from '../calc-dialog.js';
 import { statusChip, removeDraft, normaliseDraft } from '../query.js';
@@ -762,10 +762,89 @@ function walletCard(ctx) {
   ];
 }
 
+/** Emulated provider (no issuing service connected): one clear action and the add flow in a sheet. */
+function emulatedWalletProvider(ctx, provider, avail) {
+  const t = ctx.t;
+  const name = has(`wallet.${provider.id}`) ? t(`wallet.${provider.id}`) : provider.id;
+  const added = avail.state === 'added';
+  const hid = `ra-h-wallet-${provider.id}`;
+  return h('section', { class: 'pl-ra-wallet', aria: { labelledby: hid }, dataset: { provider: provider.id, state: added ? 'added' : 'ready' } },
+    h('div', { class: 'head' },
+      h('h3', { id: hid, tabindex: '-1' }, icon('wallet', { size: 16 }), h('span', null, name)),
+      h('span', { class: ['pl-chip', added ? 'pl-chip-positive' : 'pl-chip-outline'] }, t(added ? 'wallet.state_added' : 'wallet.state_ready')),
+    ),
+    added ? h('p', { class: 'small' }, t('wallet.in_wallet', { wallet: name })) : null,
+    h('div', { class: 'pl-btn-group' },
+      h('button', { class: added ? 'pl-btn' : 'pl-btn pl-btn-primary', type: 'button', dataset: { focusKey: `ra-wallet-${provider.id}` }, on: { click: () => openWalletSheet(ctx, provider, { showOnly: added }) } },
+        icon(added ? 'eye' : 'plus', { size: 16 }), added ? t('wallet.show_pass') : t('wallet.add_to', { wallet: name })),
+    ),
+  );
+}
+
+/** The add flow: preparing → confirm with the pass in view → adding → added. */
+function openWalletSheet(ctx, provider, { showOnly = false } = {}) {
+  const t = ctx.t;
+  const name = has(`wallet.${provider.id}`) ? t(`wallet.${provider.id}`) : provider.id;
+  const preview = passPreview(ctx.doc.record, { brand: t('app.name'), label: t('wallet.preview_label') });
+  const body = h('div', { class: 'pl-wallet-sheet', dataset: { provider: provider.id } });
+  const timers = [];
+  const later = (fn, ms) => { timers.push(window.setTimeout(fn, ms)); };
+  let dlg = null;
+  const pass = () => h('div', { class: 'pl-wallet-pass' }, passCard(ctx, preview));
+  function stepPreparing() {
+    clear(body);
+    body.append(h('div', { class: 'pl-wallet-wait', role: 'status' }, h('span', { class: 'pl-spinner', aria: { hidden: 'true' } }), h('p', null, t('wallet.preparing'))));
+    later(stepConfirm, 1100);
+  }
+  function stepConfirm() {
+    clear(body);
+    const add = h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: stepAdding } }, icon('plus', { size: 16 }), t('wallet.add_to', { wallet: name }));
+    body.append(
+      h('p', { class: 'pl-wallet-provider' }, icon('wallet', { size: 18 }), h('b', null, name)),
+      pass(),
+      h('p', { class: 'small' }, t('wallet.sheet_intro', { wallet: name })),
+      h('div', { class: 'pl-btn-group pl-wallet-actions' }, h('button', { class: 'pl-btn', type: 'button', on: { click: () => dlg.close('cancel') } }, t('common.cancel')), add),
+    );
+    add.focus();
+  }
+  function stepAdding() {
+    clear(body);
+    body.append(h('div', { class: 'pl-wallet-wait', role: 'status' }, h('span', { class: 'pl-spinner', aria: { hidden: 'true' } }), h('p', null, t('wallet.adding'))));
+    later(async () => {
+      await provider.request();
+      stepAdded();
+      const host = document.getElementById(`ra-wallet-${provider.id}`);
+      if (host) refreshPanel(host, () => walletProvider(ctx, provider), 'h3', null);
+    }, 900);
+  }
+  function stepAdded() {
+    clear(body);
+    const done = h('button', { class: 'pl-btn pl-btn-primary', type: 'button', on: { click: () => dlg.close('done') } }, t('common.done'));
+    body.append(
+      h('div', { class: 'pl-wallet-done' }, h('span', { class: 'pl-wallet-tick', aria: { hidden: 'true' } }, icon('check', { size: 28 })), h('h3', null, t('wallet.added_title', { wallet: name }))),
+      pass(),
+      h('p', { class: 'small' }, t('wallet.added_body', { wallet: name })),
+      h('div', { class: 'pl-btn-group pl-wallet-actions' }, done),
+    );
+    announce(t('wallet.added_title', { wallet: name }));
+    done.focus();
+  }
+  dlg = openDialog({ title: t('wallet.add_to', { wallet: name }), size: 'sm', closeLabel: t('common.close'), className: 'pl-wallet-dialog', body,
+    onClose: () => {
+      timers.forEach((x) => window.clearTimeout(x));
+      // The panel re-rendered while the sheet was open: return focus to its current button.
+      const again = document.querySelector(`[data-focus-key="ra-wallet-${provider.id}"]`);
+      if (again) again.focus();
+    } });
+  if (showOnly) stepAdded(); else stepPreparing();
+  return dlg;
+}
+
 function walletProvider(ctx, provider) {
   const t = ctx.t;
   let avail;
   try { avail = provider.availability(); } catch (err) { avail = { state: 'unavailable', reasons: [] }; }
+  if (avail.emulated) return emulatedWalletProvider(ctx, provider, avail);
   const reasons = avail.reasons || [];
   const st = walletState.get(`${ctx.scope}|${provider.id}`) || {};
   const result = st.result || (provider.state && provider.state !== 'idle' ? { state: provider.state } : null);

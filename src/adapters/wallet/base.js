@@ -1,9 +1,11 @@
 import { opaqueRef } from '../../app/persist.js';
 /** Shared behaviour for wallet providers. */
 export class WalletProvider {
-  constructor({ id, endpoint, record, profile, tokenProvider }) { this.id = id; this.endpoint = endpoint || null; this.record = record; this.profile = profile; this.tokenProvider = tokenProvider; this.state = 'idle'; }
+  constructor({ id, endpoint, record, profile, tokenProvider, emulate = true }) { this.id = id; this.endpoint = endpoint || null; this.record = record; this.profile = profile; this.tokenProvider = tokenProvider; this.state = 'idle'; this.emulated = !this.endpoint && emulate !== false; }
   /** @returns {{state:'unavailable'|'preview'|'ready', reasons:string[]}} reasons are i18n keys */
   availability() {
+    // No issuing service connected: the add flow is emulated on screen (presenter builds and demos).
+    if (this.emulated) return { state: this.state === 'added' ? 'added' : 'ready', reasons: [], emulated: true };
     const reasons = [];
     if (!this.endpoint) reasons.push('wallet.reason_no_service');
     if (!this.deviceSupported()) reasons.push('wallet.reason_device');
@@ -19,6 +21,7 @@ export class WalletProvider {
    * 'added' is only returned when the provider confirms; otherwise the honest state is 'requested'.
    */
   async request() {
+    if (this.emulated) { this.state = 'added'; return { state: 'added', emulated: true }; }
     const a = this.availability();
     if (a.state !== 'ready') { const e = new Error('unavailable'); e.code = 'unavailable'; e.reasons = a.reasons; throw e; }
     const token = this.tokenProvider ? await this.tokenProvider() : null;

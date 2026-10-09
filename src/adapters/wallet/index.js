@@ -9,7 +9,7 @@ import { SamsungWallet } from './samsung.js';
 import { opaqueRef } from '../../app/persist.js';
 
 export function walletProviders({ integration = {}, record, profile, tokenProvider = null }) {
-  const common = { record, profile, tokenProvider };
+  const common = { record, profile, tokenProvider, emulate: integration.emulate !== false };
   return [
     new AppleWallet({ ...common, endpoint: integration.apple ? integration.apple.endpoint : null }),
     new GoogleWallet({ ...common, endpoint: integration.google ? integration.google.endpoint : null }),

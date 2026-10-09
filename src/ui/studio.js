@@ -254,7 +254,7 @@ function reconfigure(ctx, cfg) {
 }
 
 function chip(text, kind) {
-  const cls = { local: 'pl-chip-info', connected: 'pl-chip-positive', unavailable: 'pl-chip-outline', awaiting: 'pl-chip-warn', pending: 'pl-chip-outline' }[kind] || '';
+  const cls = { local: 'pl-chip-info', connected: 'pl-chip-positive', unavailable: 'pl-chip-outline', awaiting: 'pl-chip-warn', pending: 'pl-chip-outline', emulated: 'pl-chip-info' }[kind] || '';
   return h('span', { class: ['pl-chip', cls], dataset: { state: kind } }, text);
 }
 
@@ -624,6 +624,7 @@ function readinessRows(ctx) {
     let state; let detail;
     if (provider && typeof provider.availability === 'function') {
       const a = provider.availability();
+      if (a.emulated) { rows.push({ label: t('studio.cap_wallet', { wallet: t(`wallet.${w}`) }), state: 'emulated', detail: t('studio.cap_detail_emulated') }); continue; }
       // 'awaiting' only when a service is configured and provider approval is the sole outstanding reason.
       state = a.state === 'ready' ? 'connected' : (provider.endpoint && a.reasons.length && a.reasons.every((r) => r === 'wallet.reason_approval') ? 'awaiting' : 'unavailable');
       detail = a.state === 'ready' ? t('studio.cap_detail_connected', { service: hostOf({ endpoint: provider.endpoint }) }) : a.reasons.map((r) => t(r)).join(' ');

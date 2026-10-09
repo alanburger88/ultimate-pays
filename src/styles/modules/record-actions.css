@@ -172,3 +172,22 @@
   .pl-ra-policies details > .body { display: block; }
   .pl-ra-pass { box-shadow: none; }
 }
+
+/* Add-to-wallet sheet ---------------------------------------------------------------------------- */
+.pl-dialog.pl-wallet-dialog { max-width: 440px; }
+.pl-wallet-sheet { display: grid; gap: var(--pl-space-4); justify-items: stretch; min-height: 220px; align-content: start; }
+.pl-wallet-provider { display: flex; align-items: center; gap: var(--pl-space-2); margin: 0; font-size: var(--pl-size-lg); }
+.pl-wallet-pass { display: grid; justify-items: center; }
+.pl-wallet-pass .pl-ra-pass { width: 100%; max-width: 340px; transform-origin: center bottom; animation: pl-pass-in var(--pl-dur-slow, 320ms) var(--pl-ease) both; }
+.pl-wallet-actions { justify-content: flex-end; }
+.pl-wallet-wait { display: grid; justify-items: center; gap: var(--pl-space-3); padding: var(--pl-space-6) 0; text-align: center; }
+.pl-wallet-wait p { margin: 0; color: var(--pl-muted); }
+.pl-wallet-done { display: grid; justify-items: center; gap: var(--pl-space-2); text-align: center; }
+.pl-wallet-done h3 { margin: 0; }
+.pl-wallet-tick { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--pl-positive); color: #fff; animation: pl-pass-in var(--pl-dur-slow, 320ms) var(--pl-ease) both; }
+.pl-spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--pl-line); border-top-color: var(--pl-accent); animation: pl-spin 0.9s linear infinite; }
+@keyframes pl-spin { to { transform: rotate(360deg); } }
+@keyframes pl-pass-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+:root[data-motion="off"] .pl-spinner { animation-duration: 3s; }
+:root[data-motion="off"] .pl-wallet-pass .pl-ra-pass, :root[data-motion="off"] .pl-wallet-tick { animation: none; }
+@media (prefers-reduced-motion: reduce) { .pl-wallet-pass .pl-ra-pass, .pl-wallet-tick { animation: none; } .pl-spinner { animation-duration: 3s; } }
