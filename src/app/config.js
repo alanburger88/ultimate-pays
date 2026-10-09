@@ -41,7 +41,7 @@ export function readLaunch(win = window) {
   const hash = (win.location && win.location.hash) ? win.location.hash.replace(/^#/, '') : '';
   const params = new URLSearchParams(hash);
   const fromFragment = {};
-  for (const key of ['region', 'lang', 'preset', 'scenario', 'studio', 'section', 'line', 'theme', 'density', 'config']) {
+  for (const key of ['region', 'lang', 'preset', 'scenario', 'studio', 'section', 'line', 'view', 'theme', 'density', 'config']) {
     if (params.has(key)) fromFragment[key] = params.get(key);
   }
   Object.assign(launch, sanitizeLaunch(fromFragment, notices, 'fragment'));
@@ -57,6 +57,7 @@ function sanitizeLaunch(obj, notices, source) {
   if (obj.studio === true || obj.studio === '1' || obj.studio === 'true') out.studio = true;
   if (typeof obj.section === 'string') out.section = obj.section;
   if (typeof obj.line === 'string') out.line = obj.line;
+  if (typeof obj.view === 'string' && obj.view.length <= 64) out.view = obj.view;
   if (typeof obj.theme === 'string' && ['light', 'dark', 'system'].includes(obj.theme)) out.theme = obj.theme;
   if (typeof obj.density === 'string' && ['comfortable', 'compact'].includes(obj.density)) out.density = obj.density;
   if (typeof obj.package === 'string') out.package = obj.package;
@@ -118,6 +119,19 @@ export function validatePresentation(input, notices = []) {
     if (['region', 'lang', 'scenario', 'preset', 'theme', 'density', 'emphasis', 'narration', 'startSection', 'lowData', 'privacyMode', 'animation', 'accessGate', 'studio', 'modules', 'sectionOrder', 'pins', 'branding', 'integrations', 'version', 'kind'].includes(k)) continue;
     notices.push({ level: 'warning', key: 'config.import_field_ignored', params: { field: k } });
   }
+  return out;
+}
+
+/**
+ * Modules a jurisdiction pack makes mandatory for this record. When the pack lists a time.* path as a
+ * required field (hours worked, overtime, leave balances), the Time & leave section carries required
+ * particulars and no preset, Studio switch or preference may remove it.
+ * Returns { module: lockReasonKey }.
+ */
+export function requiredModules(profile, record) {
+  const out = {};
+  const hasTime = record && record.time && (((record.time.entries || []).length) || (record.time.leave && (record.time.leave.balances || []).length));
+  if (hasTime && (profile.requiredFields || []).some((f) => typeof f.path === 'string' && f.path.startsWith('time.'))) out.timeLeave = 'config.lock.required_section';
   return out;
 }
 
@@ -186,9 +200,13 @@ export function resolveConfig({ launch, prefs, studioSettings, registry }) {
   // Modules the profile or record cannot support are disabled with a visible reason.
   if (record && (!record.time || !(record.time.entries || []).length) && !(record.time && record.time.leave)) { modules.timeLeave = false; locked.timeLeave = 'config.lock.no_time_data'; }
   if (record && !(record.history || []).length) { modules.whatChanged = false; locked.whatChanged = 'config.lock.no_history'; }
+  // Required particulars outrank presets and Studio switches (issued-record constraint).
+  for (const [m, reason] of Object.entries(requiredModules(profile, record))) { modules[m] = true; locked[m] = reason; }
 
   const sectionOrder = (studioSettings && studioSettings.sectionOrder) || (prefs.presentation && prefs.presentation.sectionOrder) || presetDef.sectionOrder || SECTION_IDS;
-  const startSection = launch.section || (studioSettings && studioSettings.startSection) || (prefs.presentation && prefs.presentation.startSection) || presetDef.startSection || 'my-pay';
+  // The configured home (Studio > saved preference > preset) is kept separate from a deep-linked launch section.
+  const homeSection = (studioSettings && studioSettings.startSection) || (prefs.presentation && prefs.presentation.startSection) || presetDef.startSection || 'my-pay';
+  const startSection = (launch.section && SECTION_IDS.includes(launch.section)) ? launch.section : homeSection;
 
   return {
     ok: errors.length === 0,
@@ -203,6 +221,7 @@ export function resolveConfig({ launch, prefs, studioSettings, registry }) {
     modules,
     sectionOrder: orderSections(sectionOrder, modules),
     startSection,
+    homeSection,
     presentation: { ...presentation, preset: presetId, emphasis: presentation.emphasis || presetDef.emphasis || 'balanced' },
     studio: Boolean(launch.studio) && registry.packageKind !== 'employee',
     packageKind: registry.packageKind,

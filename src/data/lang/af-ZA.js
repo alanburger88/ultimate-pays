@@ -1184,7 +1184,7 @@ export const pack = {
   'reward.deductions_not_reward_note': 'Van u salaris afgetrek. Nie deel van totale vergoeding nie en nie in die totaal hierbo ingesluit nie.',
   'reward.reimbursements_not_reward': 'Terugbetalings hierdie periode',
   'reward.reimbursements_not_reward_note': 'Terugbetaalde uitgawes, nie salaris nie. Nie deel van totale vergoeding nie.',
-  'reward.annualised_unavailable': 'Die aantal betaalperiodes in die jaar is nie op hierdie rekord nie, dus word geen jaarlikse skatting gewys nie.',
+  "reward.annualised_unavailable": "Geen jaarlikse bedrag word gewys nie. Dit sou afhang van ekstra betalings en voordeelreëls wat hierdie salarisstrokie nie verskaf nie.",
   'reward.component': 'Komponent',
   'reward.share': 'Aandeel',
   'reward.subtotal': 'Subtotaal',
@@ -1353,4 +1353,8 @@ export const pack = {
   'export.payment_particulars': 'Betaling',
   'export.no_rows': 'Geen rye',
   'export.print_footer': '{id} · {version} · {language} · {generated}',
+  "mypay.additions_note": "U netto salaris sluit ook {amount} uit ander items in, wat in die vloei hieronder gewys word.",
+  "chart.alt_flow_additions": "Vloeigrafiek: bruto salaris {gross} minus aftrekkings {deductions} plus ander items {additions} is gelyk aan netto salaris {net}.",
+  "story.cap_money_additions": "U het {gross} voor aftrekkings verdien. Ná {deductions} aan aftrekkings en {additions} uit ander items is u netto salaris {net}.",
+  "story.other_items": "Ander items",
 };

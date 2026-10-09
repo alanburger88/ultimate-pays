@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Cedolino paga (Entgeltabrechnung)',
     subtitle: 'Prospetto retributivo',
-    recordKind: 'Cedolino paga ai sensi del § 108 GewO',
+    recordKind: "Cedolino paga (struttura basata sul § 108 GewO; conformità legale non ancora verificata)",
   },
   categories: { earning: 'Competenze', deduction: 'Trattenute', employer: 'Quote a carico del datore di lavoro', reimbursement: 'Rimborsi', noncash: 'Retribuzione in natura (geldwerter Vorteil)', advance: 'Anticipi', info: 'Informazioni' },
   groups: { regular: 'Retribuzione corrente', overtime: 'Lavoro straordinario', premium: 'Maggiorazioni', leave: 'Ferie e assenze', bonus: 'Pagamenti una tantum', adjustment: 'Rettifiche', tax: 'Imposte', social: 'Assicurazioni sociali', retirement: 'Previdenza per la vecchiaia', health: 'Salute e assicurazioni', union: 'Sindacato', expenses: 'Spese e trasferte', benefit: 'Retribuzione in natura (Sachbezüge)', garnishment: 'Pignoramenti', other: 'Altro' },
@@ -65,7 +65,7 @@ export const content = {
     abrechnungszeitraum: { term: 'Abrechnungszeitraum (periodo di paga)', short: 'Il mese solare a cui si riferisce questo cedolino.' },
   },
   disclosures: {
-    record_keeping: 'Conservi questo cedolino. Ai sensi del § 108 GewO e dell’Entgeltbescheinigungsverordnung riporta il periodo di paga, il lordo complessivo compresa la retribuzione in natura, lo Steuerbrutto e l’SV-Brutto, le trattenute di legge per tipo e importo, la retribuzione netta e l’importo pagato.',
+    record_keeping: "Conservi questo cedolino. Riporta il periodo di paga, il lordo complessivo compresa la retribuzione in natura, lo Steuerbrutto e l’SV-Brutto, le trattenute di legge per tipo e importo, la retribuzione netta e l’importo pagato. La struttura fa riferimento al § 108 GewO e all’Entgeltbescheinigungsverordnung; la conformità legale non è stata verificata.",
     noncash_benefit_basis: 'La retribuzione in natura per l’auto aziendale è compresa nel lordo complessivo ed è stata assoggettata a imposte e contributi. Poiché non viene pagata in denaro, viene dedotta di nuovo dopo la retribuzione netta. La valutazione segue il metodo previsto dalla legge, sulla base del prezzo di listino lordo.',
     constructed_notice: 'Questo cedolino è stato costruito a scopo di presentazione e non è emesso dal datore di lavoro. Non costituisce prova di reddito.',
     query_window: 'Se un importo Le sembra errato, invii una richiesta di chiarimento da questo cedolino. L’ufficio paghe si impegna a rispondere entro due giorni lavorativi: è un obiettivo di servizio, non un impegno di legge.',

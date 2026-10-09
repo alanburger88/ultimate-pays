@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Gehaltsabrechnung (cedolino paga)',
     subtitle: 'Monatliche Gehaltsabrechnung',
-    recordKind: 'Prospetto paga (Gesetz Nr. 4 vom 5. Januar 1953 – Libro Unico del Lavoro)',
+    recordKind: "Prospetto paga (Aufbau in Anlehnung an Gesetz Nr. 4 vom 5. Januar 1953 und das Libro Unico del Lavoro; rechtlich noch nicht geprüft)",
   },
   categories: { earning: 'Bezüge (competenze)', deduction: 'Abzüge (trattenute)', employer: 'Arbeitgeberaufwendungen (oneri a carico azienda)', reimbursement: 'Steuerfreie Erstattungen', noncash: 'Sachbezüge (fringe benefit)', advance: 'Vorschüsse', info: 'Monatsanteile (ratei) und Hinweise' },
   groups: { regular: 'Laufende Vergütung', overtime: 'Überstunden (straordinario)', premium: 'Zuschläge und Zulagen', leave: 'Bezahlte Abwesenheiten', bonus: 'Zusätzliche Monatsgehälter und Prämien', adjustment: 'Nachzahlungen und Ausgleiche (arretrati e conguagli)', tax: 'Steuerabzüge', social: 'Sozial- und Versicherungsbeiträge', retirement: 'Vorsorge und TFR', health: 'Krankenversorgung', union: 'Gewerkschaftsbeiträge', expenses: 'Spesenerstattungen', benefit: 'Zusatzleistungen', garnishment: 'Pfändungen und Abtretungen', other: 'Sonstiges' },
@@ -89,7 +89,7 @@ export const content = {
     ytd: { term: 'Jahreswert (progressivo annuo)', short: 'Der aufgelaufene Wert seit dem 1. Januar des Steuerjahres, einschließlich dieses Monats.', long: 'In Italien ist das Steuerjahr das Kalenderjahr. Die Jahreswerte schließen die aktuelle Abrechnung ein.' },
   },
   disclosures: {
-    record_keeping: 'Bewahren Sie diese Abrechnung auf. Sie enthält den Abrechnungszeitraum, die Vergütungsbestandteile, Betrag und Grund jedes Abzugs, das Nettogehalt und den gezahlten Betrag, wie es das Gesetz 4/1953 und das Libro Unico del Lavoro vorsehen.',
+    record_keeping: "Bewahren Sie diese Abrechnung auf. Sie enthält den Abrechnungszeitraum, die Vergütungsbestandteile, Betrag und Grund jedes Abzugs, das Nettogehalt und den gezahlten Betrag. Der Aufbau orientiert sich an Gesetz 4/1953 und dem Libro Unico del Lavoro; die rechtliche Konformität wurde nicht geprüft.",
     tfr_accrual_basis: 'Der ausgewiesene TFR-Anteil wurde in diesem Monat erworben und wird von Avenlo nach Artikel 2120 des Codice civile zurückgestellt. Er wird nicht mit dem Gehalt ausgezahlt und ist kein Abzug. Der Jahreswert zeigt, was seit dem 1. Januar aufgelaufen ist; der insgesamt zurückgestellte Betrag und seine Aufwertung werden zum Jahresende mitgeteilt.',
     ratei_basis: 'Die Monatsanteile des 13. und 14. Monatsgehalts werden zur Information gezeigt und in diesem Monat nicht ausgezahlt. Das 13. Monatsgehalt wird im Dezember gezahlt, das 14. mit dem Juni-Gehalt.',
     query_window: 'Wenn Ihnen ein Betrag unrichtig erscheint, stellen Sie aus dieser Abrechnung heraus eine Rückfrage. Die Lohnbuchhaltung antwortet in der Regel innerhalb von zwei Arbeitstagen; das ist ein Serviceziel, keine rechtliche Zusage.',

@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Iphepha lomvuzo',
     subtitle: 'Ingxelo yomvuzo',
-    recordKind: 'Iphepha lomvuzo (Basic Conditions of Employment Act, icandelo 33)',
+    recordKind: "Iphepha lomvuzo (lakhiwe ngokubhekisele kwicandelo 33 le-Basic Conditions of Employment Act; alikahlolwa ngokomthetho)",
   },
   categories: { earning: 'Umvuzo', deduction: 'Iimali ezitsalwayo', employer: 'Amagalelo enkampani', reimbursement: 'Iimbuyekezo', noncash: 'Izibonelelo ezingeyomali (fringe benefits)', advance: 'Iimali ezihlawulwe kwangaphambili', info: 'Ulwazi' },
   groups: { regular: 'Umvuzo osisiseko', overtime: 'I-ovathayim', premium: 'Umsebenzi wangeCawa nangeeholide zikawonke-wonke', leave: 'Ikhefu', bonus: 'Ibhonasi', adjustment: 'Izilungiso', tax: 'Irhafu yengeniso', social: 'Amagalelo asemthethweni', retirement: 'Ingxowa-mali yomhlala-phantsi', health: 'Uncedo lwezonyango', union: 'Umanyano lwabasebenzi', expenses: 'Iindleko', benefit: 'Izibonelelo', garnishment: 'Imiyalelo yenkundla', other: 'Okunye' },
@@ -65,7 +65,7 @@ export const content = {
     sick_leave: { term: 'Ikhefu lokugula', short: 'Ikhefu elihlawulwayo xa ugula, elifumaneka kumjikelo weminyaka emithathu.' },
   },
   disclosures: {
-    record_keeping: 'Gcina eli phepha lomvuzo kwiirekhodi zakho. Libonisa ixesha ekuhlawulelwa lona, umvuzo wakho ngemali, isixa nenjongo yemali nganye etsalwayo, kunye nesixa esihlawulwe ngokwenene, njengoko kufunwa licandelo 33 le-Basic Conditions of Employment Act.',
+    record_keeping: "Gcina eli phepha lomvuzo kwiirekhodi zakho. Libonisa ixesha ekuhlawulelwa lona, umvuzo wakho ngemali, isixa nenjongo yemali nganye etsalwayo, kunye nesixa esihlawulwe ngokwenene. Ulwakhiwo lwalo lulandela icandelo 33 le-Basic Conditions of Employment Act njengesikhokelo; alikahlolwa ukuba liyahambelana na nomthetho.",
     bcea_hours_statement: 'Iiyure eziqhelekileyo ezisetyenziweyo, iiyure ze-ovathayim kunye nazo naziphi na iiyure ezisetyenzwe ngeCawa okanye ngeeholide zikawonke-wonke ziboniswa kwicandelo elithi Ixesha nekhefu, kunye nereyithi yomvuzo esetyenziselwe i-ovathayim.',
     constructed_notice: 'Le rekhodi yakhelwe ukuboniswa kwaye ayikhutshwanga ngumqeshi. Ayibobungqina bengeniso.',
     query_window: 'Ukuba ukholelwa ukuba isixa asichanekanga, faka umbuzo usuka kweli phepha lomvuzo. I-Avenlo People Services izama ukuphendula zingekapheli iintsuku ezimbini zokusebenza; le yinjongo yenkonzo, hayi isibophelelo esisemthethweni.',

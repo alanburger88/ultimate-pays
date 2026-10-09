@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Bulletin de paie (Entgeltabrechnung)',
     subtitle: 'Décompte de rémunération',
-    recordKind: 'Bulletin de paie selon le § 108 GewO',
+    recordKind: "Bulletin de paie (structure établie en référence au § 108 GewO ; conformité juridique non encore vérifiée)",
   },
   categories: { earning: 'Rémunération', deduction: 'Retenues', employer: 'Parts patronales', reimbursement: 'Remboursements', noncash: 'Avantages en nature (geldwerter Vorteil)', advance: 'Acomptes', info: 'Informations' },
   groups: { regular: 'Rémunération courante', overtime: 'Heures supplémentaires', premium: 'Majorations', leave: 'Congés et absences', bonus: 'Versements exceptionnels', adjustment: 'Régularisations', tax: 'Impôts', social: 'Assurances sociales', retirement: 'Retraite', health: 'Santé et assurances', union: 'Syndicat', expenses: 'Frais et déplacements', benefit: 'Avantages en nature', garnishment: 'Saisies', other: 'Autres' },
@@ -65,7 +65,7 @@ export const content = {
     abrechnungszeitraum: { term: 'Abrechnungszeitraum (période de paie)', short: 'Le mois civil couvert par ce bulletin de paie.' },
   },
   disclosures: {
-    record_keeping: 'Conservez ce bulletin. Il indique, comme le prévoient le § 108 GewO et l’Entgeltbescheinigungsverordnung, la période de paie, le brut total avantages en nature compris, le brut imposable et le brut soumis aux assurances sociales, les retenues légales par nature et par montant, la rémunération nette et le montant versé.',
+    record_keeping: "Conservez ce bulletin. Il indique la période de paie, le brut total avantages en nature compris, le brut imposable et le brut soumis aux assurances sociales, les retenues légales par nature et par montant, la rémunération nette et le montant versé. Sa structure se réfère au § 108 GewO et à l’Entgeltbescheinigungsverordnung ; sa conformité juridique n’a pas été vérifiée.",
     noncash_benefit_basis: 'L’avantage en nature lié à la voiture de fonction est compris dans le brut total et a été imposé et soumis à cotisations. Comme il n’est pas versé en argent, il est déduit à nouveau après la rémunération nette. Il est évalué selon la méthode légale, sur la base du prix catalogue brut.',
     constructed_notice: 'Ce bulletin a été construit à des fins de présentation et n’est pas émis par un employeur. Il ne constitue pas un justificatif de revenus.',
     query_window: 'Si un montant vous paraît inexact, posez une question depuis ce bulletin. Le service paie s’efforce de répondre sous deux jours ouvrés ; c’est un objectif de service, non un engagement légal.',

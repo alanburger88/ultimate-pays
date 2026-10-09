@@ -3,14 +3,13 @@
  * the employee has selected, with review (tags, private notes, removal), Lumi
  * context, query creation and clearing.
  *
- * Amounts come from calc.js (sumLines) through amount(); labels from governed
+ * Amounts come from calc.js (selectionSummary, never mixing categories) through amount(); labels from governed
  * content. Tags and notes live in interaction state only and never change the
  * issued record. The tray is re-rendered by the shell on every selection change.
  */
 import { h, icon, announce, clear, append, uid } from '../app/dom.js';
 import { registerStrings } from '../app/i18n.js';
-import { sumLines } from '../app/calc.js';
-import { amount, lineTitle, isNarrow } from './components/common.js';
+import { amount, lineTitle, isNarrow, selectionTotals } from './components/common.js';
 import { openDialog, openSheet } from './components/overlay.js';
 
 registerStrings({
@@ -110,7 +109,7 @@ export function renderTray(ctx) {
         lines.length ? t('select.count', { count: lines.length }) : t('select.entries_count', { count: entries.length }),
         lines.length && entries.length ? h('small', null, t('select.entries_count', { count: entries.length })) : null,
       ),
-      lines.length ? h('span', { class: 'pl-tray-total' }, h('span', { class: 'lbl' }, t('select.selected_total')), amount(ctx, sumLines(lines), { cls: 'val' })) : null,
+      ...selectionTotals(ctx, lines).map((x) => h('span', { class: 'pl-tray-total' }, h('span', { class: 'lbl' }, x.label), amount(ctx, x.minor, { cls: 'val' }))),
       h('button', { class: 'pl-btn pl-btn-quiet pl-btn-icon pl-tray-clear', type: 'button', aria: { label: t('select.clear') }, title: t('select.clear'), dataset: { focusKey: 'tray-clear' }, on: { click: () => clearSelection(ctx) } }, icon('close')),
     ),
     h('div', { class: 'pl-tray-actions' },
@@ -187,7 +186,7 @@ export function openReview(ctx) {
     append(host, [
       intro,
       lines.length ? h('ul', { class: 'pl-tray-lines', aria: { label: t('select.review_title') } }, lines.map((line, i) => lineItem(line, i, lines.length))) : null,
-      lines.length ? h('div', { class: 'pl-kv total' }, h('span', { class: 'k' }, t('select.selected_total')), amount(ctx, sumLines(lines), { cls: 'v' })) : null,
+      ...selectionTotals(ctx, lines).map((x) => h('div', { class: 'pl-kv total' }, h('span', { class: 'k' }, x.label), amount(ctx, x.minor, { cls: 'v' }))),
       entries.length ? h('div', { class: 'pl-tray-entries-block' }, h('h3', null, t('select.entries_title')), h('ul', { class: 'pl-tray-entries', aria: { label: t('select.entries_title') } }, entries.map((e, i) => entryItem(e, i, entries.length)))) : null,
     ]);
     if (pendingFocus) {

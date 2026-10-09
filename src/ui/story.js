@@ -95,9 +95,13 @@ export function buildChapters(ctx) {
   const dedId = rewardDef.deductionsTotal || 'employeeDeductions';
   const netId = profile.primaryTotal || 'net';
   const payableId = profile.payableTotal || 'payable';
-  const gross = totals[grossId] || 0;
-  const deductions = totals[dedId] || 0;
-  const net = totals[netId] || 0;
+  // Figures come from the exact gross-to-net flow, so the caption's arithmetic always holds.
+  const flow = computed.flow || { gross: totals[grossId] || 0, deductionsTotal: totals[dedId] || 0, additionsTotal: 0, net: totals[netId] || 0 };
+  const gross = flow.gross;
+  const deductions = flow.deductionsTotal;
+  const additions = flow.additionsTotal || 0;
+  const net = flow.net;
+  const deductionsLabel = totals[dedId] === deductions ? ctx.content.total(dedId) : ctx.t('mypay.deductions');
   const payable = totals[payableId];
   const period = ctx.fmt.period(record.document.period);
   const chapters = [];
@@ -117,7 +121,9 @@ export function buildChapters(ctx) {
   });
 
   // 2 — money paid
-  const moneyCaptions = [{ key: 'story.cap_money', params: { gross: { minor: gross }, deductions: { minor: deductions }, net: { minor: net } } }];
+  const moneyCaptions = [additions
+    ? { key: 'story.cap_money_additions', params: { gross: { minor: gross }, deductions: { minor: deductions }, additions: { minor: additions }, net: { minor: net } } }
+    : { key: 'story.cap_money', params: { gross: { minor: gross }, deductions: { minor: deductions }, net: { minor: net } } }];
   if (payable !== undefined && payable !== net) moneyCaptions.push({ key: 'story.cap_paid', params: { payable: { minor: payable } } });
   chapters.push({
     id: 'money',
@@ -125,20 +131,21 @@ export function buildChapters(ctx) {
     section: 'pay-details', lineId: null,
     captions: moneyCaptions,
     scene() {
-      const max = Math.max(Math.abs(gross), Math.abs(deductions), Math.abs(net), 1);
+      const max = Math.max(Math.abs(gross), Math.abs(deductions), Math.abs(additions), Math.abs(net), 1);
       const bars = [
-        { id: grossId, target: gross, cls: 'is-gross', window: [0.05, 0.35] },
-        { id: dedId, target: deductions, cls: 'is-deductions', window: [0.35, 0.62] },
-        { id: netId, target: net, cls: 'is-net', window: [0.62, 0.9] },
-      ].map((b) => {
+        { label: ctx.content.total(grossId), target: gross, cls: 'is-gross', window: [0.05, 0.3] },
+        { label: deductionsLabel, target: deductions, cls: 'is-deductions', window: [0.3, 0.55] },
+        additions ? { label: ctx.t('story.other_items'), target: additions, cls: 'is-additions', window: [0.45, 0.65] } : null,
+        { label: ctx.content.total(netId), target: net, cls: 'is-net', window: [0.62, 0.9] },
+      ].filter(Boolean).map((b) => {
         const bar = h('div', { class: ['b', b.cls] });
         const val = amount(ctx, b.target);
-        const col = h('div', { class: 'pl-story-bar' }, h('div', { class: 'pl-story-bar-track' }, bar), val, h('span', { class: 'lbl' }, ctx.content.total(b.id)));
+        const col = h('div', { class: 'pl-story-bar' }, h('div', { class: 'pl-story-bar-track' }, bar), val, h('span', { class: 'lbl' }, b.label));
         return { ...b, bar, val, col };
       });
       const el = h('div', { class: 'pl-story-scene-inner' },
         h('div', { class: 'lbl' }, ctx.t('story.chapter_money')),
-        h('div', { class: 'pl-story-bars', role: 'img', aria: { label: sentenceText(ctx, 'story.cap_money', moneyCaptions[0].params) } }, bars.map((b) => b.col)),
+        h('div', { class: 'pl-story-bars', role: 'img', aria: { label: sentenceText(ctx, moneyCaptions[0].key, moneyCaptions[0].params) } }, bars.map((b) => b.col)),
         payable !== undefined && payable !== net ? h('div', { class: 'pl-story-sub' }, sentence(ctx, 'story.cap_paid', { payable: { minor: payable } })) : null,
       );
       return {
@@ -217,8 +224,12 @@ export function buildChapters(ctx) {
   // 4 — beyond take-home
   const reward = computed.reward || { employer: 0 };
   const employer = reward.employer || 0;
-  const benefitItems = ((record.benefits || []).filter((b) => (b.employerAmountMinor || 0) > 0).map((b) => ({ label: ctx.content.benefit(b.key).label, minor: b.employerAmountMinor, lineId: (b.lineIds || []).find((id) => { const l = ctx.line(id); return l && l.category === 'employer'; }) || (b.lineIds || [])[0] || null })));
-  const employerLines = record.lines.filter((l) => l.category === 'employer');
+  // Only items whose lines are part of the headline employer figure (employer-category lines) are listed under it.
+  const benefitItems = (record.benefits || [])
+    .map((b) => ({ b, lineId: (b.lineIds || []).find((id) => { const l = ctx.line(id); return l && l.category === 'employer' && !(l.flags || []).includes('exclude_from_reward'); }) || null }))
+    .filter((x) => x.lineId && (x.b.employerAmountMinor || 0) > 0)
+    .map((x) => ({ label: ctx.content.benefit(x.b.key).label, minor: ctx.line(x.lineId).amountMinor, lineId: x.lineId }));
+  const employerLines = record.lines.filter((l) => l.category === 'employer' && !(l.flags || []).includes('exclude_from_reward'));
   const items = (benefitItems.length ? benefitItems : employerLines.map((l) => ({ label: ctx.content.lineLabel(l), minor: l.amountMinor, lineId: l.id })))
     .sort((a, b) => Math.abs(b.minor) - Math.abs(a.minor)).slice(0, 3);
   chapters.push({

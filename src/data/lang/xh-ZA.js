@@ -1184,7 +1184,7 @@ export const pack = {
   'reward.deductions_not_reward_note': 'Zitsalwe emvuzweni wakho. Aziyonxalenye yomvuzo nezibonelelo zizonke kwaye azibandakanywanga kwisiyonke esingentla.',
   'reward.reimbursements_not_reward': 'Iimbuyekezo kweli xesha',
   'reward.reimbursements_not_reward_note': 'Iindleko ezibuyisiweyo, hayi umvuzo. Aziyonxalenye yomvuzo nezibonelelo zizonke.',
-  'reward.annualised_unavailable': 'Inani lamaxesha omvuzo onyaka alikho kule rekhodi, ngoko akukho qikelelo lonyaka luboniswayo.',
+  "reward.annualised_unavailable": "Akukho xabiso lonyaka liboniswayo. Linokuxhomekeka kwiintlawulo ezongezelelweyo nakwimithetho yezibonelelo engaboniswanga kweli phepha lomvuzo.",
   'reward.component': 'Icandelo',
   'reward.share': 'Isabelo',
   'reward.subtotal': 'Isiyonke esincinci',
@@ -1353,4 +1353,8 @@ export const pack = {
   'export.payment_particulars': 'Intlawulo',
   'export.no_rows': 'Akukho mida',
   'export.print_footer': '{id} · {version} · {language} · {generated}',
+  "mypay.additions_note": "Umvuzo osalayo ukwabandakanya i-{amount} evela kwezinye izinto, eboniswe kukuhamba okungezantsi.",
+  "chart.alt_flow_additions": "Itshathi yokuhamba: umvuzo opheleleyo {gross} kususwe iimali ezitsalwayo {deductions} kongezwe ezinye izinto {additions} kulingana nomvuzo osalayo {net}.",
+  "story.cap_money_additions": "Usebenzele i-{gross} ngaphambi kokutsalwa kweemali. Emva kweemali ezitsalwayo ezingu-{deductions} kunye ne-{additions} evela kwezinye izinto, umvuzo wakho osalayo ngu-{net}.",
+  "story.other_items": "Ezinye izinto",
 };

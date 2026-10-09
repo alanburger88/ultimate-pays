@@ -17,7 +17,7 @@ import { registerStrings, LANGUAGE_NAMES } from '../app/i18n.js';
 import { openDialog, confirmDialog, toast } from './components/overlay.js';
 import { notice } from './components/common.js';
 import { loadStudioSettings, saveStudioSettings, clearAllSessions } from '../app/persist.js';
-import { validatePresentation, encodeShared, orderSections, SECTION_IDS, OPTIONAL_MODULES, DEFAULT_PRESENTATION } from '../app/config.js';
+import { validatePresentation, encodeShared, orderSections, SECTION_IDS, OPTIONAL_MODULES, DEFAULT_PRESENTATION, requiredModules } from '../app/config.js';
 import { PRESETS } from '../app/presets.js';
 import { verifyRecord } from '../app/calc.js';
 import * as registry from '../data/index.js';
@@ -155,12 +155,15 @@ function locksFor(ctx, form) {
   const record = registry.findRecord(form.region, form.scenario);
   if (record && (!record.time || !(record.time.entries || []).length) && !(record.time && record.time.leave)) locks.timeLeave = 'config.lock.no_time_data';
   if (record && !(record.history || []).length) locks.whatChanged = 'config.lock.no_history';
+  const profileForLocks = registry.profiles[form.region];
+  if (profileForLocks) Object.assign(locks, requiredModules(profileForLocks, record));
   return locks;
 }
 
 function effectiveModules(form, locks) {
   const out = { ...form.modules };
-  for (const k of Object.keys(locks)) if (OPTIONAL_MODULES.includes(k)) out[k] = false;
+  // A lock either removes a module the record cannot support or keeps one that carries required particulars.
+  for (const k of Object.keys(locks)) if (OPTIONAL_MODULES.includes(k)) out[k] = locks[k] === 'config.lock.required_section';
   return out;
 }
 

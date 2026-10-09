@@ -85,3 +85,6 @@
   .pl-story-sub { font-size: var(--pl-size-md); }
   .pl-story-bar-track { height: 150px; }
 }
+
+/* Additions in the money scene (items added between gross and net, e.g. a non-cash benefit counted in net). */
+.pl-story .pl-story-bars .b.is-additions { background: var(--pl-chart-3); }

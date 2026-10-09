@@ -1184,7 +1184,7 @@ export const pack = {
   "reward.deductions_not_reward_note": "Von Ihrem Entgelt abgezogen. Nicht Teil der Gesamtvergütung und nicht in der obigen Summe enthalten.",
   "reward.reimbursements_not_reward": "Erstattungen in diesem Zeitraum",
   "reward.reimbursements_not_reward_note": "Erstattete Auslagen, kein Entgelt. Nicht Teil der Gesamtvergütung.",
-  "reward.annualised_unavailable": "Die Zahl der Abrechnungszeiträume im Jahr ist in diesem Beleg nicht angegeben, daher wird keine Jahresschätzung gezeigt.",
+  "reward.annualised_unavailable": "Es wird kein Jahresbetrag angezeigt. Er hinge von Sonderzahlungen und leistungsbezogenen Regeln ab, die diese Abrechnung nicht enthält.",
   "reward.component": "Bestandteil",
   "reward.share": "Anteil",
   "reward.subtotal": "Zwischensumme",
@@ -1353,4 +1353,8 @@ export const pack = {
   "export.payment_particulars": "Zahlung",
   "export.no_rows": "Keine Zeilen",
   "export.print_footer": "{id} · {version} · {language} · {generated}",
+  "mypay.additions_note": "Ihr Nettoentgelt enthält außerdem {amount} aus weiteren Posten, dargestellt im Verlauf unten.",
+  "chart.alt_flow_additions": "Flussdiagramm: Bruttoentgelt {gross} abzüglich Abzüge {deductions} zuzüglich weitere Posten {additions} ergibt Nettoentgelt {net}.",
+  "story.cap_money_additions": "Vor Abzügen haben Sie {gross} verdient. Nach {deductions} an Abzügen und {additions} aus weiteren Posten beträgt Ihr Nettoentgelt {net}.",
+  "story.other_items": "Weitere Posten",
 };

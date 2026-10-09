@@ -1184,7 +1184,7 @@ export const pack = {
   "reward.deductions_not_reward_note": 'Deducted from your pay. Not part of total reward and not included in the total above.',
   "reward.reimbursements_not_reward": 'Reimbursements this period',
   "reward.reimbursements_not_reward_note": 'Repaid expenses, not pay. Not part of total reward.',
-  "reward.annualised_unavailable": 'The number of pay periods in the year is not on this record, so no annual estimate is shown.',
+  "reward.annualised_unavailable": "No annual figure is shown. It would depend on extra payments and benefit rules that this statement does not supply.",
   "reward.component": 'Component',
   "reward.share": 'Share',
   "reward.subtotal": 'Subtotal',
@@ -1353,4 +1353,8 @@ export const pack = {
   "export.payment_particulars": 'Payment',
   "export.no_rows": 'No rows',
   "export.print_footer": '{id} · {version} · {language} · {generated}',
+  "mypay.additions_note": "Net pay also includes {amount} from other items, shown in the flow below.",
+  "chart.alt_flow_additions": "Flow chart: gross pay {gross} less deductions {deductions} plus other items {additions} equals net pay {net}.",
+  "story.cap_money_additions": "You earned {gross} before deductions. After {deductions} in deductions and {additions} from other items, your net pay is {net}.",
+  "story.other_items": "Other items",
 };

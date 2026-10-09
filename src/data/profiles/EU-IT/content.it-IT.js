@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Cedolino paga',
     subtitle: 'Prospetto paga mensile',
-    recordKind: 'Prospetto paga (Legge 5 gennaio 1953, n. 4 — Libro Unico del Lavoro)',
+    recordKind: "Prospetto paga (struttura basata sulla Legge 5 gennaio 1953, n. 4 e sul Libro Unico del Lavoro; conformità legale non ancora verificata)",
   },
   categories: { earning: 'Competenze', deduction: 'Trattenute', employer: 'Oneri a carico azienda', reimbursement: 'Rimborsi non imponibili', noncash: 'Fringe benefit', advance: 'Anticipi', info: 'Ratei e informazioni' },
   groups: { regular: 'Retribuzione ordinaria', overtime: 'Lavoro straordinario', premium: 'Maggiorazioni e indennità', leave: 'Assenze retribuite', bonus: 'Mensilità aggiuntive e premi', adjustment: 'Arretrati e conguagli', tax: 'Ritenute fiscali', social: 'Contributi previdenziali e assicurativi', retirement: 'Previdenza e TFR', health: 'Assistenza sanitaria', union: 'Quote sindacali', expenses: 'Rimborsi spese', benefit: 'Benefit', garnishment: 'Pignoramenti e cessioni', other: 'Altro' },
@@ -89,7 +89,7 @@ export const content = {
     ytd: { term: 'Progressivo annuo', short: 'Il totale dal 1° gennaio dell’anno fiscale, compreso questo mese.', long: 'In Italia l’anno fiscale coincide con l’anno solare. I progressivi includono il cedolino corrente.' },
   },
   disclosures: {
-    record_keeping: 'Conserva questo cedolino. Riporta il periodo di paga, gli elementi della retribuzione, l’importo e la causale di ogni trattenuta, il netto in busta e l’importo pagato, come previsto dalla Legge 4/1953 e dal Libro Unico del Lavoro.',
+    record_keeping: "Conserva questo cedolino. Riporta il periodo di paga, gli elementi della retribuzione, l’importo e la causale di ogni trattenuta, il netto in busta e l’importo pagato. La struttura fa riferimento alla Legge 4/1953 e al Libro Unico del Lavoro; la conformità legale non è stata verificata.",
     tfr_accrual_basis: 'La quota TFR indicata è maturata in questo mese e accantonata da Avenlo ai sensi dell’articolo 2120 del Codice civile. Non è pagata in busta e non è una trattenuta. Il progressivo annuo mostra quanto è maturato dal 1° gennaio; il fondo complessivo accantonato e la rivalutazione sono comunicati a fine anno.',
     ratei_basis: 'I ratei di tredicesima e quattordicesima sono mostrati per informazione e non sono pagati in questo mese. La tredicesima è pagata a dicembre; la quattordicesima con lo stipendio di giugno.',
     query_window: 'Se ritieni che un importo sia errato, invia una richiesta di chiarimento da questo cedolino. L’ufficio paghe risponde di norma entro due giorni lavorativi: è un obiettivo di servizio, non un impegno di legge.',

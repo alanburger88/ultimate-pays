@@ -104,7 +104,10 @@ const openPolicies = new Set();
 
 /** Cards replace the eight-column listing below 900px (the shared ≤720px rule plus the tablet band). */
 const CARDS_QUERY = '(max-width: 899px)';
-function useCards() { return isNarrow() || (window.matchMedia && window.matchMedia(CARDS_QUERY).matches); }
+/** Language/width combinations where the listing was measured too wide; cards are used there instead. */
+const tooWide = new Set();
+function fitKey(ctx) { return `${ctx.locale}|${window.innerWidth}`; }
+function useCards(ctx) { return isNarrow() || (window.matchMedia && window.matchMedia(CARDS_QUERY).matches) || (ctx && tooWide.has(fitKey(ctx))); }
 
 let liveCtx = null;
 if (typeof window !== 'undefined' && window.matchMedia) {
@@ -125,8 +128,15 @@ function isConstructed(record) {
 export function render(ctx) {
   liveCtx = ctx;
   const t = ctx.t;
-  const narrow = useCards();
+  const narrow = useCards(ctx);
   const modules = ctx.modules();
+  if (!narrow) {
+    // Long translations can make the listing wider than the page; measure after layout and fall back to cards.
+    requestAnimationFrame(() => {
+      const over = Array.from(document.querySelectorAll('#pl-section-host .pl-ra-table')).some((tbl) => tbl.parentElement && tbl.scrollWidth > tbl.parentElement.clientWidth + 1);
+      if (over && liveCtx === ctx && ctx.store.get().nav.section === 'record-actions') { tooWide.add(fitKey(ctx)); ctx.store.update('nav', (n) => ({ ...n })); }
+    });
+  }
   const parts = [
     { id: 'full', title: t('record.full_record'), icon: 'file', build: fullRecordCard },
     { id: 'provenance', title: t('record.provenance'), icon: 'shield', build: provenanceCard },

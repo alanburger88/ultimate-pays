@@ -9,7 +9,7 @@ export const content = {
   document: {
     title: 'Payslip',
     subtitle: 'Pay statement',
-    recordKind: 'Payslip (Basic Conditions of Employment Act, section 33)',
+    recordKind: "Payslip (structured with reference to section 33 of the Basic Conditions of Employment Act; not yet legally reviewed)",
   },
   categories: { earning: 'Remuneration', deduction: 'Deductions', employer: 'Company contributions', reimbursement: 'Reimbursements', noncash: 'Fringe benefits (non-cash)', advance: 'Advances', info: 'Information' },
   groups: { regular: 'Basic salary', overtime: 'Overtime', premium: 'Sunday and public holiday work', leave: 'Leave', bonus: 'Bonus', adjustment: 'Adjustments', tax: 'Income tax', social: 'Statutory contributions', retirement: 'Retirement fund', health: 'Medical aid', union: 'Union', expenses: 'Expenses', benefit: 'Benefits', garnishment: 'Court orders', other: 'Other' },
@@ -71,7 +71,7 @@ export const content = {
     sick_leave: { term: 'Sick leave', short: 'Paid leave for illness, available over a three-year cycle.' },
   },
   disclosures: {
-    record_keeping: 'Keep this payslip for your records. It shows the period for which payment is made, your remuneration in money, the amount and purpose of each deduction, and the actual amount paid, as required by section 33 of the Basic Conditions of Employment Act.',
+    record_keeping: "Keep this payslip for your records. It shows the period for which payment is made, your remuneration in money, the amount and purpose of each deduction, and the actual amount paid. Its structure follows section 33 of the Basic Conditions of Employment Act as a reference; it has not been reviewed for legal compliance.",
     bcea_hours_statement: 'Ordinary hours worked, overtime hours and any hours worked on Sundays or public holidays are shown in the Time & leave section, together with the rate of remuneration used for overtime.',
     constructed_notice: 'This record was constructed for presentation and is not employer-issued. It is not proof of earnings.',
     query_window: 'If you believe an amount is wrong, raise a query from this payslip. Avenlo People Services aims to respond within two business days; this is a service target, not a legal commitment.',

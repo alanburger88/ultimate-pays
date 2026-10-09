@@ -1184,7 +1184,7 @@ export const pack = {
   "reward.deductions_not_reward_note": "Trattenute dalla sua retribuzione. Non fanno parte della retribuzione globale e non sono incluse nel totale qui sopra.",
   "reward.reimbursements_not_reward": "Rimborsi in questo periodo",
   "reward.reimbursements_not_reward_note": "Spese rimborsate, non retribuzione. Non fanno parte della retribuzione globale.",
-  "reward.annualised_unavailable": "Il numero di periodi di paga nell’anno non è indicato in questo documento, quindi non viene mostrata alcuna stima annua.",
+  "reward.annualised_unavailable": "Non viene mostrato alcun importo annuo: dipenderebbe da pagamenti aggiuntivi e da regole specifiche dei benefit che questo cedolino non riporta.",
   "reward.component": "Componente",
   "reward.share": "Quota",
   "reward.subtotal": "Subtotale",
@@ -1353,4 +1353,8 @@ export const pack = {
   "export.payment_particulars": "Pagamento",
   "export.no_rows": "Nessuna riga",
   "export.print_footer": "{id} · {version} · {language} · {generated}",
+  "mypay.additions_note": "La retribuzione netta comprende anche {amount} da altre voci, indicate nel flusso qui sotto.",
+  "chart.alt_flow_additions": "Grafico di flusso: retribuzione lorda {gross}, meno trattenute {deductions}, più altre voci {additions}, dà una retribuzione netta di {net}.",
+  "story.cap_money_additions": "Ha maturato {gross} prima delle trattenute. Dopo {deductions} di trattenute e {additions} da altre voci, la sua retribuzione netta è di {net}.",
+  "story.other_items": "Altre voci",
 };

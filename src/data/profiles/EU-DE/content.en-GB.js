@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Pay statement (Entgeltabrechnung)',
     subtitle: 'Earnings statement',
-    recordKind: 'Pay statement under § 108 GewO',
+    recordKind: "Pay statement (structured with reference to § 108 GewO; not yet legally reviewed)",
   },
   categories: { earning: 'Pay', deduction: 'Deductions', employer: 'Employer contributions', reimbursement: 'Reimbursements', noncash: 'Non-cash benefits (geldwerter Vorteil)', advance: 'Advances', info: 'Information' },
   groups: { regular: 'Regular pay', overtime: 'Overtime', premium: 'Supplements', leave: 'Leave and absence', bonus: 'One-off payments', adjustment: 'Corrections', tax: 'Taxes', social: 'Social insurance', retirement: 'Pension', health: 'Health and insurance', union: 'Union', expenses: 'Expenses and travel', benefit: 'Benefits in kind', garnishment: 'Garnishments', other: 'Other' },
@@ -65,7 +65,7 @@ export const content = {
     abrechnungszeitraum: { term: 'Abrechnungszeitraum (pay period)', short: 'The calendar month this pay statement covers.' },
   },
   disclosures: {
-    record_keeping: 'Keep this statement for your records. Under § 108 GewO and the Entgeltbescheinigungsverordnung it shows the pay period, total gross including benefits in kind, taxable gross and social-insurance gross, each statutory deduction by type and amount, net earnings and the amount paid.',
+    record_keeping: "Keep this statement for your records. It shows the pay period, total gross including benefits in kind, taxable gross and social-insurance gross, each statutory deduction by type and amount, net earnings and the amount paid. Its structure refers to § 108 GewO and the Entgeltbescheinigungsverordnung; it has not been reviewed for legal compliance.",
     noncash_benefit_basis: 'The company-car benefit in kind is included in total gross and has been taxed and contributed on. Because it is not paid as money, it is deducted again after net earnings. It is valued under the statutory method based on the gross list price.',
     constructed_notice: 'This statement was constructed for presentation and is not employer-issued. It is not proof of earnings.',
     query_window: 'If an amount looks wrong, raise a query from this statement. Payroll aims to respond within two working days; this is a service target, not a legal commitment.',

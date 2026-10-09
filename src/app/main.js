@@ -118,12 +118,14 @@ export function boot() {
   const doc = buildDocument(config);
   const scope = documentScope(doc.record);
   const restored = loadSession(scope);
-  const startSection = config.initialLine ? 'pay-details' : (launch.section && SECTION_IDS.includes(launch.section) ? launch.section : (restored && restored.nav && restored.nav.section) || config.startSection);
+  // A deep-linked section wins; a line without a section opens Pay details; otherwise return to where the employee was.
+  const restoredNav = (restored && restored.nav) || {};
+  const startSection = (launch.section && SECTION_IDS.includes(launch.section)) ? launch.section : (config.initialLine ? 'pay-details' : (restoredNav.section || config.startSection));
 
   const store = createStore({
     config,
     prefs: { presentation: { ...config.presentation }, acknowledged: prefs.acknowledged || {} },
-    nav: { section: startSection, lineId: config.initialLine || (restored && restored.nav && restored.nav.lineId) || null, view: launch.view || null, filters: (restored && restored.nav && restored.nav.filters) || { query: '', category: 'all', sort: 'default' }, entryDate: null },
+    nav: { section: startSection, lineId: config.initialLine || restoredNav.lineId || null, view: launch.view || restoredNav.view || null, filters: restoredNav.filters || { query: '', category: 'all', sort: 'default' }, entryIds: restoredNav.entryIds || null, entryDate: restoredNav.entryDate || null, chartViews: restoredNav.chartViews || {} },
     selection: (restored && restored.selection) || { lineIds: [], entryIds: [], tags: {}, notes: {} },
     queries: { drafts: (restored && restored.queries && restored.queries.drafts) || [], submitted: (restored && restored.queries && restored.queries.submitted) || [], active: null },
     lumi: { open: false, messages: [], contextLineIds: null, busy: false },
@@ -196,9 +198,11 @@ function createContext({ store, doc, config, services, scope }) {
     go(sectionId, { lineId = null, view = null, push = false, focus = true } = {}) {
       const sections = ctx.sections();
       if (!sections.some((s) => s.id === sectionId)) sectionId = sections[0].id;
+      const from = store.get().nav.section;
+      if (from !== sectionId) placeMemory.set(from, window.scrollY);
       store.update('nav', (nav) => ({ ...nav, section: sectionId, lineId, view }));
       router.write({ section: sectionId, lineId, view }, { push });
-      if (focus) requestAnimationFrame(() => { const el = document.getElementById(`section-${sectionId}`); if (el) { el.focus({ preventScroll: lineId ? true : false }); if (!lineId) window.scrollTo({ top: 0, behavior: 'auto' }); } });
+      if (focus) requestAnimationFrame(() => focusSection(sectionId, { lineId, view }));
       announce(t('a11y.section_changed', { section: t((sections.find((s) => s.id === sectionId) || {}).titleKey || 'nav.my_pay') }));
     },
     focusLine(lineId, { section = 'pay-details' } = {}) { actions.go(section, { lineId, push: true }); },
@@ -268,7 +272,14 @@ function createContext({ store, doc, config, services, scope }) {
   ctx.actions = actions;
 
   const router = createRouter({
-    onNavigate: (nav) => { if (nav.section && nav.section !== store.get().nav.section) store.update('nav', (n) => ({ ...n, section: nav.section, lineId: nav.lineId, view: nav.view })); else store.update('nav', (n) => ({ ...n, lineId: nav.lineId, view: nav.view })); },
+    onNavigate: (nav) => {
+      // Browser back/forward: re-render, then put focus and scroll back where the employee was.
+      const from = store.get().nav.section;
+      const section = nav.section || from;
+      if (section !== from) placeMemory.set(from, window.scrollY);
+      store.update('nav', (n) => ({ ...n, section, lineId: nav.lineId, view: nav.view }));
+      requestAnimationFrame(() => focusSection(section, { lineId: nav.lineId, view: nav.view }));
+    },
     onConfigChange: () => boot(),
   });
   ctx.router = router;
@@ -286,6 +297,22 @@ function pickPersistable(p) {
   const out = {};
   for (const k of ['theme', 'density', 'emphasis', 'lang', 'sectionOrder', 'startSection', 'pins', 'privacyMode', 'lowData', 'animation', 'narration']) if (p[k] !== undefined) out[k] = p[k];
   return out;
+}
+
+/** Scroll position per section for the life of the page, so returning to a section restores the employee's place. */
+const placeMemory = new Map();
+
+/** Focus a section after navigation without losing the employee's place. A requested line is handled by mountSection. */
+function focusSection(sectionId, { lineId = null, view = null } = {}) {
+  const el = document.getElementById(`section-${sectionId}`);
+  if (!el) return;
+  if (lineId) return;
+  if (view === 'totals') {
+    const target = el.querySelector('.pl-dtotals');
+    if (target) { const heading = target.querySelector('h2, h3') || target; if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1'); target.scrollIntoView({ block: 'start' }); heading.focus({ preventScroll: true }); return; }
+  }
+  el.focus({ preventScroll: true });
+  window.scrollTo({ top: placeMemory.has(sectionId) ? placeMemory.get(sectionId) : 0, behavior: 'auto' });
 }
 
 function renderApp(ctx) {
@@ -355,9 +382,21 @@ function renderApp(ctx) {
 }
 
 function measureMasthead() {
+  const root = document.documentElement;
   const m = document.querySelector('.pl-masthead');
-  if (m) document.documentElement.style.setProperty('--pl-masthead-h', `${m.offsetHeight}px`);
+  const n = document.querySelector('.pl-nav');
+  if (m) root.style.setProperty('--pl-masthead-h', `${m.offsetHeight}px`);
+  // Height of whatever stays stuck at the top, so focused elements scroll clear of it (scroll-padding-top).
+  let sticky = 0;
+  if (m && getComputedStyle(m).position === 'sticky') sticky += m.offsetHeight;
+  if (n && getComputedStyle(n).position === 'sticky') sticky += n.offsetHeight;
+  root.style.setProperty('--pl-sticky-h', `${sticky}px`);
 }
+
+/** While a text field has focus on a narrow or short screen, floating controls step aside (see base.css). */
+function isTextField(el) { return el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && !['checkbox', 'radio', 'button', 'submit', 'range', 'color'].includes(el.type))); }
+document.addEventListener('focusin', (e) => { if (isTextField(e.target) && window.matchMedia('(max-width: 720px), (max-height: 500px)').matches) document.documentElement.dataset.typing = 'true'; });
+document.addEventListener('focusout', (e) => { if (isTextField(e.target)) delete document.documentElement.dataset.typing; });
 
 function syncNav(ctx) {
   const current = ctx.store.get().nav.section;

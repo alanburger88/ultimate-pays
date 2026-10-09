@@ -14,7 +14,7 @@
 import { h, icon, announce, debounce, uid, replaceChildren } from '../../app/dom.js';
 import { registerStrings } from '../../app/i18n.js';
 import { sumLines, priorLines } from '../../app/calc.js';
-import { amount, delta, lineTitle, notice, sectionHeader, isNarrow, emptyState, termButton } from '../components/common.js';
+import { amount, delta, lineTitle, notice, sectionHeader, isNarrow, emptyState, termButton, selectionTotals } from '../components/common.js';
 import { openSheet, openPopover, closePopover } from '../components/overlay.js';
 import { calcIcon, calcSummary, hoursText, rateText, sensitiveText, textWithAmount } from '../calc-dialog.js';
 
@@ -257,7 +257,11 @@ function statusRow(ctx, model, selected, narrow) {
   return h('div', { class: 'stack pl-dstatus' },
     h('div', { class: 'row-between' },
       h('p', { class: 'muted small', id: 'details-results' }, t('details.results', { count: model.shownCount })),
-      selected.length ? textWithAmount(ctx, 'details.selected_sum', sumLines(selected), { tag: 'p', cls: 'pl-chip pl-chip-accent pl-dsum' }) : null,
+      ...(() => {
+        const totals = selectionTotals(ctx, selected);
+        if (totals.length === 1) return [textWithAmount(ctx, 'details.selected_sum', totals[0].minor, { tag: 'p', cls: 'pl-chip pl-chip-accent pl-dsum' })];
+        return totals.map((x) => h('p', { class: 'pl-chip pl-chip-accent pl-dsum' }, `${x.label}: `, amount(ctx, x.minor)));
+      })(),
     ),
     model.filtered ? notice(ctx, [t('details.filtered_notice'), ' ', clearButton(ctx, model)], { kind: 'info', iconName: 'filter' }) : null,
     model.forced ? notice(ctx, t('details.focus_outside_filter', { line: model.forced.label }), { kind: 'neutral' }) : null,
@@ -470,7 +474,7 @@ function lineCard(ctx, r, model) {
       r.statutory && r.statutory.term !== r.label ? h('span', { class: 'pl-statutory', lang: r.statutory.locale }, r.statutory.term) : null,
       h('span', { class: 'meta' },
         h('span', null, ctx.content.category(line.category)),
-        hours !== null ? h('span', null, `${t('common.hours')}: ${hours}`) : null,
+        hours !== null ? h('span', null, `${t('details.col_hours')}: ${hours}`) : null,
         rate !== null && !rate.money ? h('span', null, `${t('common.rate')}: ${rate.text}`) : null,
       ),
     ),

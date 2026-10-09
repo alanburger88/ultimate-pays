@@ -21,7 +21,7 @@ registerStrings({
   'reward.deductions_not_reward_note': 'Deducted from your pay. Not part of total reward and not included in the total above.',
   'reward.reimbursements_not_reward': 'Reimbursements this period',
   'reward.reimbursements_not_reward_note': 'Repaid expenses, not pay. Not part of total reward.',
-  'reward.annualised_unavailable': 'The number of pay periods in the year is not on this record, so no annual estimate is shown.',
+  'reward.annualised_unavailable': 'No annual figure is shown. It would depend on extra payments and benefit rules that this statement does not supply.',
   'reward.component': 'Component',
   'reward.share': 'Share',
   'reward.subtotal': 'Subtotal',
@@ -162,7 +162,9 @@ export function render(ctx) {
 function kpiBlock(ctx, m) {
   const t = ctx.t;
   const { reward, profile } = m;
-  const netLabel = ctx.content.glossary('net_pay') ? termButton(ctx, 'net_pay', t('reward.take_home')) : t('reward.take_home');
+  // Named after the record's own net total: in some jurisdictions net still includes non-cash items, so it is not 'take-home'.
+  const netName = ctx.content.total(ctx.doc.profile.primaryTotal) || t('reward.take_home');
+  const netLabel = ctx.content.glossary('net_pay') ? termButton(ctx, 'net_pay', netName) : netName;
   return h('div', { class: 'pl-rw-kpis' },
     kpi(ctx, { label: t('reward.total'), value: amount(ctx, reward.total), sub: t('reward.period_sub', { period: m.period }), size: 'big', cls: 'pl-card-accent pl-rw-kpi pl-rw-kpi-total' }),
     kpi(ctx, { label: netLabel, value: amount(ctx, reward.net), sub: ctx.content.totalPlain(profile.primaryTotal) || null, cls: 'pl-rw-kpi' }),

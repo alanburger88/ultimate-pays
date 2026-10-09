@@ -12,8 +12,7 @@
  */
 import { h, clear, append, announce, icon, uid } from '../app/dom.js';
 import { registerStrings, LANGUAGE_NAMES } from '../app/i18n.js';
-import { sumLines } from '../app/calc.js';
-import { amount, lineTitle, notice } from './components/common.js';
+import { amount, lineTitle, notice, selectionTotals } from './components/common.js';
 import { openDialog, confirmDialog, toast } from './components/overlay.js';
 import { TAG_IDS, tagLabel, tagOptions, selectedEntries, entryHours, entryLabel } from './tray.js';
 
@@ -310,7 +309,7 @@ export function openQuery(ctx, opts = {}) {
   }
 
   function kvTotal(lines) {
-    return h('div', { class: 'pl-kv total' }, h('span', { class: 'k' }, t('select.selected_total')), amount(ctx, sumLines(lines), { cls: 'v' }));
+    return selectionTotals(ctx, lines).map((x) => h('div', { class: 'pl-kv total' }, h('span', { class: 'k' }, x.label), amount(ctx, x.minor, { cls: 'v' })));
   }
 
   function renderLines() {
@@ -431,7 +430,6 @@ export function openQuery(ctx, opts = {}) {
       h('dl', { class: 'pl-dl pl-query-payload' },
         row(t('query.document_reference'), `${payload.documentRef.id} · ${t('masthead.version', { version: payload.documentRef.version })}`),
         row(t('query.lines_included'), lines.length ? h('ul', { class: 'pl-query-sent-list' }, lines.map((l) => h('li', null, h('code', null, l.id), ' · ', ctx.content.lineLabel(l), ' · ', amount(ctx, l.amountMinor), payload.tags[l.id] ? h('span', { class: 'pl-chip pl-chip-accent' }, tagLabel(ctx, payload.tags[l.id])) : null))) : t('common.none')),
-        lines.length ? row(t('select.selected_total'), amount(ctx, sumLines(lines), { cls: 'strong' })) : null,
         row(t('query.entries_included'), entries.length ? h('ul', { class: 'pl-query-sent-list' }, entries.map((e) => h('li', null, h('code', null, e.id), ' · ', ctx.fmt.date(e.date, 'weekday'), ' · ', entryHours(ctx, e)))) : t('common.none')),
         row(t('query.tag'), payload.tag ? tagLabel(ctx, payload.tag) : t('tags.none')),
         row(t('query.note'), noteLines.length ? h('ul', { class: 'pl-query-sent-list' }, noteLines.map((l) => h('li', null, h('b', null, ctx.content.lineLabel(l)), ': ', h('span', { class: 'pl-query-message' }, payload.notes[l.id])))) : t('common.none')),

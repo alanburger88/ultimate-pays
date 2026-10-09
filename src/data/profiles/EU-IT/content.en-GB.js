@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Payslip (cedolino paga)',
     subtitle: 'Monthly pay statement',
-    recordKind: 'Prospetto paga (Law no. 4 of 5 January 1953 — Libro Unico del Lavoro)',
+    recordKind: "Prospetto paga (structured with reference to Law no. 4 of 5 January 1953 and the Libro Unico del Lavoro; not yet legally reviewed)",
   },
   categories: { earning: 'Pay elements (competenze)', deduction: 'Deductions (trattenute)', employer: 'Employer charges', reimbursement: 'Non-taxable reimbursements', noncash: 'Fringe benefits', advance: 'Advances', info: 'Accruals and information' },
   groups: { regular: 'Ordinary pay', overtime: 'Overtime (straordinario)', premium: 'Supplements and allowances', leave: 'Paid absences', bonus: 'Additional monthly payments and bonuses', adjustment: 'Arrears and adjustments', tax: 'Tax withholdings', social: 'Social-security and insurance contributions', retirement: 'Pension and TFR', health: 'Health cover', union: 'Union dues', expenses: 'Expense reimbursements', benefit: 'Benefits', garnishment: 'Garnishments and assignments', other: 'Other' },
@@ -89,7 +89,7 @@ export const content = {
     ytd: { term: 'Year to date (progressivo annuo)', short: 'The running total since 1 January of the tax year, including this month.', long: 'In Italy the tax year is the calendar year. Year-to-date values include the current payslip.' },
   },
   disclosures: {
-    record_keeping: 'Keep this payslip. It shows the pay period, the pay elements, the amount and purpose of each deduction, net pay and the amount paid, as required by Law 4/1953 and the Libro Unico del Lavoro.',
+    record_keeping: "Keep this payslip. It shows the pay period, the pay elements, the amount and purpose of each deduction, net pay and the amount paid. Its structure refers to Law 4/1953 and the Libro Unico del Lavoro; it has not been reviewed for legal compliance.",
     tfr_accrual_basis: 'The TFR quota shown accrued this month and is set aside by Avenlo under article 2120 of the Codice civile. It is not paid with your salary and is not a deduction. The year-to-date figure shows what has accrued since 1 January; the total fund set aside and its revaluation are communicated at year end.',
     ratei_basis: 'The thirteenth- and fourteenth-month accruals are shown for information and are not paid this month. The thirteenth month is paid in December; the fourteenth with the June salary.',
     query_window: 'If you believe an amount is wrong, raise a query from this payslip. Payroll aims to respond within two working days; this is a service target, not a legal commitment.',

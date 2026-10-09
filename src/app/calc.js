@@ -310,8 +310,11 @@ export function rewardSummary(record, profile) {
     cash, employer, noncash, otherBenefits, total, net,
     employeeDeductions: totals[def.deductionsTotal || 'employeeDeductions'] || 0,
     periodsPerYear,
-    annualised: periodsPerYear ? total * periodsPerYear : null,
-    annualisedNote: periodsPerYear ? 'periods' : 'none',
+    // An annual figure is only meaningful with the profile's annualisation rules (13th/14th-month pay,
+    // holiday and Christmas pay, one-off items, benefit-specific annual rules). No bundled profile
+    // supplies them, so no annual figure is produced rather than an unsupported period × N estimate.
+    annualised: def.annualisation ? null : null,
+    annualisedNote: 'rules-required',
     components: [
       { id: 'cash', amount: cash },
       { id: 'employer', amount: employer },
@@ -322,25 +325,75 @@ export function rewardSummary(record, profile) {
   };
 }
 
-/** Gross-to-net flow for the flow infographic: gross → deduction groups → net (+ other movements). */
+/**
+ * Gross-to-net flow: gross → deduction groups (and any additions) → net.
+ * Exact by construction for every profile: totals are linear in lines, so
+ *   net − gross = Σ (effect_on_net(line) − effect_on_gross(line)) × amount(line).
+ * Each line whose two effects differ is one step; negative steps are deductions,
+ * positive steps are additions (e.g. a German non-cash benefit that is in net but
+ * not in cash gross, or a reimbursement when net is the paid amount).
+ * Returns positive magnitudes grouped by line group, with the lines behind each group.
+ */
 export function grossToNetFlow(record, profile) {
   const { totals } = computeTotals(record.lines, profile);
   const memo = new Map();
   const netId = profile.primaryTotal;
-  const gross = totals[profile.reward && profile.reward.grossTotal ? profile.reward.grossTotal : 'gross'] || 0;
-  const groups = {};
+  const grossId = profile.reward && profile.reward.grossTotal ? profile.reward.grossTotal : 'gross';
+  const gross = totals[grossId] || 0;
+  const net = totals[netId] || 0;
+  const minus = {};
+  const plus = {};
   for (const line of record.lines) {
-    const effect = lineEffect(line, netId, profile, memo);
-    if (effect >= 0 || line.category === 'earning') continue;
+    const diff = lineEffect(line, netId, profile, memo) - lineEffect(line, grossId, profile, memo);
+    if (diff === 0 || line.amountMinor === 0) continue;
+    const signed = diff * line.amountMinor;
+    const bucket = signed < 0 ? minus : plus;
     const g = line.group || line.category;
-    groups[g] = (groups[g] || 0) + line.amountMinor;
+    const entry = bucket[g] || (bucket[g] = { group: g, amount: 0, lineIds: [], category: line.category });
+    entry.amount += Math.abs(signed);
+    entry.lineIds.push(line.id);
   }
-  const additions = {};
-  for (const line of record.lines) {
-    const effect = lineEffect(line, netId, profile, memo);
-    if (effect > 0 && line.category !== 'earning') additions[line.group || line.category] = (additions[line.group || line.category] || 0) + line.amountMinor;
+  const deductions = Object.values(minus).sort((a, b) => b.amount - a.amount);
+  const additions = Object.values(plus).sort((a, b) => b.amount - a.amount);
+  const deductionsTotal = deductions.reduce((x, d) => x + d.amount, 0);
+  const additionsTotal = additions.reduce((x, d) => x + d.amount, 0);
+  return { grossId, netId, gross, net, deductions, additions, deductionsTotal, additionsTotal, reconciles: gross - deductionsTotal + additionsTotal === net, totals };
+}
+
+/**
+ * Gross pay year to date: for each line counted in the gross total, the latest year-to-date value
+ * across this statement and earlier statements of the same tax year (lines absent this period still count).
+ * Returns null when the record carries no year-to-date values for gross lines.
+ */
+export function grossYearToDate(record, profile) {
+  const grossId = profile.reward && profile.reward.grossTotal ? profile.reward.grossTotal : 'gross';
+  const memo = new Map();
+  const year = record.document.taxYear && record.document.taxYear.label;
+  const latest = new Map();
+  const periods = [{ lines: record.lines, sameYear: true }, ...(record.history || []).map((h) => ({ lines: priorLines(h), sameYear: !year || !h.taxYearLabel || h.taxYearLabel === year }))];
+  for (const p of periods) {
+    if (!p.sameYear) continue;
+    for (const line of p.lines) {
+      if (typeof line.ytdMinor !== 'number' || latest.has(line.id)) continue;
+      if (lineEffect(line, grossId, profile, memo) !== 1) continue;
+      latest.set(line.id, line.ytdMinor);
+    }
   }
-  return { gross, net: totals[netId] || 0, deductions: Object.entries(groups).map(([group, amount]) => ({ group, amount })).sort((a, b) => b.amount - a.amount), additions: Object.entries(additions).map(([group, amount]) => ({ group, amount })), totals };
+  if (!latest.size) return null;
+  let total = 0;
+  for (const v of latest.values()) total += v;
+  return { grossId, amount: total, lineIds: Array.from(latest.keys()) };
+}
+
+/**
+ * Selection summary by category. Earnings, deductions and employer contributions are never added
+ * together; a single total is given only when every selected line shares one category.
+ */
+export function selectionSummary(lines) {
+  const byCategory = new Map();
+  for (const l of lines) byCategory.set(l.category, (byCategory.get(l.category) || 0) + l.amountMinor);
+  const categories = Array.from(byCategory.entries()).map(([category, amount]) => ({ category, amount }));
+  return { categories, single: categories.length === 1 ? categories[0] : null, count: lines.length };
 }
 
 /** Sum helper for arbitrary line selections (used by selection tray / Lumi). */

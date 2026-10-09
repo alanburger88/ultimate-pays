@@ -1184,7 +1184,7 @@ export const pack = {
   'reward.deductions_not_reward_note': 'Retenues sur votre paie. Elles ne font pas partie de la rémunération globale et ne sont pas incluses dans le total ci-dessus.',
   'reward.reimbursements_not_reward': 'Remboursements de frais de la période',
   'reward.reimbursements_not_reward_note': 'Frais remboursés, et non salaire. Ils ne font pas partie de la rémunération globale.',
-  'reward.annualised_unavailable': 'Le nombre de périodes de paie dans l’année ne figure pas dans ce document ; aucune estimation annuelle n’est donc affichée.',
+  "reward.annualised_unavailable": "Aucun montant annuel n’est affiché. Il dépendrait de versements supplémentaires et de règles propres aux avantages que ce bulletin ne fournit pas.",
   'reward.component': 'Composante',
   'reward.share': 'Part',
   'reward.subtotal': 'Sous-total',
@@ -1353,4 +1353,8 @@ export const pack = {
   'export.payment_particulars': 'Paiement',
   'export.no_rows': 'Aucune ligne',
   'export.print_footer': '{id} · {version} · {language} · {generated}',
+  "mypay.additions_note": "Votre salaire net comprend aussi {amount} provenant d’autres éléments, présentés dans le flux ci-dessous.",
+  "chart.alt_flow_additions": "Graphique de flux : salaire brut de {gross}, moins {deductions} de retenues, plus {additions} d’autres éléments, soit un salaire net de {net}.",
+  "story.cap_money_additions": "Votre salaire brut est de {gross}. Après {deductions} de retenues et {additions} provenant d’autres éléments, votre salaire net est de {net}.",
+  "story.other_items": "Autres éléments",
 };

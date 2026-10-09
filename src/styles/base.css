@@ -1,5 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--pl-sticky-h, 0px) + 8px); scroll-padding-bottom: calc(var(--pl-launcher-safe) + var(--pl-tray-h, 0px)); }
+/* While typing on a narrow or short screen, the floating launcher and selection tray step aside so the field stays visible. */
+:root[data-typing="true"] .pl-launcher, :root[data-typing="true"] .pl-tray { display: none; }
 body {
   margin: 0;
   font-family: var(--pl-font);
@@ -88,16 +90,20 @@ small, .small { font-size: var(--pl-size-sm); }
 .pl-masthead-net { margin-left: auto; text-align: right; }
 .pl-masthead-net .lbl { display: block; font-size: var(--pl-size-xs); color: var(--pl-muted); }
 .pl-masthead-net .val { font-size: var(--pl-size-lg); font-weight: 700; font-variant-numeric: tabular-nums; }
-.pl-masthead-tools { display: flex; gap: var(--pl-space-1); align-items: center; }
+.pl-masthead-tools { display: flex; flex-wrap: wrap; gap: var(--pl-space-1); align-items: center; min-width: 0; max-width: 100%; }
+.pl-masthead-tools .pl-select { width: auto; max-width: 100%; min-width: 0; min-height: 40px; }
 @media (max-width: 720px) {
   .pl-masthead { position: static; }
   .pl-masthead-facts { order: 3; flex-basis: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; }
   .pl-masthead-facts span { min-width: 0; overflow-wrap: anywhere; }
   .pl-masthead-net { margin-left: auto; }
-  .pl-nav { top: 0; }
 }
 @media (max-width: 360px) {
   .pl-masthead-facts { grid-template-columns: 1fr; }
+}
+/* Short viewports (landscape phones, software keyboard open): nothing sticks, so content is never covered. */
+@media (max-height: 500px) {
+  .pl-masthead, .pl-nav { position: static; }
 }
 
 /* Tabs / section nav -------------------------------------------------------------- */
@@ -108,6 +114,8 @@ small, .small { font-size: var(--pl-size-sm); }
 .pl-tab[aria-selected="true"] { color: var(--pl-accent); border-bottom-color: var(--pl-accent); }
 .pl-nav-mobile { display: none; }
 @media (max-width: 720px) {
+  /* The masthead scrolls away on mobile, so the section selector sticks to the very top. */
+  .pl-nav { top: 0; }
   .pl-tabs { display: none; }
   .pl-nav-mobile { display: block; padding: var(--pl-space-2) 0; }
   .pl-nav-mobile .pl-btn { width: 100%; justify-content: space-between; }

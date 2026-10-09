@@ -1,6 +1,7 @@
 /** Shared presentational pieces used across sections. */
 import { h, icon } from '../../app/dom.js';
 import { openPopover } from './overlay.js';
+import { selectionSummary } from '../../app/calc.js';
 
 /** A money amount element. Respects presentation privacy (blur until activated). */
 export function amount(ctx, minor, { sign = 'auto', cls = '', currency = null, tag = 'span' } = {}) {
@@ -83,17 +84,21 @@ export function sectionHeader(ctx, title, intro, actions = null) {
 }
 
 /** Chart/table toggle wrapper. In low-data mode or when emphasis is 'table', the table is shown first. */
+/** The employee's chart/table choice per chart, kept across re-renders and section changes for this page. */
+const chartViewChoice = new Map();
+
 export function chartWithTable(ctx, { chart, table, label, defaultView = null }) {
   const lowData = ctx.lowData();
   const emphasis = ctx.store.get().prefs.presentation.emphasis || 'balanced';
-  let view = defaultView || (lowData || emphasis === 'table' ? 'table' : 'chart');
+  const choiceKey = `${ctx.store.get().nav.section}|${label}`;
+  let view = chartViewChoice.get(choiceKey) || defaultView || (lowData || emphasis === 'table' ? 'table' : 'chart');
   if (lowData) view = 'table';
   const host = h('div', { class: 'pl-chart-host' });
   const chartEl = h('div', { class: 'pl-chart-view' }, chart);
   const tableEl = h('div', { class: 'pl-chart-table' }, table);
   const toggle = lowData ? h('p', { class: 'muted xs' }, ctx.t('chart.low_data')) : h('div', { class: 'pl-seg', role: 'group', aria: { label } },
-    h('button', { type: 'button', aria: { pressed: String(view === 'chart') }, on: { click: () => set('chart') } }, icon('trend', { size: 16 }), ctx.t('common.chart')),
-    h('button', { type: 'button', aria: { pressed: String(view === 'table') }, on: { click: () => set('table') } }, icon('table', { size: 16 }), ctx.t('common.table')),
+    h('button', { type: 'button', dataset: { focusKey: `${choiceKey}|chart` }, aria: { pressed: String(view === 'chart') }, on: { click: () => { chartViewChoice.set(choiceKey, 'chart'); set('chart'); } } }, icon('trend', { size: 16 }), ctx.t('common.chart')),
+    h('button', { type: 'button', dataset: { focusKey: `${choiceKey}|table` }, aria: { pressed: String(view === 'table') }, on: { click: () => { chartViewChoice.set(choiceKey, 'table'); set('table'); } } }, icon('table', { size: 16 }), ctx.t('common.table')),
   );
   function set(v) {
     view = v;
@@ -119,3 +124,15 @@ export function dataTable(ctx, { caption = null, cols, rows, foot = null, compac
 
 /** Mobile detection shared by sections: cards under 720px. */
 export function isNarrow() { return window.matchMedia('(max-width: 720px)').matches; }
+
+/**
+ * Totals for a set of selected lines. Earnings, deductions and employer contributions are never added
+ * together: one total when every line shares a category, otherwise one subtotal per category.
+ * Returns [{ label, minor }].
+ */
+export function selectionTotals(ctx, lines) {
+  const sum = selectionSummary(lines);
+  if (!sum.count) return [];
+  if (sum.single) return [{ label: ctx.t('select.selected_total'), minor: sum.single.amount }];
+  return sum.categories.map((c) => ({ label: ctx.content.category(c.category), minor: c.amount }));
+}

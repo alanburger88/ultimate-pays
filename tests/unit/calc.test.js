@@ -56,13 +56,36 @@ test('reward excludes employee deductions and reimbursements', () => {
   assert.equal(r.employer, 48177);
   assert.equal(r.noncash, 850);
   assert.equal(r.total, 312000 + 48177 + 850);
-  assert.equal(r.annualised, r.total * 26);
+  // No annual figure without the profile's annualisation rules (PRD §11: extra periods and benefit rules matter).
+  assert.equal(r.annualised, null);
 });
 
-test('gross-to-net flow groups deductions and totals to net', () => {
-  const f = grossToNetFlow(record, profile);
-  const deducted = f.deductions.reduce((s, d) => s + d.amount, 0);
-  assert.equal(f.gross - deducted, f.net);
+test('gross-to-net flow reconciles exactly for every bundled record', async () => {
+  const registry = await import('../../src/data/index.js');
+  for (const [pid, prof] of Object.entries(registry.profiles)) {
+    for (const rec of registry.records[pid]) {
+      const f = grossToNetFlow(rec, prof);
+      assert.equal(f.gross - f.deductionsTotal + f.additionsTotal, f.net, `${pid}/${rec.scenario.id}`);
+      assert.equal(f.reconciles, true);
+    }
+  }
+});
+
+test('gross year to date includes earnings paid earlier in the tax year', async () => {
+  const { grossYearToDate } = await import('../../src/app/calc.js');
+  const y = grossYearToDate(record, profile);
+  // Base salary YTD 60,000.00 + retro 120.00 + spot bonus 500.00 paid in an earlier period.
+  assert.equal(y.amount, 6000000 + 12000 + 50000);
+  assert.ok(y.lineIds.includes('e-bonus'));
+});
+
+test('selection summary never adds categories together', async () => {
+  const { selectionSummary } = await import('../../src/app/calc.js');
+  const lines = record.lines.filter((l) => ['e-base', 'd-tax', 'er-cpp'].includes(l.id));
+  const s = selectionSummary(lines);
+  assert.equal(s.single, null);
+  assert.equal(s.categories.length, 3);
+  assert.deepEqual(selectionSummary(lines.slice(0, 1)).single, { category: 'earning', amount: 300000 });
 });
 
 test('comparison table spans current and history with stable ids', () => {

@@ -13,7 +13,7 @@
  */
 import { h, icon, debounce } from '../../app/dom.js';
 import { registerStrings } from '../../app/i18n.js';
-import { lineEffect } from '../../app/calc.js';
+import { lineEffect, grossYearToDate, varianceBridge } from '../../app/calc.js';
 import { amount, delta, kpi, sectionHeader, chartWithTable, dataTable, termButton, notice, isNarrow } from '../components/common.js';
 
 registerStrings({
@@ -79,25 +79,23 @@ function buildModel(ctx) {
   const sections = ctx.sections().map((s) => s.id);
   const net = totals[primaryId] || 0;
   const payable = totals[payableId];
+  // KPI figures come from the exact gross-to-net flow, so gross − deductions (+ other items) = net always holds.
+  const flow = computed.flow;
+  const issuedDeductionsMatch = deductionsId && totals[deductionsId] === flow.deductionsTotal;
   return {
     record, profile, computed, totals, memo,
-    primaryId, payableId, grossId, deductionsId,
+    primaryId, payableId, grossId, deductionsId: issuedDeductionsMatch ? deductionsId : null,
     net,
-    gross: totals[grossId],
-    deductions: deductionsId ? totals[deductionsId] : null,
-    deductionLines: deductionsId ? record.lines.filter((l) => lineEffect(l, deductionsId, profile, memo) !== 0).length : 0,
+    gross: flow.gross,
+    deductions: flow.deductionsTotal,
+    additions: flow.additionsTotal,
+    deductionLines: flow.deductions.reduce((n, d) => n + d.lineIds.length, 0),
     payable,
     paidDiffers: typeof payable === 'number' && payable !== net,
     bridge: computed.bridge || null,
     has: (id) => sections.includes(id),
     period: ctx.fmt.period(record.document.period),
   };
-}
-
-/** Category to filter Pay details by for a flow group: the category of the lines in that group with the given effect sign on net. */
-function categoryForGroup(m, group, sign) {
-  const line = m.record.lines.find((l) => (l.group || l.category) === group && Math.sign(lineEffect(l, m.primaryId, m.profile, m.memo)) === sign);
-  return line ? line.category : 'all';
 }
 
 // ---------------------------------------------------------------------------
@@ -153,7 +151,7 @@ export function render(ctx) {
     adjustmentsBlock(ctx, m),
     h('div', { class: 'grid-2 pl-mp-pair' }, sinceLastBlock(ctx, m), attentionBlock(ctx, m)),
     flowBlock(ctx, m),
-    (m.computed.reward && m.computed.reward.employer > 0) || ctx.modules().story
+    employerFigure(ctx, m).amount > 0 || ctx.modules().story
       ? h('div', { class: 'grid-2 pl-mp-pair' }, employerBlock(ctx, m), storyBlock(ctx, m))
       : null,
     reconciliationBlock(ctx, m),
@@ -166,10 +164,13 @@ function kpiBlock(ctx, m) {
   const t = ctx.t;
   const { content } = ctx;
   const cards = [];
+  const reconcile = m.has('pay-details')
+    ? h('button', { class: 'pl-btn-link pl-mp-recon-link', type: 'button', dataset: { focusKey: 'mypay-net-recon' }, on: { click: () => ctx.actions.go('pay-details', { view: 'totals', push: true }) } }, t('mypay.reconciliation'), icon('forward', { size: 14 }))
+    : null;
   cards.push(kpi(ctx, {
-    label: labelWithTerm(ctx, t('mypay.net_pay'), 'net_pay'),
+    label: labelWithTerm(ctx, content.total(m.primaryId) || t('mypay.net_pay'), 'net_pay'),
     value: amount(ctx, m.net),
-    sub: content.totalPlain(m.primaryId) || null,
+    sub: h('span', null, content.totalPlain(m.primaryId) || '', reconcile ? h('br') : null, reconcile),
     size: 'big', cls: 'pl-card-accent pl-mp-kpi pl-mp-kpi-net',
   }));
   if (typeof m.gross === 'number') {
@@ -184,7 +185,10 @@ function kpiBlock(ctx, m) {
     cards.push(kpi(ctx, {
       label: t('mypay.deductions'),
       value: amount(ctx, m.deductions),
-      sub: h('span', null, content.total(m.deductionsId), ' · ', t('mypay.deduction_lines', { count: m.deductionLines })),
+      sub: h('span', null,
+        m.deductionsId ? [content.total(m.deductionsId), ' · '] : null,
+        t('mypay.deduction_lines', { count: m.deductionLines }),
+        m.additions ? [h('br'), withAmount(ctx, 'mypay.additions_note', {}, amount(ctx, m.additions), { tag: 'span' })] : null),
       cls: 'pl-mp-kpi',
     }));
   }
@@ -290,11 +294,11 @@ function pinCards(ctx, m, pin) {
     }
     case 'employer':
       return [pinCard(ctx, m, { key: pin, label: t('mine.pin_employer'), section: 'total-reward',
-        value: amount(ctx, computed.reward ? computed.reward.employer : 0), sub: m.period })];
+        value: amount(ctx, employerFigure(ctx, m).amount), sub: employerFigure(ctx, m).label })];
     case 'ytd': {
-      const ytd = record.lines.filter((l) => l.category === 'earning' && typeof l.ytdMinor === 'number').reduce((s, l) => s + l.ytdMinor, 0);
+      const ytdInfo = grossYearToDate(record, m.profile);
       const label = ctx.content.glossary('ytd') ? termButton(ctx, 'ytd', t('common.ytd')) : t('common.ytd');
-      return [pinCard(ctx, m, { key: pin, label, section: 'pay-details', value: amount(ctx, ytd),
+      return [pinCard(ctx, m, { key: pin, label, section: 'pay-details', value: ytdInfo ? amount(ctx, ytdInfo.amount) : t('common.not_available'),
         sub: t('mypay.pin_ytd_sub', { total: ctx.content.total(m.grossId) }) })];
     }
     default:
@@ -327,10 +331,14 @@ function sinceLastBlock(ctx, m) {
   const change = b.change;
   const key = change > 0 ? 'mypay.change_up' : change < 0 ? 'mypay.change_down' : 'mypay.change_none';
   const id = 'mypay-since-h';
+  const prior = (m.record.history || [])[0];
+  const paidChange = m.paidDiffers && prior ? varianceBridge(m.record, prior, m.profile, m.payableId).change : null;
   return h('section', { class: 'pl-card pl-mp-since', aria: { labelledby: id } },
     cardHeading(ctx, t('mypay.since_last'), 'trend', id),
+    h('span', { class: 'muted small pl-mp-since-lbl' }, ctx.content.total(b.totalId)),
     delta(ctx, change, { cls: 'big' }),
     withAmount(ctx, key, { period: ctx.fmt.period(b.periodFrom) }, amount(ctx, Math.abs(change)), { tag: 'p' }),
+    paidChange !== null ? h('p', { class: 'small' }, `${ctx.content.total(m.payableId)}: `, delta(ctx, paidChange)) : null,
     m.has('what-changed')
       ? h('button', { class: 'pl-btn', type: 'button', dataset: { focusKey: 'mypay-see-why' }, on: { click: () => ctx.actions.go('what-changed', { push: true }) } }, t('mypay.see_why'), icon('forward', { size: 16 }))
       : null,
@@ -407,19 +415,19 @@ function attentionBlock(ctx, m) {
 function flowRows(ctx, m) {
   const flow = m.computed.flow;
   const { content } = ctx;
-  const rows = [{ kind: 'gross', label: content.total(m.grossId), minor: flow.gross, category: 'earning' }];
+  const rows = [{ kind: 'gross', label: content.total(m.grossId), minor: flow.gross, category: 'earning', lineIds: [] }];
   let running = flow.gross;
   let scale = Math.max(flow.gross, flow.net, 1);
   for (const d of flow.deductions) {
     running -= d.amount;
-    rows.push({ kind: 'ded', label: content.group(d.group), minor: d.amount, left: running, category: categoryForGroup(m, d.group, -1) });
+    rows.push({ kind: 'ded', label: content.group(d.group), minor: d.amount, left: running, category: d.category, lineIds: d.lineIds });
   }
   for (const a of flow.additions) {
-    rows.push({ kind: 'add', label: content.group(a.group), minor: a.amount, left: running, category: categoryForGroup(m, a.group, 1) });
+    rows.push({ kind: 'add', label: content.group(a.group), minor: a.amount, left: running, category: a.category, lineIds: a.lineIds });
     running += a.amount;
     scale = Math.max(scale, running);
   }
-  rows.push({ kind: 'net', label: content.total(m.primaryId), minor: flow.net, category: 'all' });
+  rows.push({ kind: 'net', label: content.total(m.primaryId), minor: flow.net, category: 'all', lineIds: [] });
   for (const r of rows) {
     const left = r.kind === 'gross' || r.kind === 'net' ? 0 : Math.max(0, r.left);
     r.leftPct = Math.min(100, (left / scale) * 100);
@@ -429,12 +437,17 @@ function flowRows(ctx, m) {
   return rows;
 }
 
+/** One action back to the source: a deduction or addition opens its first line; net opens the totals reconciliation. */
+function openFlowRow(ctx, r) {
+  if (r.kind === 'net') { ctx.actions.go('pay-details', { view: 'totals', push: true }); return; }
+  goToDetails(ctx, r.category, r.lineIds && r.lineIds.length ? r.lineIds[0] : null);
+}
+
 function flowBlock(ctx, m) {
   const t = ctx.t;
   const flow = m.computed.flow;
   if (!flow || !(flow.gross > 0)) return null;
   const rows = flowRows(ctx, m);
-  const deductionsTotal = flow.deductions.reduce((s, d) => s + d.amount, 0);
   const animate = !flowAnimated && !ctx.reducedMotion();
   flowAnimated = true;
   const bars = [];
@@ -444,7 +457,7 @@ function flowBlock(ctx, m) {
     const bar = h('span', { class: 'bar', style: { left: `${r.leftPct}%`, width: animate ? '0%' : `${r.widthPct}%` } });
     bars.push([bar, r.widthPct]);
     return h('div', { class: ['pl-flow-row', r.kind], role: 'listitem' },
-      h('button', { class: 'pl-mp-flow-btn', type: 'button', dataset: { focusKey: `mypay-flow-${i}` }, on: { click: () => goToDetails(ctx, r.category) } },
+      h('button', { class: 'pl-mp-flow-btn', type: 'button', dataset: { focusKey: `mypay-flow-${i}` }, on: { click: () => openFlowRow(ctx, r) } },
         h('span', { class: 'lbl' }, prefix(r.kind), r.label),
         h('span', { class: 'track', aria: { hidden: 'true' } }, bar),
       ),
@@ -454,13 +467,15 @@ function flowBlock(ctx, m) {
   if (animate) requestAnimationFrame(() => requestAnimationFrame(() => { for (const [bar, w] of bars) bar.style.width = `${w}%`; }));
 
   const chart = h('div', { class: 'pl-mp-flow' },
-    h('p', { class: 'sr-only' }, t('chart.alt_flow', { gross: ctx.fmt.money(flow.gross), deductions: ctx.fmt.money(deductionsTotal), net: ctx.fmt.money(flow.net) })),
+    h('p', { class: 'sr-only' }, flow.additionsTotal
+      ? t('chart.alt_flow_additions', { gross: ctx.fmt.money(flow.gross), deductions: ctx.fmt.money(flow.deductionsTotal), additions: ctx.fmt.money(flow.additionsTotal), net: ctx.fmt.money(flow.net) })
+      : t('chart.alt_flow', { gross: ctx.fmt.money(flow.gross), deductions: ctx.fmt.money(flow.deductionsTotal), net: ctx.fmt.money(flow.net) })),
     list,
     h('p', { class: 'muted xs pl-mp-flow-hint' }, t('mypay.flow_hint')),
   );
   // Narrow screens: two columns, with the share of gross under the amount, so nothing needs horizontal scrolling at 320 px.
   const narrow = isNarrow();
-  const stepCol = { key: 'step', label: t('mypay.flow_step'), render: (r) => h('button', { class: 'pl-btn-link pl-mp-flow-link', type: 'button', on: { click: () => goToDetails(ctx, r.category) } }, `${prefix(r.kind)}${r.label}`) };
+  const stepCol = { key: 'step', label: t('mypay.flow_step'), render: (r) => h('button', { class: 'pl-btn-link pl-mp-flow-link', type: 'button', on: { click: () => openFlowRow(ctx, r) } }, `${prefix(r.kind)}${r.label}`) };
   const shareText = (r) => ctx.fmt.percent(r.sharePermyriad, 1);
   const cols = narrow
     ? [stepCol, { key: 'amt', label: `${t('common.amount')} · ${t('mypay.flow_share')}`, num: true, render: (r) => h('span', { class: 'pl-mp-flow-cell' }, amount(ctx, r.minor), h('span', { class: 'muted xs share' }, shareText(r))) }]
@@ -482,16 +497,23 @@ function flowBlock(ctx, m) {
 
 // --- Employer adds / story ----------------------------------------------------------------------
 
+/** The employer figure to show: the issued employer-contributions total under its governed name when the profile defines one. */
+function employerFigure(ctx, m) {
+  const id = m.profile.totals.some((d) => d.id === 'employerContributions') ? 'employerContributions' : null;
+  if (id && typeof m.totals[id] === 'number') return { amount: m.totals[id], label: ctx.content.total(id) };
+  return { amount: m.computed.reward ? m.computed.reward.employer : 0, label: ctx.t('reward.employer') };
+}
+
 function employerBlock(ctx, m) {
   const t = ctx.t;
-  const reward = m.computed.reward;
-  if (!reward || !(reward.employer > 0)) return null;
+  const fig = employerFigure(ctx, m);
+  if (!(fig.amount > 0)) return null;
   const id = 'mypay-employer-h';
   return h('section', { class: 'pl-card pl-mp-cta', aria: { labelledby: id } },
     icon('gift', { size: 22 }),
     h('div', { class: 'txt' },
-      h('h2', { id, class: 'pl-mp-h3' }, t('reward.employer')),
-      withAmount(ctx, 'mypay.employer_adds_generic', {}, amount(ctx, reward.employer), { tag: 'p' }),
+      h('h2', { id, class: 'pl-mp-h3' }, fig.label),
+      withAmount(ctx, 'mypay.employer_adds_generic', {}, amount(ctx, fig.amount), { tag: 'p' }),
       h('p', { class: 'muted small' }, t('details.employer_note')),
       m.has('total-reward')
         ? h('button', { class: 'pl-btn', type: 'button', dataset: { focusKey: 'mypay-reward' }, on: { click: () => ctx.actions.go('total-reward', { push: true }) } }, t('mypay.view_reward'), icon('forward', { size: 16 }))

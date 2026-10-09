@@ -29,7 +29,7 @@ export function renderMasthead(ctx) {
   );
   return h('header', { class: 'pl-masthead', role: 'banner' },
     h('div', { class: 'pl-wrap' },
-      h('a', { class: 'pl-brand', href: '#', on: { click: (e) => { e.preventDefault(); ctx.actions.go(ctx.config.startSection); } } },
+      h('a', { class: 'pl-brand', href: '#', on: { click: (e) => { e.preventDefault(); ctx.actions.go(ctx.config.homeSection || ctx.config.startSection, { push: true }); } } },
         h('span', { class: 'pl-brand-mark', aria: { hidden: 'true' } }, (branding.name || 'Paylight').slice(0, 1)),
         h('span', null, branding.name || t('app.name'), h('small', null, ctx.content.document('title'))),
       ),
@@ -43,7 +43,7 @@ function languageControl(ctx) {
   const t = ctx.t;
   const locales = ctx.config.approvedLocales.filter((l) => ctx.doc.registry.languages[l]);
   if (locales.length < 2) return null;
-  const select = h('select', { class: 'pl-select', style: { minWidth: '0', width: 'auto', minHeight: '40px' }, aria: { label: t('app.language') }, on: { change: (e) => ctx.actions.setLocale(e.target.value) } },
+  const select = h('select', { class: 'pl-select', aria: { label: t('app.language') }, on: { change: (e) => ctx.actions.setLocale(e.target.value) } },
     locales.map((l) => h('option', { value: l, selected: l === ctx.locale ? true : null }, LANGUAGE_NAMES[l] || l)),
   );
   return select;
@@ -60,7 +60,8 @@ export function renderNav(ctx) {
     )),
   );
   const currentSection = sections.find((s) => s.id === current) || sections[0];
-  const mobileBtn = h('button', { class: 'pl-btn', type: 'button', aria: { haspopup: 'dialog', label: t('nav.open_menu') }, on: { click: () => openSectionSheet(ctx) } },
+  // The visible text ("Sections: Time & leave") is the accessible name, so speech users can say what they see.
+  const mobileBtn = h('button', { class: 'pl-btn', type: 'button', title: t('nav.open_menu'), aria: { haspopup: 'dialog' }, on: { click: () => openSectionSheet(ctx) } },
     h('span', null, h('span', { class: 'muted small' }, `${t('nav.sections')}: `), h('b', null, t(currentSection.titleKey))), icon('down'));
   const mobile = h('div', { class: 'pl-nav-mobile' }, mobileBtn);
   return h('nav', { class: 'pl-nav', id: 'pl-nav', aria: { label: t('nav.sections') } }, h('div', { class: 'pl-wrap' }, tabs, mobile));
@@ -75,7 +76,7 @@ function onTabKey(e, sections, id, ctx) {
   else if (e.key === 'End') next = sections[sections.length - 1];
   if (!next) return;
   e.preventDefault();
-  ctx.actions.go(next.id, { push: true });
+  ctx.actions.go(next.id, { push: true, focus: false });
   const btn = document.getElementById(`tab-${next.id}`);
   if (btn) btn.focus();
 }

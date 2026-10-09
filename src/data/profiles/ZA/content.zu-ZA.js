@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Isiliphu somholo',
     subtitle: 'Isitatimende somholo',
-    recordKind: 'Isiliphu somholo (uMthetho weMibandela Eyisisekelo Yokuqashwa — Basic Conditions of Employment Act, isigaba 33)',
+    recordKind: "Isiliphu somholo (sakhiwe ngokubheka isigaba 33 soMthetho weMibandela Eyisisekelo Yokuqashwa; asikahlolwa ngokomthetho)",
   },
   categories: { earning: 'Umholo', deduction: 'Izimali ezidonswayo', employer: 'Iminikelo yenkampani', reimbursement: 'Izimbuyiselo zezindleko', noncash: 'Izinzuzo ezengeziwe (ezingakhokhwa ngemali)', advance: 'Izimali zakusengaphambili', info: 'Ulwazi' },
   groups: { regular: 'Iholo eliyisisekelo', overtime: 'I-ovathayimu', premium: 'Umsebenzi wangeSonto nowamaholide omphakathi', leave: 'Ikhefu', bonus: 'Ibhonasi', adjustment: 'Izilungiso', tax: 'Intela yengeniso', social: 'Iminikelo efunwa ngumthetho', retirement: 'Isikhwama somhlalaphansi', health: 'Usizo lwezempilo', union: 'Inyunyana', expenses: 'Izindleko', benefit: 'Izinzuzo', garnishment: 'Imiyalelo yenkantolo', other: 'Okunye' },
@@ -65,7 +65,7 @@ export const content = {
     sick_leave: { term: 'Ikhefu lokugula', short: 'Ikhefu elikhokhelwayo lokugula, elitholakala emjikelezweni weminyaka emithathu.' },
   },
   disclosures: {
-    record_keeping: 'Gcina lesi siliphu somholo njengerekhodi lakho. Sikhombisa isikhathi okukhokhelwa sona, umholo wakho ngemali, inani nenhloso yemali ngayinye edonswayo, kanye nemali ekhokhwe ngempela, njengoba kufunwa yisigaba 33 soMthetho weMibandela Eyisisekelo Yokuqashwa (Basic Conditions of Employment Act).',
+    record_keeping: "Gcina lesi siliphu somholo njengerekhodi lakho. Sikhombisa isikhathi okukhokhelwa sona, umholo wakho ngemali, inani nenhloso yemali ngayinye edonswayo, kanye nemali ekhokhwe ngempela. Ukwakheka kwaso kulandela isigaba 33 soMthetho weMibandela Eyisisekelo Yokuqashwa (Basic Conditions of Employment Act) njengesiqondiso; asikahlolwa ukuthi siyahambisana yini nomthetho.",
     bcea_hours_statement: 'Amahora ajwayelekile asetshenziwe, amahora e-ovathayimu kanye nanoma yimaphi amahora asetshenzwe ngamaSonto noma ngamaholide omphakathi akhonjiswa esigabeni esithi Isikhathi nekhefu, kanye nesilinganiso somholo esisetshenziselwe i-ovathayimu.',
     constructed_notice: 'Leli rekhodi lakhelwe ukwethulwa kuphela futhi alikhishwanga ngumqashi. Alibona ubufakazi bomholo.',
     query_window: 'Uma ukholwa ukuthi kukhona inani elingalungile, faka umbuzo usuka kulesi siliphu somholo. I-Avenlo People Services ihlose ukuphendula ezinsukwini ezimbili zokusebenza; lokhu kuyinhloso yesevisi, hhayi isibopho esingokomthetho.',

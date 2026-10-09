@@ -3,7 +3,7 @@ export const content = {
   document: {
     title: 'Bulletin de paie (cedolino paga)',
     subtitle: 'Bulletin de paie mensuel',
-    recordKind: 'Prospetto paga (loi n° 4 du 5 janvier 1953 — Libro Unico del Lavoro)',
+    recordKind: "Prospetto paga (structure établie en référence à la loi n° 4 du 5 janvier 1953 et au Libro Unico del Lavoro ; conformité juridique non encore vérifiée)",
   },
   categories: { earning: 'Éléments de rémunération (competenze)', deduction: 'Retenues (trattenute)', employer: 'Charges patronales (oneri a carico azienda)', reimbursement: 'Remboursements non imposables', noncash: 'Avantages en nature (fringe benefit)', advance: 'Acomptes', info: 'Quotes-parts acquises (ratei) et informations' },
   groups: { regular: 'Rémunération ordinaire', overtime: 'Heures supplémentaires (straordinario)', premium: 'Majorations et indemnités', leave: 'Absences rémunérées', bonus: 'Mensualités supplémentaires et primes', adjustment: 'Rappels et régularisations (arretrati e conguagli)', tax: 'Retenues fiscales', social: 'Cotisations sociales et d’assurance', retirement: 'Retraite et TFR', health: 'Couverture santé', union: 'Cotisations syndicales', expenses: 'Remboursements de frais', benefit: 'Avantages', garnishment: 'Saisies et cessions', other: 'Autres' },
@@ -89,7 +89,7 @@ export const content = {
     ytd: { term: 'Cumul annuel (progressivo annuo)', short: 'Le total depuis le 1er janvier de l’année fiscale, mois en cours compris.', long: 'En Italie, l’année fiscale correspond à l’année civile. Les cumuls incluent le bulletin en cours.' },
   },
   disclosures: {
-    record_keeping: 'Conservez ce bulletin de paie. Il indique la période de paie, les éléments de la rémunération, le montant et le motif de chaque retenue, le net à payer et le montant versé, comme le prévoient la loi 4/1953 et le Libro Unico del Lavoro.',
+    record_keeping: "Conservez ce bulletin de paie. Il indique la période de paie, les éléments de la rémunération, le montant et le motif de chaque retenue, le net à payer et le montant versé. Sa structure se réfère à la loi 4/1953 et au Libro Unico del Lavoro ; sa conformité juridique n’a pas été vérifiée.",
     tfr_accrual_basis: 'La quote-part de TFR indiquée a été acquise ce mois-ci et est provisionnée par Avenlo conformément à l’article 2120 du Codice civile. Elle n’est pas payée avec votre salaire et n’est pas une retenue. Le cumul annuel indique ce qui a été acquis depuis le 1er janvier ; le fonds total provisionné et sa revalorisation sont communiqués en fin d’année.',
     ratei_basis: 'Les quotes-parts de tredicesima et de quattordicesima sont affichées pour information et ne sont pas payées ce mois-ci. La tredicesima est payée en décembre ; la quattordicesima avec le salaire de juin.',
     query_window: 'Si un montant vous paraît inexact, posez une question depuis ce bulletin. Le service paie s’efforce de répondre sous deux jours ouvrés ; c’est un objectif de service, non un engagement légal.',
