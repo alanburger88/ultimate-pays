@@ -91,3 +91,11 @@ test('required time particulars keep Time & leave on in every preset', () => {
   const on = resolveConfig({ launch: { region: 'CA-ON', preset: 'core' }, prefs: {}, studioSettings: null, registry });
   assert.equal(on.modules.timeLeave, false);
 });
+
+test('wallet emulation can be switched off by deployment configuration', async () => {
+  const { validatePresentation } = await import('../../src/app/config.js');
+  const on = validatePresentation({ integrations: { wallet: {} } });
+  assert.equal(on.integrations.wallet.emulate, undefined, 'default leaves emulation on');
+  const off = validatePresentation({ integrations: { wallet: { emulate: false } } });
+  assert.equal(off.integrations.wallet.emulate, false);
+});

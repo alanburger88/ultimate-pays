@@ -134,6 +134,8 @@ export function validatePresentation(input, notices = []) {
         if (v && typeof v === 'object' && safeEndpoint(v.endpoint)) out.integrations.wallet[p] = { endpoint: safeEndpoint(v.endpoint) };
         else if (v !== undefined && v !== null) notices.push({ level: 'warning', key: 'config.import_field_ignored', params: { field: `integrations.wallet.${p}` } });
       }
+      // Wallets without an issuing service run an on-screen add flow unless this is false.
+      if (typeof input.integrations.wallet.emulate === 'boolean') out.integrations.wallet.emulate = input.integrations.wallet.emulate;
     }
   }
   for (const k of Object.keys(input)) {
