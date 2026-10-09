@@ -19,6 +19,7 @@ export const profile = {
   group: 'north-america' | 'africa' | 'europe',           // navigation group only — not a legal ruleset
   currency: 'CAD', locales: ['en-CA', 'fr-CA'], defaultLocale: 'en-CA', statutoryLocale: 'en-CA',
   paper: 'letter' | 'a4',
+  timeZone: 'America/Toronto',   // IANA zone of the issuer: issue times are shown in it, with the zone named
   taxYear: { startMonth: 1, startDay: 1, basisKey: 'ytd.basis.calendar_year' },   // ZA: startMonth 3, 'ytd.basis.march_year'
   payFrequency: 'biweekly' | 'monthly' | 'weekly' | 'semimonthly',
   entity: { legalName, tradingName, address: { lines: [], city, region, postalCode, country }, registrations: [{ key, valueMasked }] },

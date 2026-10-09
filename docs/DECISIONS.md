@@ -35,3 +35,4 @@ The PRD (v0.1) states its decisions are recommended defaults pending confirmatio
 8. **Performance budget**: the agreed mid-range device/network profile for the measurements in `node scripts/measure.js`.
 9. **Brand**: Paylight/Lumi/Avenlo are working names and are not trademark-cleared.
 10. **Record corrections**: the supersession flow (new linked issue, older versions preserved) is modelled in the data but no correction scenario is bundled — add one?
+11. **PDF character coverage**: the PDF uses the standard Helvetica font, which covers Western European text. A record containing other characters (for example Ł, ő or ş in a name) is refused with a message pointing to Print, rather than altered. Embedding a broader licensed font would remove that limit at a cost of roughly 100–300 KiB per build. Which font, if any, should be licensed and embedded?

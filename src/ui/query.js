@@ -409,13 +409,13 @@ export function openQuery(ctx, opts = {}) {
       if (draft.lastError === 'duplicate') body.push(h('p', { class: 'strong' }, t('query.duplicate_blocked', { reference: draft.caseReference })));
       else body.push(h('p', { class: 'strong' }, t('query.submitted')));
       body.push(h('p', null, t('query.case_reference', { reference: draft.caseReference })));
-      if (draft.acknowledgedAt) body.push(h('p', null, t('query.submitted_at', { date: ctx.fmt.dateTime(draft.acknowledgedAt) })));
+      if (draft.acknowledgedAt) body.push(h('p', null, t('query.submitted_at', { date: ctx.fmt.dateTime(draft.acknowledgedAt, { local: true }) })));
       body.push(draft.nextStep ? h('p', null, `${t('query.next_step')}: `, h('span', { class: 'pl-query-next-step' }, draft.nextStep)) : h('p', { class: 'muted small' }, t('query.response_time_unknown')));
     } else if (s === 'saved_offline') {
       kind = 'warn';
       body.push(h('p', { class: 'strong' }, draft.lastError === 'offline' ? t('query.offline_saved') : draft.lastError === 'no_token' ? t('query.not_signed_in') : t('query.no_service')));
       if (draft.lastError !== 'offline') body.push(h('p', { class: 'muted small' }, t('query.offline_saved')));
-      body.push(h('p', { class: 'muted small' }, t('query.saved_at', { date: ctx.fmt.dateTime(draft.updatedAt) })));
+      body.push(h('p', { class: 'muted small' }, t('query.saved_at', { date: ctx.fmt.dateTime(draft.updatedAt, { local: true }) })));
     } else if (s === 'failed') {
       kind = 'error';
       if (draft.lastError === 'interrupted') body.push(h('p', { class: 'strong' }, t('query.interrupted')));

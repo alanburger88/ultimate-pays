@@ -723,8 +723,8 @@ function queryItem(ctx, d) {
       entries ? h('span', null, t('record.query_entries', { count: entries })) : null,
       d.tag ? h('span', null, t('tags.tagged_as', { tag: tagLabel(ctx, d.tag) })) : null,
       acknowledged ? h('span', { class: 'strong' }, t('query.case_reference', { reference: d.caseReference })) : null,
-      acknowledged && d.acknowledgedAt ? h('span', null, t('query.submitted_at', { date: ctx.fmt.dateTime(d.acknowledgedAt) }))
-        : (d.updatedAt ? h('span', null, t('record.query_updated', { date: ctx.fmt.dateTime(d.updatedAt) })) : null),
+      acknowledged && d.acknowledgedAt ? h('span', null, t('query.submitted_at', { date: ctx.fmt.dateTime(d.acknowledgedAt, { local: true }) }))
+        : (d.updatedAt ? h('span', null, t('record.query_updated', { date: ctx.fmt.dateTime(d.updatedAt, { local: true }) })) : null),
     ),
     h('div', { class: 'actions' },
       h('button', { class: 'pl-btn pl-btn-sm', type: 'button', dataset: { focusKey: `ra-q-open-${d.id}` }, aria: { haspopup: 'dialog' }, on: { click: () => ctx.actions.openQuery({ draftId: d.id }) } }, icon('eye', { size: 16 }), t('query.view')),

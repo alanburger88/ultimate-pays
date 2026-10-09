@@ -23,8 +23,8 @@ Status vocabulary: **Local** — works in the portable file with no network. **C
 | Make it mine | Local | `ui/mine.js`; preferences in localStorage, non-sensitive |
 | Presenter Studio, presets, import/export/share, employee packaging | Local | `ui/studio.js`, `bin/paylight.js build --employee` |
 | Print (paginated, no controls) | Local | `export/print.js`, `styles/print.css` |
-| Text-based searchable PDF | Local | `export/pdf.js`; `tests/unit/exports.test.js` runs `pdftotext`; independent accessibility validation outstanding |
-| Typed `.xlsx` workbook, selected extract | Local | `export/xlsx.js`; inline strings only, never formulas |
+| Text-based searchable PDF | Local | `export/pdf.js`; `tests/unit/exports.test.js` runs `pdftotext`. The built-in font covers Western European text only, so a record with other characters (for example Ł or ő in a name) is refused with a message pointing to Print rather than altered. Independent accessibility validation outstanding |
+| Typed `.xlsx` workbook, selected extract | Local | `export/xlsx.js`; inline strings only, never formulas. Amounts, hours, dates, period start/end and rates are typed cells; a Particulars sheet carries employer, employee, document and payment particulars |
 | Wallet: Apple | Unavailable → Connected | `adapters/wallet/apple.js`; needs pass type ID + signing certificate on an issuing server |
 | Wallet: Google | Unavailable → Awaiting approval | `adapters/wallet/google.js`; needs issuer account with sensitive-data pass approval |
 | Wallet: Samsung | Unavailable → Awaiting approval | `adapters/wallet/samsung.js`; needs partner onboarding and credentials |

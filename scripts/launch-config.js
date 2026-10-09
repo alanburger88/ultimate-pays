@@ -102,7 +102,7 @@ export async function validateLaunch(flags, { allowEmpty = false } = {}) {
       const raw = JSON.parse(fs.readFileSync(String(flags.endpoints), 'utf8'));
       const notices = [];
       const v = validatePresentation({ integrations: raw.integrations || raw }, notices);
-      for (const n of notices) errors.push(`--endpoints: ignored invalid field ${n.params && n.params.field}. Endpoints must be plain https:// URLs without credentials.`);
+      for (const n of notices) errors.push(`--endpoints: invalid value for ${n.params && n.params.field}. Endpoints must be plain https:// URLs with no user name, password, key or token in them. Nothing was built.`);
       if (v.integrations) launch.integrations = v.integrations;
     } catch (err) {
       errors.push(`--endpoints: could not read ${flags.endpoints}: ${err.message}`);
