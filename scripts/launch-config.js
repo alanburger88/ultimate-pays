@@ -46,7 +46,7 @@ export async function validateLaunch(flags, { allowEmpty = false } = {}) {
   const errors = [];
   const warnings = [];
   const launch = {};
-  const known = ['region', 'lang', 'preset', 'scenario', 'studio', 'employee', 'out', 'port', 'host', 'open', 'all', 'help', 'endpoints'];
+  const known = ['region', 'lang', 'preset', 'scenario', 'studio', 'employee', 'out', 'port', 'host', 'open', 'all', 'help', 'endpoints', 'narration'];
   for (const key of Object.keys(flags)) {
     if (!known.includes(key)) errors.push(`Unknown flag --${key}.`);
   }
@@ -94,6 +94,7 @@ export async function validateLaunch(flags, { allowEmpty = false } = {}) {
       } else launch.scenario = scenario;
     }
   }
+  if (flags.narration !== undefined && !['on', 'off'].includes(flags.narration)) errors.push('--narration takes on or off.');
   if (flags.endpoints !== undefined) {
     // Deployment endpoints for connected services, embedded in the build (never taken from a link).
     try {

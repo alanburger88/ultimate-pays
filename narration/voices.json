@@ -1,0 +1,17 @@
+{
+  "_comment": "Narration voices for the pay story, per interface language. Change a voiceId (ElevenLabs voice library ID) and run `node scripts/narrate.js` to regenerate. Set \"enabled\": false to leave a language on captions and the device voice. languageCode is omitted where the model has no official support for the language.",
+  "model": "eleven_v4",
+  "outputFormat": "mp3_22050_32",
+  "voices": {
+    "en-CA": { "name": "Megan", "voiceId": "E393dkE75hqtz1LO2aEJ", "languageCode": "en", "enabled": true },
+    "en-GB": { "name": "Megan", "voiceId": "E393dkE75hqtz1LO2aEJ", "languageCode": "en", "enabled": true },
+    "en-ZA": { "name": "Megan", "voiceId": "E393dkE75hqtz1LO2aEJ", "languageCode": "en", "enabled": true },
+    "fr-CA": { "name": "Jeanne Mance", "voiceId": "K7gx0ylJdff0yjM2uVQS", "languageCode": "fr", "enabled": true },
+    "fr-FR": { "name": "Mélanie", "voiceId": "GoEy5CmodqJy0T9AxjLk", "languageCode": "fr", "enabled": true },
+    "de-DE": { "name": "Yvonne", "voiceId": "fBs1tCpaSMsPcbMkLQlk", "languageCode": "de", "enabled": true, "standIn": "Requested voice: Mrs. Sophie. Replace voiceId with its library ID." },
+    "it-IT": { "name": "Beatrice", "voiceId": "kkPJzQOWz2Oz9cUaEaQd", "languageCode": "it", "enabled": true },
+    "af-ZA": { "name": "Cheyenne", "voiceId": "atf1ppeJGCYFBlCLZ26e", "languageCode": "af", "enabled": true, "standIn": "Requested voice: Anneke. Replace voiceId with its library ID." },
+    "zu-ZA": { "name": "Cheyenne", "voiceId": "atf1ppeJGCYFBlCLZ26e", "enabled": true, "standIn": "isiZulu is not an officially supported ElevenLabs language; best-effort voice, review before use." },
+    "xh-ZA": { "name": "Cheyenne", "voiceId": "atf1ppeJGCYFBlCLZ26e", "enabled": true, "standIn": "isiXhosa is not an officially supported ElevenLabs language; best-effort voice, review before use." }
+  }
+}

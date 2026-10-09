@@ -45,6 +45,7 @@ Flags:
   --endpoints JSON file with HTTPS endpoints for connected services (assistant, queries, identity,
               verification, wallet.apple|google|samsung); embedded in the build, never read from a link
   --all       Build the presenter bundle plus one employee package per scenario
+  --narration=off  Leave out the pay-story voice clips (smaller file; captions and device voice remain)
 
 Fragment equivalent (any build or dev server):
   paylight.html#region=ZA&lang=xh-ZA&preset=complete&studio=1
@@ -88,7 +89,7 @@ async function main() {
 
   if (command === 'build') {
     if (flags.all) {
-      const outputs = await buildAll({ root });
+      const outputs = await buildAll({ root, narration: flags.narration !== 'off' });
       for (const o of outputs) console.log(`built ${path.relative(root, o.file)} (${(o.bytes / 1024).toFixed(0)} KiB)`);
       return;
     }
@@ -98,7 +99,7 @@ async function main() {
       process.exit(2);
     }
     if (result.warnings.length) console.warn(formatValidation(result));
-    const out = await buildSingle({ root, launch: result.launch, employee: Boolean(flags.employee), out: flags.out });
+    const out = await buildSingle({ root, launch: result.launch, employee: Boolean(flags.employee), out: flags.out, narration: flags.narration !== 'off' });
     console.log(`built ${path.relative(root, out.file)} (${(out.bytes / 1024).toFixed(0)} KiB)`);
     return;
   }

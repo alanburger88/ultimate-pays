@@ -1378,4 +1378,7 @@ export const pack = {
   "mine.picked_up": "{section} picked up, position {position} of {count}. Use the arrow keys to move it, Space to drop, Escape to cancel.",
   "mine.dropped": "{section} dropped at position {position} of {count}.",
   "mine.drag_cancelled": "Reorder cancelled. {section} is back at position {position}.",
+  "story.voice": "Voice",
+  "story.voice_credit": "Read by {name}, an ElevenLabs voice.",
+  "story.voice_blocked": "Your browser held back the sound. Press Play to hear the narration.",
 };

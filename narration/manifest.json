@@ -1,0 +1,944 @@
+{
+  "generatedAt": "2026-10-09T16:14:10.938Z",
+  "model": "eleven_v4",
+  "outputFormat": "mp3_22050_32",
+  "entries": [
+    {
+      "profileId": "CA-ON",
+      "scenarioId": "on-salaried",
+      "ref": "AVN-CA-ON-2026-20-0412@1",
+      "locales": {
+        "en-CA": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "080fcfd13338e334c78d",
+              "duration": 10.48,
+              "text": "Hello Maya Bennett. This is your statement for Sep 13, 2026 – Sep 26, 2026, paid on October 2, 2026."
+            },
+            {
+              "id": "money",
+              "key": "da44e019498a384ce82b",
+              "duration": 18.39,
+              "text": "You earned $3,120.00 before deductions. After $927.90 in deductions, your net pay is $2,192.10. $2,278.50 was paid to your account."
+            },
+            {
+              "id": "changes",
+              "key": "f9dd555aca25913fc299",
+              "duration": 11.26,
+              "text": "Compared with your last pay, net pay is up $88.29. The biggest movement: Retroactive salary adjustment, +$120.00."
+            },
+            {
+              "id": "benefits",
+              "key": "352403bee195ceeff522",
+              "duration": 7.99,
+              "text": "Your employer also contributed $481.77 toward benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "6874f3d049557500c912",
+              "duration": 8.86,
+              "text": "Keep this statement, or select any line to ask about it or raise a query. Your Vacation balance is now 9.08 days."
+            }
+          ]
+        },
+        "fr-CA": {
+          "voice": "Jeanne Mance",
+          "voiceId": "K7gx0ylJdff0yjM2uVQS",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "d742af626a44100fa3ea",
+              "duration": 9.82,
+              "text": "Bonjour Maya Bennett. Voici votre relevé pour la période du 13 sept. 2026 – 26 sept. 2026, payé le 2 octobre 2026."
+            },
+            {
+              "id": "money",
+              "key": "defce90087f54164515c",
+              "duration": 14.94,
+              "text": "Vous avez gagné 3 120,00 $ avant retenues. Après 927,90 $ de retenues, votre salaire net est de 2 192,10 $. 2 278,50 $ a été déposé dans votre compte."
+            },
+            {
+              "id": "changes",
+              "key": "c5508d7183684cf8f6e8",
+              "duration": 11.49,
+              "text": "Par rapport à votre dernière paie, le salaire net est en hausse de 88,29 $. Le plus grand mouvement : Ajustement salarial rétroactif, +120,00 $."
+            },
+            {
+              "id": "benefits",
+              "key": "2886acae2c2d52874fe9",
+              "duration": 7.34,
+              "text": "Votre employeur a aussi versé 481,77 $ en avantages et en cotisations cette période."
+            },
+            {
+              "id": "next",
+              "key": "30793fac62b7a97bc846",
+              "duration": 9.59,
+              "text": "Conservez ce relevé, ou sélectionnez une ligne pour poser une question ou soumettre une demande. Votre solde de Vacances est maintenant de 9,08 jours."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "profileId": "CA-QC",
+      "scenarioId": "qc-hourly",
+      "ref": "AVQ-CA-QC-2026-20-0318@1",
+      "locales": {
+        "en-CA": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "578f6299748955a2445a",
+              "duration": 10.71,
+              "text": "Hello Étienne Roy. This is your statement for Sep 13, 2026 – Sep 26, 2026, paid on October 2, 2026."
+            },
+            {
+              "id": "money",
+              "key": "1332120bfe28276e7ae5",
+              "duration": 15.33,
+              "text": "You earned $2,397.50 before deductions. After $693.79 in deductions, your net pay is $1,703.71."
+            },
+            {
+              "id": "changes",
+              "key": "004f50d2bc50e968a5a2",
+              "duration": 11.99,
+              "text": "Compared with your last pay, net pay is up $126.98. The biggest movement: Regular wages, +$219.20."
+            },
+            {
+              "id": "benefits",
+              "key": "ffae9dbcbb0f2863f08b",
+              "duration": 7.92,
+              "text": "Your employer also contributed $313.44 toward benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "ae0a5260bad3e015d23b",
+              "duration": 9.01,
+              "text": "Keep this statement, or select any line to ask about it or raise a query. Your Vacation balance is now 60.52 h."
+            }
+          ]
+        },
+        "fr-CA": {
+          "voice": "Jeanne Mance",
+          "voiceId": "K7gx0ylJdff0yjM2uVQS",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "54595fb96959ac11fd62",
+              "duration": 9.9,
+              "text": "Bonjour Étienne Roy. Voici votre relevé pour la période du 13 sept. 2026 – 26 sept. 2026, payé le 2 octobre 2026."
+            },
+            {
+              "id": "money",
+              "key": "a5e359abf4ea2a54605f",
+              "duration": 12.15,
+              "text": "Vous avez gagné 2 397,50 $ avant retenues. Après 693,79 $ de retenues, votre salaire net est de 1 703,71 $."
+            },
+            {
+              "id": "changes",
+              "key": "49e230180c065892ec04",
+              "duration": 11.1,
+              "text": "Par rapport à votre dernière paie, le salaire net est en hausse de 126,98 $. Le plus grand mouvement : Salaire régulier, +219,20 $."
+            },
+            {
+              "id": "benefits",
+              "key": "4ab752aca8df9f0b5894",
+              "duration": 6.45,
+              "text": "Votre employeur a aussi versé 313,44 $ en avantages et en cotisations cette période."
+            },
+            {
+              "id": "next",
+              "key": "37ff1939a4f500f5ab81",
+              "duration": 9.74,
+              "text": "Conservez ce relevé, ou sélectionnez une ligne pour poser une question ou soumettre une demande. Votre solde de Vacances est maintenant de 60,52 h."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "profileId": "ZA",
+      "scenarioId": "za-overtime",
+      "ref": "AVN-ZA-2026-07-0218@1",
+      "locales": {
+        "en-ZA": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "1d1107c830f0a7c687be",
+              "duration": 10.87,
+              "text": "Hello Nomsa Dlamini. This is your payslip for 01 Sept 2026 – 30 Sept 2026, paid on 25 September 2026."
+            },
+            {
+              "id": "money",
+              "key": "7168a714490bcda3649d",
+              "duration": 16.8,
+              "text": "You earned R 29,979.96 before deductions. After R 7,829.32 in deductions, your net pay is R 22,150.64."
+            },
+            {
+              "id": "changes",
+              "key": "90ea654aa1d6b91dcdca",
+              "duration": 13.98,
+              "text": "Compared with your last pay, net pay is down R 365.02. The biggest movement: Overtime at 1.5 times, -R 493.32."
+            },
+            {
+              "id": "benefits",
+              "key": "02fe60b4938c1905a338",
+              "duration": 9.01,
+              "text": "Your employer also contributed R 5,119.42 towards benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "67fd3006975b3714cb57",
+              "duration": 9.2,
+              "text": "Keep this payslip, or select any line to ask about it or log a query. Your Annual leave balance is now 11.75 days."
+            }
+          ]
+        },
+        "af-ZA": {
+          "voice": "Cheyenne",
+          "voiceId": "atf1ppeJGCYFBlCLZ26e",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "7dd43b93536bb1797887",
+              "duration": 13.58,
+              "text": "Hallo Nomsa Dlamini. Dit is u salarisstrokie vir 1 Sep. 2026 – 30 Sep. 2026, betaal op 25 September 2026."
+            },
+            {
+              "id": "money",
+              "key": "010393a727058f177161",
+              "duration": 19.51,
+              "text": "U het R 29 979,96 voor aftrekkings verdien. Ná R 7 829,32 aan aftrekkings is u netto salaris R 22 150,64."
+            },
+            {
+              "id": "changes",
+              "key": "7dc72e1f2d3f09e0a073",
+              "duration": 16.14,
+              "text": "In vergelyking met u vorige salaris is die netto salaris R 365,02 laer. Die grootste beweging: Oortyd teen 1,5 keer, -R 493,32."
+            },
+            {
+              "id": "benefits",
+              "key": "ce067beae5688897d556",
+              "duration": 8.78,
+              "text": "U werkgewer het hierdie periode ook R 5 119,42 tot voordele en bydraes bygedra."
+            },
+            {
+              "id": "next",
+              "key": "fc78e65a97338fbd86f8",
+              "duration": 11.49,
+              "text": "Bewaar hierdie salarisstrokie, of kies enige lyn om daaroor te vra of ’n navraag in te dien. U saldo vir Jaarlikse verlof is nou 11,75 dae."
+            }
+          ]
+        },
+        "zu-ZA": {
+          "voice": "Cheyenne",
+          "voiceId": "atf1ppeJGCYFBlCLZ26e",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "39fb0ca6c01bf09b567a",
+              "duration": 21.5,
+              "text": "Sawubona Nomsa Dlamini. Lesi yisitatimende sakho se-Sep 1, 2026 – Sep 30, 2026, esikhokhwe mhlaka September 25, 2026."
+            },
+            {
+              "id": "money",
+              "key": "dc935a439eefe711920b",
+              "duration": 41.98,
+              "text": "Uhole u-R 29,979.96 ngaphambi kwezimali ezidonswayo. Ngemva kwezimali ezidonswayo ezingu-R 7,829.32, umholo wakho osele ngu-R 22,150.64."
+            },
+            {
+              "id": "changes",
+              "key": "d35e8828da3591280f7e",
+              "duration": 24.79,
+              "text": "Uma uqhathaniswa nomholo wakho wokugcina, umholo osele wehle ngo-R 365.02. Ushintsho olukhulu kunazo zonke: I-ovathayimu ephindwe ka-1.5, -R 493.32."
+            },
+            {
+              "id": "benefits",
+              "key": "1ae29fde3cb425c65d8f",
+              "duration": 14.79,
+              "text": "Umqashi wakho naye unikele ngo-R 5,119.42 ezinzuzweni naseminikelweni kulesi sikhathi."
+            },
+            {
+              "id": "next",
+              "key": "4664ae336ea71a816c31",
+              "duration": 18.63,
+              "text": "Gcina lesi sitatimende, noma ukhethe noma yimuphi umugqa ukuze ubuze ngawo noma ufake umbuzo. Ibhalansi yakho (Ikhefu lonyaka) manje ingu-11.75 izinsuku."
+            }
+          ]
+        },
+        "xh-ZA": {
+          "voice": "Cheyenne",
+          "voiceId": "atf1ppeJGCYFBlCLZ26e",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "d0d71a7a174f82bb7f30",
+              "duration": 21.03,
+              "text": "Molo Nomsa Dlamini. Eli liphepha lomvuzo wakho lexesha elithi Sep 1, 2026 – Sep 30, 2026, elihlawulwe nge-September 25, 2026."
+            },
+            {
+              "id": "money",
+              "key": "32d713b74eb62ee410fe",
+              "duration": 41.67,
+              "text": "Usebenzele i-R 29,979.96 ngaphambi kokutsalwa kweemali. Emva kweemali ezitsalwayo ezingu-R 7,829.32, umvuzo wakho osalayo ngu-R 22,150.64."
+            },
+            {
+              "id": "changes",
+              "key": "8fba0b3a2dc6acba492d",
+              "duration": 25.03,
+              "text": "Xa kuthelekiswa nomvuzo wakho wokugqibela, umvuzo osalayo wehle nge-R 365.02. Intshukumo enkulu: I-ovathayim ephindwe ka-1.5, -R 493.32."
+            },
+            {
+              "id": "benefits",
+              "key": "bec97214ccaeab9cc224",
+              "duration": 15.91,
+              "text": "Umqeshi wakho naye ufake i-R 5,119.42 kwizibonelelo namagalelo kweli xesha."
+            },
+            {
+              "id": "next",
+              "key": "0301c2f45695d65ea6ff",
+              "duration": 17.19,
+              "text": "Gcina eli phepha lomvuzo, okanye khetha nawuphi na umgca ukuze ubuze ngawo okanye ufake umbuzo. Ibhalansi yakho (Ikhefu lonyaka) ngoku ngu-11.75 iintsuku."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "profileId": "ZA",
+      "scenarioId": "za-new-starter",
+      "ref": "AVN-ZA-2026-07-0991@1",
+      "locales": {
+        "en-ZA": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "3e60b42591d34d355808",
+              "duration": 10.95,
+              "text": "Hello Sipho Khumalo. This is your payslip for 14 Sept 2026 – 30 Sept 2026, paid on 25 September 2026."
+            },
+            {
+              "id": "money",
+              "key": "758de25a4e5008eea383",
+              "duration": 14.24,
+              "text": "You earned R 11,700.00 before deductions. After R 1,376.50 in deductions, your net pay is R 10,323.50."
+            },
+            {
+              "id": "changes",
+              "key": "7e4400b665b00bbb3866",
+              "duration": 4.47,
+              "text": "This is the first payslip included, so there is no comparison yet."
+            },
+            {
+              "id": "benefits",
+              "key": "e80927d630fdc6abd2c5",
+              "duration": 6.95,
+              "text": "Your employer also contributed R 234.00 towards benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "282265c170ff74ec907c",
+              "duration": 9.12,
+              "text": "Keep this payslip, or select any line to ask about it or log a query. Your Annual leave balance is now 0.74 days."
+            }
+          ]
+        },
+        "af-ZA": {
+          "voice": "Cheyenne",
+          "voiceId": "atf1ppeJGCYFBlCLZ26e",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "b20ec761b6f2e6a29942",
+              "duration": 13.11,
+              "text": "Hallo Sipho Khumalo. Dit is u salarisstrokie vir 14 Sep. 2026 – 30 Sep. 2026, betaal op 25 September 2026."
+            },
+            {
+              "id": "money",
+              "key": "877e6036dc3ee934cd24",
+              "duration": 14.47,
+              "text": "U het R 11 700,00 voor aftrekkings verdien. Ná R 1 376,50 aan aftrekkings is u netto salaris R 10 323,50."
+            },
+            {
+              "id": "changes",
+              "key": "44cfa4c0e6fe78db48fd",
+              "duration": 6.37,
+              "text": "Dit is die eerste salarisstrokie wat ingesluit is, dus is daar nog geen vergelyking nie."
+            },
+            {
+              "id": "benefits",
+              "key": "69ea57f325933678d5ea",
+              "duration": 7.11,
+              "text": "U werkgewer het hierdie periode ook R 234,00 tot voordele en bydraes bygedra."
+            },
+            {
+              "id": "next",
+              "key": "5e5b7f6018e610148b69",
+              "duration": 11.68,
+              "text": "Bewaar hierdie salarisstrokie, of kies enige lyn om daaroor te vra of ’n navraag in te dien. U saldo vir Jaarlikse verlof is nou 0,74 dae."
+            }
+          ]
+        },
+        "zu-ZA": {
+          "voice": "Cheyenne",
+          "voiceId": "atf1ppeJGCYFBlCLZ26e",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "d80f1499775f4ebe192e",
+              "duration": 23.51,
+              "text": "Sawubona Sipho Khumalo. Lesi yisitatimende sakho se-Sep 14, 2026 – Sep 30, 2026, esikhokhwe mhlaka September 25, 2026."
+            },
+            {
+              "id": "money",
+              "key": "b7ac267a70ee26f6db28",
+              "duration": 30.22,
+              "text": "Uhole u-R 11,700.00 ngaphambi kwezimali ezidonswayo. Ngemva kwezimali ezidonswayo ezingu-R 1,376.50, umholo wakho osele ngu-R 10,323.50."
+            },
+            {
+              "id": "changes",
+              "key": "d591a2f4ede7e2afbab3",
+              "duration": 6.79,
+              "text": "Lesi yisitatimende sokuqala esifakiwe, ngakho akukho kuqhathanisa okwamanje."
+            },
+            {
+              "id": "benefits",
+              "key": "df2b93e3e99a67532bf3",
+              "duration": 10.63,
+              "text": "Umqashi wakho naye unikele ngo-R 234.00 ezinzuzweni naseminikelweni kulesi sikhathi."
+            },
+            {
+              "id": "next",
+              "key": "95a13afe28b1ca09b784",
+              "duration": 16.3,
+              "text": "Gcina lesi sitatimende, noma ukhethe noma yimuphi umugqa ukuze ubuze ngawo noma ufake umbuzo. Ibhalansi yakho (Ikhefu lonyaka) manje ingu-0.74 izinsuku."
+            }
+          ]
+        },
+        "xh-ZA": {
+          "voice": "Cheyenne",
+          "voiceId": "atf1ppeJGCYFBlCLZ26e",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "29e91fe92359e89e4fe3",
+              "duration": 20.45,
+              "text": "Molo Sipho Khumalo. Eli liphepha lomvuzo wakho lexesha elithi Sep 14, 2026 – Sep 30, 2026, elihlawulwe nge-September 25, 2026."
+            },
+            {
+              "id": "money",
+              "key": "495886cb419373f2808c",
+              "duration": 29.6,
+              "text": "Usebenzele i-R 11,700.00 ngaphambi kokutsalwa kweemali. Emva kweemali ezitsalwayo ezingu-R 1,376.50, umvuzo wakho osalayo ngu-R 10,323.50."
+            },
+            {
+              "id": "changes",
+              "key": "ab7450ad535e90bbbf3b",
+              "duration": 6.87,
+              "text": "Eli liphepha lomvuzo lokuqala elibandakanyiweyo, ngoko akukho thelekiso okwangoku."
+            },
+            {
+              "id": "benefits",
+              "key": "12bdcc6121b88688f9f2",
+              "duration": 9.98,
+              "text": "Umqeshi wakho naye ufake i-R 234.00 kwizibonelelo namagalelo kweli xesha."
+            },
+            {
+              "id": "next",
+              "key": "293acce97c7056441960",
+              "duration": 16.14,
+              "text": "Gcina eli phepha lomvuzo, okanye khetha nawuphi na umgca ukuze ubuze ngawo okanye ufake umbuzo. Ibhalansi yakho (Ikhefu lonyaka) ngoku ngu-0.74 iintsuku."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "profileId": "EU-FR",
+      "scenarioId": "fr-monthly",
+      "ref": "AVF-EU-FR-2026-09-2041@1",
+      "locales": {
+        "en-GB": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "589da874ee30b96f621f",
+              "duration": 10.55,
+              "text": "Hello Camille Laurent. This is your payslip for 1 Sept 2026 – 30 Sept 2026, paid on 30 September 2026."
+            },
+            {
+              "id": "money",
+              "key": "ac18c05511607af7be39",
+              "duration": 17.74,
+              "text": "You earned €3,512.09 before deductions. After €1,067.71 in deductions and €37.00 from other items, your net pay is €2,481.38."
+            },
+            {
+              "id": "changes",
+              "key": "1e1ba2cf3e15924de821",
+              "duration": 14.24,
+              "text": "Compared with your last pay, net pay is up €52.25. The biggest movement: Overtime at +25 % (heures supplémentaires), +€112.09."
+            },
+            {
+              "id": "benefits",
+              "key": "1b329b41534098256312",
+              "duration": 8.93,
+              "text": "Your employer also contributed €1,452.37 towards benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "bb989ee517fa2efa7336",
+              "duration": 15.83,
+              "text": "Keep this payslip, or select any line to ask about it or raise a query. Your Paid leave N−1 (accrued 1 June 2025 – 31 May 2026) balance is now 9.00 days."
+            }
+          ]
+        },
+        "fr-FR": {
+          "voice": "Mélanie",
+          "voiceId": "GoEy5CmodqJy0T9AxjLk",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "a3e67db58942a7b8d00b",
+              "duration": 10.55,
+              "text": "Bonjour Camille Laurent. Voici votre bulletin pour la période 1 sept. 2026 – 30 sept. 2026, avec un paiement le 30 septembre 2026."
+            },
+            {
+              "id": "money",
+              "key": "89d058adb88d2cd75c89",
+              "duration": 15.02,
+              "text": "Votre salaire brut est de 3 512,09 €. Après 1 067,71 € de retenues et 37,00 € provenant d’autres éléments, votre salaire net est de 2 481,38 €."
+            },
+            {
+              "id": "changes",
+              "key": "b8b05f5bd4bdd5dbaa03",
+              "duration": 14.24,
+              "text": "Par rapport à votre dernière paie, votre salaire net augmente de 52,25 €. La plus forte variation : Heures supplémentaires majorées à 25 %, +112,09 €."
+            },
+            {
+              "id": "benefits",
+              "key": "a0f89467e423a5dbf659",
+              "duration": 8.7,
+              "text": "Votre employeur a également versé 1 452,37 € au titre des avantages et des cotisations sur cette période."
+            },
+            {
+              "id": "next",
+              "key": "0f08915bee06143ff2ab",
+              "duration": 17.97,
+              "text": "Conservez ce bulletin, ou sélectionnez une ligne pour en savoir plus ou poser une question au service paie. Votre solde « Congés payés N−1 (acquis du 1er juin 2025 au 31 mai 2026) » est désormais de 9,00 jours."
+            }
+          ]
+        },
+        "de-DE": {
+          "voice": "Yvonne",
+          "voiceId": "fBs1tCpaSMsPcbMkLQlk",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "2ff8e263f3da1a8e78db",
+              "duration": 12.62,
+              "text": "Guten Tag, Camille Laurent. Das ist Ihre Abrechnung für 1. Sept. 2026 – 30. Sept. 2026, gezahlt am 30. September 2026."
+            },
+            {
+              "id": "money",
+              "key": "c7ca7e60045c0c7637e2",
+              "duration": 18.47,
+              "text": "Vor Abzügen haben Sie 3.512,09 € verdient. Nach 1.067,71 € an Abzügen und 37,00 € aus weiteren Posten beträgt Ihr Nettoentgelt 2.481,38 €."
+            },
+            {
+              "id": "changes",
+              "key": "1b779b5cc9025aaf59da",
+              "duration": 16.22,
+              "text": "Gegenüber Ihrer letzten Abrechnung ist das Nettoentgelt um 52,25 € gestiegen. Die größte Veränderung: Überstunden mit 25 % Zuschlag (heures supplémentaires), +112,09 €."
+            },
+            {
+              "id": "benefits",
+              "key": "970c041462119f0e0881",
+              "duration": 9.67,
+              "text": "Ihr Arbeitgeber hat in diesem Zeitraum zusätzlich 1.452,37 € für Leistungen und Beiträge aufgewendet."
+            },
+            {
+              "id": "next",
+              "key": "b7b3f3bb6bd1f3848667",
+              "duration": 20.87,
+              "text": "Bewahren Sie diese Abrechnung auf, oder wählen Sie eine Position aus, um danach zu fragen oder eine Rückfrage zu stellen. Ihr Saldo für Bezahlter Urlaub N−1 (erworben vom 1. Juni 2025 bis 31. Mai 2026) beträgt jetzt 9,00 Tage."
+            }
+          ]
+        },
+        "it-IT": {
+          "voice": "Beatrice",
+          "voiceId": "kkPJzQOWz2Oz9cUaEaQd",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "13e2b80ed015a719c7d0",
+              "duration": 11.26,
+              "text": "Gentile Camille Laurent, ecco il suo cedolino di 1 set 2026 – 30 set 2026, pagato il 30 settembre 2026."
+            },
+            {
+              "id": "money",
+              "key": "2873741e37a575ff945e",
+              "duration": 19.36,
+              "text": "Ha maturato 3.512,09 € prima delle trattenute. Dopo 1.067,71 € di trattenute e 37,00 € da altre voci, la sua retribuzione netta è di 2.481,38 €."
+            },
+            {
+              "id": "changes",
+              "key": "e6c291ae2cfe982335e9",
+              "duration": 17.42,
+              "text": "Rispetto all’ultima paga, la retribuzione netta è aumentata di 52,25 €. La variazione maggiore: Straordinario maggiorato del 25% (heures supplémentaires), +112,09 €."
+            },
+            {
+              "id": "benefits",
+              "key": "4dd1d34060f7b0a309b0",
+              "duration": 10.79,
+              "text": "In questo periodo il datore di lavoro ha inoltre versato 1.452,37 € per benefit e contributi."
+            },
+            {
+              "id": "next",
+              "key": "e394ddb0598a32d26733",
+              "duration": 21.26,
+              "text": "Conservi questo cedolino, oppure selezioni una riga per fare una domanda o inviare una richiesta di chiarimento. Congés payés N−1 (ferie maturate dal 1° giugno 2025 al 31 maggio 2026): il saldo ora è di 9,00 giorni."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "profileId": "EU-DE",
+      "scenarioId": "de-company-car",
+      "ref": "AVN-EU-DE-2026-09-20481@1",
+      "locales": {
+        "en-GB": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "96b4a58fb250384821d3",
+              "duration": 10.48,
+              "text": "Hello Lina Hoffmann. This is your payslip for 1 Sept 2026 – 30 Sept 2026, paid on 30 September 2026."
+            },
+            {
+              "id": "money",
+              "key": "6982fcf5ace9520c5ec6",
+              "duration": 22.23,
+              "text": "You earned €4,650.00 before deductions. After €1,898.37 in deductions and €300.00 from other items, your net pay is €3,051.63. €2,938.03 was paid into your account."
+            },
+            {
+              "id": "changes",
+              "key": "583d56130c22600faa4c",
+              "duration": 3.11,
+              "text": "Your net pay is the same as your last pay."
+            },
+            {
+              "id": "benefits",
+              "key": "c4a0167bd4dedf0f0c68",
+              "duration": 9.12,
+              "text": "Your employer also contributed €1,247.78 towards benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "01e00f43c032dccb1d68",
+              "duration": 11.02,
+              "text": "Keep this payslip, or select any line to ask about it or raise a query. Your Annual leave (Erholungsurlaub) balance is now 14.00 days."
+            }
+          ]
+        },
+        "fr-FR": {
+          "voice": "Mélanie",
+          "voiceId": "GoEy5CmodqJy0T9AxjLk",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "ae33619e50ece7784b5e",
+              "duration": 11.02,
+              "text": "Bonjour Lina Hoffmann. Voici votre bulletin pour la période 1 sept. 2026 – 30 sept. 2026, avec un paiement le 30 septembre 2026."
+            },
+            {
+              "id": "money",
+              "key": "a0ce9605c58107551e9f",
+              "duration": 20.06,
+              "text": "Votre salaire brut est de 4 650,00 €. Après 1 898,37 € de retenues et 300,00 € provenant d’autres éléments, votre salaire net est de 3 051,63 €. Montant versé sur votre compte : 2 938,03 €."
+            },
+            {
+              "id": "changes",
+              "key": "d8c4b952731b89a1c8cf",
+              "duration": 4,
+              "text": "Votre salaire net est le même que lors de votre dernière paie."
+            },
+            {
+              "id": "benefits",
+              "key": "97325fffe7de030b8c3a",
+              "duration": 8.7,
+              "text": "Votre employeur a également versé 1 247,78 € au titre des avantages et des cotisations sur cette période."
+            },
+            {
+              "id": "next",
+              "key": "d217186f42d5d0f754b9",
+              "duration": 13.9,
+              "text": "Conservez ce bulletin, ou sélectionnez une ligne pour en savoir plus ou poser une question au service paie. Votre solde « Congés annuels (Erholungsurlaub) » est désormais de 14,00 jours."
+            }
+          ]
+        },
+        "de-DE": {
+          "voice": "Yvonne",
+          "voiceId": "fBs1tCpaSMsPcbMkLQlk",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "444d2a3d17c9b94826d8",
+              "duration": 12.62,
+              "text": "Guten Tag, Lina Hoffmann. Das ist Ihre Abrechnung für 1. Sept. 2026 – 30. Sept. 2026, gezahlt am 30. September 2026."
+            },
+            {
+              "id": "money",
+              "key": "bc4b3ffa54ce541eb2e2",
+              "duration": 22.31,
+              "text": "Vor Abzügen haben Sie 4.650,00 € verdient. Nach 1.898,37 € an Abzügen und 300,00 € aus weiteren Posten beträgt Ihr Nettoentgelt 3.051,63 €. Auf Ihr Konto überwiesen: 2.938,03 €."
+            },
+            {
+              "id": "changes",
+              "key": "8270d72e18701db9bf0a",
+              "duration": 4.31,
+              "text": "Ihr Nettoentgelt ist genauso hoch wie bei Ihrer letzten Abrechnung."
+            },
+            {
+              "id": "benefits",
+              "key": "4b9b65b36aa28fb9398b",
+              "duration": 9.67,
+              "text": "Ihr Arbeitgeber hat in diesem Zeitraum zusätzlich 1.247,78 € für Leistungen und Beiträge aufgewendet."
+            },
+            {
+              "id": "next",
+              "key": "ab078414635bbc37686d",
+              "duration": 13.19,
+              "text": "Bewahren Sie diese Abrechnung auf, oder wählen Sie eine Position aus, um danach zu fragen oder eine Rückfrage zu stellen. Ihr Saldo für Erholungsurlaub beträgt jetzt 14,00 Tage."
+            }
+          ]
+        },
+        "it-IT": {
+          "voice": "Beatrice",
+          "voiceId": "kkPJzQOWz2Oz9cUaEaQd",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "ce820fd741f7d1c281e8",
+              "duration": 11.34,
+              "text": "Gentile Lina Hoffmann, ecco il suo cedolino di 1 set 2026 – 30 set 2026, pagato il 30 settembre 2026."
+            },
+            {
+              "id": "money",
+              "key": "13f2a7596674f28c539b",
+              "duration": 25.18,
+              "text": "Ha maturato 4.650,00 € prima delle trattenute. Dopo 1.898,37 € di trattenute e 300,00 € da altre voci, la sua retribuzione netta è di 3.051,63 €. Sul suo conto è stato accreditato l’importo di 2.938,03 €."
+            },
+            {
+              "id": "changes",
+              "key": "3d74c4adabe29e3bdc1d",
+              "duration": 4.7,
+              "text": "La sua retribuzione netta è uguale a quella dell’ultima paga."
+            },
+            {
+              "id": "benefits",
+              "key": "8abdecb6c1daaa7ddf8b",
+              "duration": 10.29,
+              "text": "In questo periodo il datore di lavoro ha inoltre versato 1.247,78 € per benefit e contributi."
+            },
+            {
+              "id": "next",
+              "key": "1a7e01b23b6e844332f6",
+              "duration": 15.67,
+              "text": "Conservi questo cedolino, oppure selezioni una riga per fare una domanda o inviare una richiesta di chiarimento. Ferie (Erholungsurlaub): il saldo ora è di 14,00 giorni."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "profileId": "EU-IT",
+      "scenarioId": "it-ccnl",
+      "ref": "AVN-EU-IT-2026-09-30712@1",
+      "locales": {
+        "en-GB": {
+          "voice": "Megan",
+          "voiceId": "E393dkE75hqtz1LO2aEJ",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "b9eebf03e927683f1a9b",
+              "duration": 10.55,
+              "text": "Hello Sofia Ricci. This is your payslip for 1 Sept 2026 – 30 Sept 2026, paid on 9 October 2026."
+            },
+            {
+              "id": "money",
+              "key": "bc0a3bfc3c1c16f6b010",
+              "duration": 19.59,
+              "text": "You earned €2,669.40 before deductions. After €750.35 in deductions, your net pay is €1,919.05. €2,031.35 was paid into your account."
+            },
+            {
+              "id": "changes",
+              "key": "b5d0c4dfffa294c6fb25",
+              "duration": 12.85,
+              "text": "Compared with your last pay, net pay is up €110.97. The biggest movement: CCNL increase arrears (arretrati), +€70.00."
+            },
+            {
+              "id": "benefits",
+              "key": "d027c1abecd296c676d4",
+              "duration": 7.99,
+              "text": "Your employer also contributed €996.19 towards benefits and contributions this period."
+            },
+            {
+              "id": "next",
+              "key": "3c71b6ed1560d200795e",
+              "duration": 10.79,
+              "text": "Keep this payslip, or select any line to ask about it or raise a query. Your Annual holiday (ferie) balance is now 88.00 h."
+            }
+          ]
+        },
+        "fr-FR": {
+          "voice": "Mélanie",
+          "voiceId": "GoEy5CmodqJy0T9AxjLk",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "f09d67dbcd62dedd5a5e",
+              "duration": 10.71,
+              "text": "Bonjour Sofia Ricci. Voici votre bulletin pour la période 1 sept. 2026 – 30 sept. 2026, avec un paiement le 9 octobre 2026."
+            },
+            {
+              "id": "money",
+              "key": "426bb8b2a1cbb661c9ea",
+              "duration": 16.3,
+              "text": "Votre salaire brut est de 2 669,40 €. Après 750,35 € de retenues, votre salaire net est de 1 919,05 €. Montant versé sur votre compte : 2 031,35 €."
+            },
+            {
+              "id": "changes",
+              "key": "cdd244307990e5a5acf1",
+              "duration": 14.39,
+              "text": "Par rapport à votre dernière paie, votre salaire net augmente de 110,97 €. La plus forte variation : Rappel augmentation CCNL (arretrati), +70,00 €."
+            },
+            {
+              "id": "benefits",
+              "key": "c141c7ae2fb63a6be791",
+              "duration": 8.62,
+              "text": "Votre employeur a également versé 996,19 € au titre des avantages et des cotisations sur cette période."
+            },
+            {
+              "id": "next",
+              "key": "ee8bba624f9f71e184f8",
+              "duration": 12.15,
+              "text": "Conservez ce bulletin, ou sélectionnez une ligne pour en savoir plus ou poser une question au service paie. Votre solde « Congés annuels (ferie) » est désormais de 88,00 h."
+            }
+          ]
+        },
+        "de-DE": {
+          "voice": "Yvonne",
+          "voiceId": "fBs1tCpaSMsPcbMkLQlk",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "3c977ee751f242538a2c",
+              "duration": 12.46,
+              "text": "Guten Tag, Sofia Ricci. Das ist Ihre Abrechnung für 1. Sept. 2026 – 30. Sept. 2026, gezahlt am 9. Oktober 2026."
+            },
+            {
+              "id": "money",
+              "key": "79c3eb53f5f352b59365",
+              "duration": 19.36,
+              "text": "Vor Abzügen haben Sie 2.669,40 € verdient. Nach 750,35 € an Abzügen beträgt Ihr Nettoentgelt 1.919,05 €. Auf Ihr Konto überwiesen: 2.031,35 €."
+            },
+            {
+              "id": "changes",
+              "key": "c75361185afd6b062ab7",
+              "duration": 15.1,
+              "text": "Gegenüber Ihrer letzten Abrechnung ist das Nettoentgelt um 110,97 € gestiegen. Die größte Veränderung: Nachzahlung CCNL-Erhöhung (arretrati), +70,00 €."
+            },
+            {
+              "id": "benefits",
+              "key": "fe40b32f560aadef4401",
+              "duration": 8.54,
+              "text": "Ihr Arbeitgeber hat in diesem Zeitraum zusätzlich 996,19 € für Leistungen und Beiträge aufgewendet."
+            },
+            {
+              "id": "next",
+              "key": "39fedd79503e6cb47e7a",
+              "duration": 14.55,
+              "text": "Bewahren Sie diese Abrechnung auf, oder wählen Sie eine Position aus, um danach zu fragen oder eine Rückfrage zu stellen. Ihr Saldo für Urlaub (ferie) beträgt jetzt 88,00 h."
+            }
+          ]
+        },
+        "it-IT": {
+          "voice": "Beatrice",
+          "voiceId": "kkPJzQOWz2Oz9cUaEaQd",
+          "model": "eleven_v4",
+          "chapters": [
+            {
+              "id": "greeting",
+              "key": "7b47b4aef1b1ba711bc3",
+              "duration": 10.87,
+              "text": "Gentile Sofia Ricci, ecco il suo cedolino di 1 set 2026 – 30 set 2026, pagato il 9 ottobre 2026."
+            },
+            {
+              "id": "money",
+              "key": "6de439e7a8f683141b71",
+              "duration": 23.2,
+              "text": "Ha maturato 2.669,40 € prima delle trattenute. Dopo 750,35 € di trattenute, la sua retribuzione netta è di 1.919,05 €. Sul suo conto è stato accreditato l’importo di 2.031,35 €."
+            },
+            {
+              "id": "changes",
+              "key": "8f645134eb4488ead807",
+              "duration": 14.63,
+              "text": "Rispetto all’ultima paga, la retribuzione netta è aumentata di 110,97 €. La variazione maggiore: Arretrati aumento CCNL, +70,00 €."
+            },
+            {
+              "id": "benefits",
+              "key": "119a6abc8959f97bfef1",
+              "duration": 9.51,
+              "text": "In questo periodo il datore di lavoro ha inoltre versato 996,19 € per benefit e contributi."
+            },
+            {
+              "id": "next",
+              "key": "158bbea3bed97bca623a",
+              "duration": 13.9,
+              "text": "Conservi questo cedolino, oppure selezioni una riga per fare una domanda o inviare una richiesta di chiarimento. Ferie: il saldo ora è di 88,00 h."
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

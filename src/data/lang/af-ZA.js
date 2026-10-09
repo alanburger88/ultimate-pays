@@ -1372,4 +1372,7 @@ export const pack = {
   "mine.picked_up": "{section} opgetel, posisie {position} van {count}. Gebruik die pyltjies om dit te skuif, Spasie om dit neer te sit, Escape om te kanselleer.",
   "mine.dropped": "{section} neergesit op posisie {position} van {count}.",
   "mine.drag_cancelled": "Herrangskikking gekanselleer. {section} is terug op posisie {position}.",
+  "story.voice": "Stem",
+  "story.voice_credit": "Gelees deur {name}, ’n ElevenLabs-stem.",
+  "story.voice_blocked": "Jou blaaier het die klank teruggehou. Druk Speel om die vertelling te hoor.",
 };

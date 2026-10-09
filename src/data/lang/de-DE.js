@@ -1372,4 +1372,7 @@ export const pack = {
   "mine.picked_up": "{section} aufgenommen, Position {position} von {count}. Mit den Pfeiltasten verschieben, Leertaste zum Ablegen, Escape zum Abbrechen.",
   "mine.dropped": "{section} an Position {position} von {count} abgelegt.",
   "mine.drag_cancelled": "Verschieben abgebrochen. {section} ist wieder an Position {position}.",
+  "story.voice": "Stimme",
+  "story.voice_credit": "Gelesen von {name}, einer ElevenLabs-Stimme.",
+  "story.voice_blocked": "Ihr Browser hat den Ton zurückgehalten. Drücken Sie auf Abspielen, um die Erzählung zu hören.",
 };

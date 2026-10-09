@@ -19,7 +19,7 @@ export const DEFAULT_PRESENTATION = {
   lowData: false,
   privacyMode: false,
   animation: true,
-  narration: 'captions',     // captions | audio-when-available | off
+  narration: 'audio-when-available', // audio-when-available (bundled voice, else device voice on demand) | captions | off
   branding: { name: 'Paylight', employerLabel: 'Avenlo Group', accent: null },
   integrations: { assistant: null, queries: null, wallet: {}, identity: null, verification: null },
   accessGate: false,

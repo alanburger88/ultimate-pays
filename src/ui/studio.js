@@ -130,7 +130,7 @@ function initialForm(ctx) {
     startSection: SECTION_IDS.includes(config.startSection) ? config.startSection : (SECTION_IDS.includes(saved.startSection) ? saved.startSection : preset.startSection),
     branding: { name: (p.branding && p.branding.name) || DEFAULT_PRESENTATION.branding.name, employerLabel: (p.branding && p.branding.employerLabel) || DEFAULT_PRESENTATION.branding.employerLabel, accent: p.branding && HEX.test(p.branding.accent || '') ? p.branding.accent : null },
     density: p.density || 'comfortable', theme: p.theme || 'system', emphasis: p.emphasis || preset.emphasis || 'balanced',
-    animation: p.animation !== false, narration: p.narration || 'captions', lowData: Boolean(p.lowData), privacyMode: Boolean(p.privacyMode), accessGate: Boolean(p.accessGate),
+    animation: p.animation !== false, narration: p.narration || 'audio-when-available', lowData: Boolean(p.lowData), privacyMode: Boolean(p.privacyMode), accessGate: Boolean(p.accessGate),
     integrations: {
       assistant: endpointOf(integrations.assistant), queries: endpointOf(integrations.queries), identity: endpointOf(integrations.identity), verification: endpointOf(integrations.verification),
       wallet: Object.fromEntries(WALLETS.map((w) => [w, endpointOf(integrations.wallet && integrations.wallet[w])])),

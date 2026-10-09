@@ -16,7 +16,7 @@ import { SECTIONS } from '../ui/sections/index.js';
 import { renderMasthead, renderNav, renderFooter, renderLauncher, setOfflineBanner, syncThemeToggle } from '../ui/shell.js';
 import { toast, closeAll, closePopover } from '../ui/components/overlay.js';
 import { openLumi } from '../ui/lumi.js';
-import { openStory } from '../ui/story.js';
+import { openStory, narrationScript } from '../ui/story.js';
 import { renderTray } from '../ui/tray.js';
 import { openQuery } from '../ui/query.js';
 import { openMine } from '../ui/mine.js';
@@ -162,6 +162,8 @@ export function boot() {
 
   current = { ctx: null, unsubscribe: [] };
   const ctx = createContext({ store, doc, config, services, scope });
+  // Read-only hook for the narration build step: the story's spoken text for the statement on screen.
+  window.__paylight = Object.freeze({ narrationScript: () => narrationScript(ctx), locale: ctx.locale, ref: `${doc.record.document.id}@${doc.record.document.version}` });
   current.ctx = ctx;
   renderApp(ctx);
   if (restored && (restored.selection.lineIds.length || restored.nav.lineId)) toast(t('notice.restored'));

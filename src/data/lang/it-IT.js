@@ -1372,4 +1372,7 @@ export const pack = {
   "mine.picked_up": "{section} selezionata, posizione {position} di {count}. Usa le frecce per spostarla, Spazio per rilasciarla, Esc per annullare.",
   "mine.dropped": "{section} rilasciata in posizione {position} di {count}.",
   "mine.drag_cancelled": "Riordino annullato. {section} è tornata in posizione {position}.",
+  "story.voice": "Voce",
+  "story.voice_credit": "Letto da {name}, una voce ElevenLabs.",
+  "story.voice_blocked": "Il browser ha bloccato l’audio. Premi Riproduci per ascoltare la narrazione.",
 };

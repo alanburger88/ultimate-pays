@@ -41,7 +41,37 @@ registerStrings({
   'story.first_statement': 'First statement included',
   'story.transcript_intro': 'Every caption from the story, in order.',
   'story.no_leave': 'No leave balance is recorded on this statement.',
+  'story.voice': 'Voice',
+  'story.voice_credit': 'Read by {name}, an ElevenLabs voice.',
+  'story.voice_blocked': 'Your browser held back the sound. Press Play to hear the narration.',
 });
+
+/* ---- Bundled narration: voice clips prepared at build time (scripts/narrate.js), one per chapter. ---- */
+let narrationIndex;
+function bundledNarration(ctx) {
+  if (narrationIndex === undefined) {
+    const el = typeof document !== 'undefined' ? document.getElementById('pl-narration') : null;
+    try { narrationIndex = el ? JSON.parse(el.textContent) : null; } catch (e) { narrationIndex = null; }
+  }
+  if (!narrationIndex) return null;
+  const d = ctx.doc.record.document;
+  const entry = narrationIndex[`${d.id}@${d.version}`];
+  return (entry && entry[ctx.locale]) || null;
+}
+// Letters and digits only: spacing and punctuation may differ between browsers' number formats.
+const spoken = (s) => String(s).normalize('NFKD').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+
+/** Clips whose recorded text is exactly what this statement says now (a clip never speaks other figures). */
+function matchClips(ctx) {
+  const n = bundledNarration(ctx);
+  if (!n) return { voice: null, clips: {} };
+  const clips = {};
+  for (const line of narrationScript(ctx)) {
+    const clip = n.chapters.find((c) => c.id === line.id);
+    if (clip && spoken(clip.text) === spoken(line.text) && document.getElementById(`pl-audio-${clip.key}`)) clips[line.id] = clip;
+  }
+  return { voice: Object.keys(clips).length ? n.voice : null, clips };
+}
 
 /* Chapter durations in seconds (restrained: 5–7 s each). */
 const DURATIONS = { greeting: 5, money: 7, changes: 6, benefits: 5, next: 5 };
@@ -87,7 +117,7 @@ function sentenceText(ctx, key, params = {}) {
  * Build the chapters from the document. Each chapter: { id, title, section,
  * lineId, captions: [{ key, params }], scene(ctx) -> { el, update(p) } }.
  */
-export function buildChapters(ctx) {
+export function buildChapters(ctx, { durations = null } = {}) {
   const { record, profile, computed } = ctx.doc;
   const totals = computed.totals || {};
   const rewardDef = profile.reward || {};
@@ -281,15 +311,22 @@ export function buildChapters(ctx) {
   });
 
   let offset = 0;
-  for (const c of chapters) { c.duration = DURATIONS[c.id] || 5; c.start = offset; offset += c.duration; }
+  // With a voice clip, a chapter lasts as long as its narration (plus a short pause); otherwise the restrained default.
+  for (const c of chapters) { c.duration = Math.max(DURATIONS[c.id] || 5, durations && durations[c.id] ? Math.ceil((durations[c.id] + 0.8) * 10) / 10 : 0); c.start = offset; offset += c.duration; }
   return { chapters, total: offset };
+}
+
+/** The spoken script of this statement's story: one plain-text paragraph per chapter (used to prepare narration audio). */
+export function narrationScript(ctx) {
+  return buildChapters(ctx).chapters.map((c) => ({ id: c.id, text: captionText(ctx, c) }));
 }
 
 function captionNodes(ctx, chapter) { return chapter.captions.map((c) => sentence(ctx, c.key, c.params, 'p')); }
 function captionText(ctx, chapter) { return chapter.captions.map((c) => sentenceText(ctx, c.key, c.params)).join(' '); }
 
 export function openStory(ctx, { chapter = null } = {}) {
-  const { chapters, total } = buildChapters(ctx);
+  const { voice: voiceName, clips } = matchClips(ctx);
+  const { chapters, total } = buildChapters(ctx, { durations: Object.fromEntries(Object.entries(clips).map(([id, c]) => [id, c.duration])) });
   const lowData = ctx.lowData();
   const stepped = !lowData && ctx.reducedMotion();
   const mode = lowData ? 'transcript' : stepped ? 'stepped' : 'timeline';
@@ -358,17 +395,73 @@ export function openStory(ctx, { chapter = null } = {}) {
   // Narration: bundled audio for this language (never autoplayed) or a truthful unavailable state.
   const audioSrc = (() => { const a = ctx.doc.record.story && ctx.doc.record.story.audio && ctx.doc.record.story.audio[ctx.locale]; if (!a) return null; return typeof a === 'string' ? a : (a.src || a.url || null); })();
   const narration = h('div', { class: 'pl-story-narration' });
-  if (audioSrc) {
+  const pref = (ctx.store.get().prefs.presentation || {}).narration || 'audio-when-available';
+  const voice = { on: Boolean(voiceName) && pref === 'audio-when-available', el: null, key: null, urls: new Map(), warned: false, pending: false, blocked: false };
+  let voiceBtn = null;
+  function clipUrl(key) {
+    if (voice.urls.has(key)) return voice.urls.get(key);
+    const node = document.getElementById(`pl-audio-${key}`);
+    if (!node) return null;
+    const bin = atob(node.textContent.trim());
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const url = URL.createObjectURL(new Blob([bytes], { type: node.dataset.type || 'audio/mpeg' }));
+    voice.urls.set(key, url);
+    return url;
+  }
+  function stopVoice() { if (voice.el && !voice.el.paused) { try { voice.el.pause(); } catch (e) { /* ignore */ } } }
+  function startClip(clip, offset) {
+    if (!voice.el) { voice.el = new Audio(); voice.el.preload = 'auto'; }
+    const url = clipUrl(clip.key);
+    if (!url) return;
+    if (voice.key !== clip.key) { voice.el.src = url; voice.key = clip.key; }
+    try { voice.el.currentTime = Math.max(0, offset); } catch (e) { /* not seekable yet */ }
+    voice.pending = true;
+    const p = voice.el.play();
+    const done = () => { voice.pending = false; };
+    if (p && p.then) p.then(done, () => { done(); voice.blocked = true; if (!voice.warned) { voice.warned = true; announce(ctx.t('story.voice_blocked')); } });
+    else done();
+  }
+  /** Keep the current chapter's clip in step with the story: called on every render. */
+  function syncVoice(changed) {
+    if (!voice.on) { stopVoice(); return; }
+    if (voice.pending || voice.blocked) return;
+    const c = chapters[state.index];
+    const clip = clips[c.id];
+    if (stepped) {
+      // Reduced motion: nothing sounds on open; each step the person takes plays that chapter.
+      if (!voice.armed) { voice.lastIndex = state.index; return; }
+      if (voice.lastIndex !== state.index) { voice.lastIndex = state.index; if (clip) startClip(clip, 0); else stopVoice(); }
+      return;
+    }
+    if (!state.playing || !clip) { stopVoice(); return; }
+    const offset = state.t - c.start;
+    if (offset >= clip.duration) { stopVoice(); return; }
+    if (voice.key === clip.key && voice.el.ended) return; // this chapter's narration has finished
+    if (voice.key !== clip.key || voice.el.paused) startClip(clip, offset);
+    else if (Math.abs(voice.el.currentTime - offset) > 0.6) { try { voice.el.currentTime = offset; } catch (e) { /* ignore */ } }
+  }
+  cleanups.push(() => { stopVoice(); for (const url of voice.urls.values()) URL.revokeObjectURL(url); voice.urls.clear(); });
+  if (voiceName) {
+    voiceBtn = h('button', { class: 'pl-btn', type: 'button', aria: { pressed: String(voice.on) }, on: { click: () => {
+      voice.on = !voice.on;
+      voice.blocked = false;
+      voiceBtn.setAttribute('aria-pressed', String(voice.on));
+      if (voice.on && stepped) { const clip = clips[chapters[state.index].id]; if (clip) startClip(clip, 0); } else syncVoice(false);
+    } } }, icon('volume', { size: 16 }), ctx.t('story.voice'));
+    narration.append(voiceBtn, h('span', { class: 'muted xs' }, ctx.t('story.voice_credit', { name: voiceName })));
+  } else if (audioSrc) {
     const audio = h('audio', { controls: true, preload: 'none', src: audioSrc, aria: { label: ctx.t('story.audio') } });
     narration.append(h('span', { class: 'lbl' }, icon('volume', { size: 16 }), ctx.t('story.audio')), audio);
     cleanups.push(() => { try { audio.pause(); } catch (e) { /* ignore */ } });
   } else {
     narration.append(h('p', { class: 'muted small pl-story-audio-none' }, icon('volume', { size: 14 }), ctx.t('story.audio_unavailable')));
   }
+  if (voiceName) narration.classList.add('has-voice');
   // Device voice, only when the preference asks for audio and a matching voice exists; always on demand.
   const speechHost = h('div', { class: 'pl-story-speech' });
   narration.appendChild(speechHost);
-  const wantsSpeech = (ctx.store.get().prefs.presentation || {}).narration === 'audio-when-available' && typeof window !== 'undefined' && window.speechSynthesis;
+  const wantsSpeech = !voiceName && pref === 'audio-when-available' && typeof window !== 'undefined' && window.speechSynthesis;
   const langPrefix = String(ctx.locale).toLowerCase().split('-')[0];
   function matchingVoice() { try { return window.speechSynthesis.getVoices().find((v) => String(v.lang || '').toLowerCase().startsWith(langPrefix)) || null; } catch (e) { return null; } }
   let speakBtn = null;
@@ -456,6 +549,7 @@ export function openStory(ctx, { chapter = null } = {}) {
       root.dataset.playing = String(state.playing);
     }
     renderCaption();
+    syncVoice(changed);
   }
 
   function tick(now) {
@@ -470,7 +564,7 @@ export function openStory(ctx, { chapter = null } = {}) {
     render();
     raf = requestAnimationFrame(tick);
   }
-  function play() { if (state.t >= total) state.t = 0; state.playing = true; last = null; if (raf === null) raf = requestAnimationFrame(tick); render(); }
+  function play() { if (state.t >= total) state.t = 0; voice.blocked = false; state.playing = true; last = null; if (raf === null) raf = requestAnimationFrame(tick); render(); }
   function pause() { state.playing = false; last = null; if (raf !== null) { cancelAnimationFrame(raf); raf = null; } render(); }
   function togglePlay() { if (state.playing) pause(); else play(); }
   function seekTo(t) { state.t = Math.max(0, Math.min(total, t)); last = null; render(); }
@@ -506,7 +600,8 @@ export function openStory(ctx, { chapter = null } = {}) {
   ctx.store.update('story', (s) => ({ ...s, open: true }));
 
   render();
-  // Visuals start on open unless motion is reduced; narration never starts by itself.
+  voice.armed = true;
+  // Visuals (and the voice, when on) start on open unless motion is reduced.
   if (!stepped) play();
   return dlg;
 }

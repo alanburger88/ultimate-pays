@@ -30,7 +30,7 @@
 .pl-story .pl-story-bars .b.is-prior { background: var(--pl-chart-neutral); }
 .pl-story .pl-story-bars .b.is-net { background: var(--pl-chart-1); }
 .pl-story-bar .pl-amount { font-weight: 650; font-size: var(--pl-size-sm); overflow-wrap: anywhere; text-align: center; }
-.pl-story-bar .lbl { font-size: var(--pl-size-xs); text-align: center; overflow-wrap: anywhere; }
+.pl-story-bar .lbl { font-size: var(--pl-size-xs); text-align: center; overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; max-width: 100%; }
 .pl-story[data-mode="stepped"] .pl-story-bars .b { transition: none; }
 
 .pl-story-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 360px; }

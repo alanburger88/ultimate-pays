@@ -1372,4 +1372,7 @@ export const pack = {
   "mine.picked_up": "{section} liphakanyisiwe, indawo {position} kwezi-{count}. Sebenzisa iintolo ukulihambisa, u-Space ukulibeka, u-Escape ukurhoxisa.",
   "mine.dropped": "{section} libekwe kwindawo {position} kwezi-{count}.",
   "mine.drag_cancelled": "Ukulungelelanisa kwakhona kurhoxisiwe. {section} libuyele kwindawo {position}.",
+  "story.voice": "Ilizwi",
+  "story.voice_credit": "Kufundwa ngu-{name}, ilizwi le-ElevenLabs.",
+  "story.voice_blocked": "Ibhrawuza yakho ithintele isandi. Cinezela u-Dlala ukuze uve ingxelo.",
 };
