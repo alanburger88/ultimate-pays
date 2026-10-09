@@ -10,6 +10,8 @@ node scripts/measure.js dist/paylight.html "#region=ZA&lang=zu-ZA&preset=complet
 
 Playwright is a dev dependency (`npm i -D playwright`); the cloud build environment uses its pre-installed Chromium.
 
+Last full run, 9 October 2026: 86 unit tests passed, 0 failed; 1 386 end-to-end checks passed, 0 failed (every profile × language at 320 px and 1200 px, a 200 % text-size pass, and the cross-section journeys).
+
 ## What the checks cover
 
 **Financial integrity** (`scripts/validate.js`, `tests/unit/calc.test.js`): every supplied total equals the profile's reconciliation spec evaluated over the lines; every disclosed calculation recomputes to the issued amount; year-to-date chains hold across included periods; time entries reconcile to the hours they pay; leave balances reconcile; the variance bridge reconciles exactly against every prior period; the payment amount equals the payable total. The same functions feed the UI, Lumi, the story, PDF and Excel, so a reconciled record is reconciled everywhere.

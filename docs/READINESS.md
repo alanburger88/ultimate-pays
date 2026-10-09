@@ -44,7 +44,7 @@ Measured on 9 October 2026 with `node scripts/measure.js` (headless Chromium 141
 
 | Bundle | Raw | gzip | brotli | App ready | First contentful paint | DOM nodes |
 |---|---|---|---|---|---|---|
-| `dist/paylight.html` (presenter: 6 profiles, 7 records, 10 languages) | 1 515 KiB | 355 KiB | 266 KiB | ≈ 1.1 s | ≈ 220 ms | 338 |
-| `dist/paylight-ZA-za-new-starter.html` (employee package) | 831 KiB | — | — | ≈ 0.8 s | ≈ 160 ms | 299 |
+| `dist/paylight.html` (presenter: 6 profiles, 7 records, 10 complete languages) | 2 305 KiB | 572 KiB | 368 KiB | ≈ 1.1 s | ≈ 300 ms | 301 |
+| `dist/paylight-ZA-za-new-starter.html` (employee package, 4 languages) | 1 186 KiB | 302 KiB | 215 KiB | ≈ 0.9 s | ≈ 190 ms | 300 |
 
-Section mounts after load (same profile): Pay details ≈ 100 ms, What changed ≈ 250 ms, Time & leave ≈ 160–180 ms, Total reward ≈ 100–120 ms, Record & actions ≈ 155–190 ms. The record is readable before any optional media or connected enhancement loads; the UserWay script is appended asynchronously after first render and cannot block the statement.
+Section mounts after load (ZA new starter): Pay details ≈ 110–135 ms, Time & leave ≈ 200–255 ms, Total reward ≈ 85–130 ms, Record & actions ≈ 170–215 ms. Most of the size is the complete interface language packs (about 850 KB of source for 10 languages); an employee package carries only its profile's languages plus the reference pack. The record is readable before any optional media or connected enhancement loads; the UserWay script is appended asynchronously after first render and cannot block the statement.
