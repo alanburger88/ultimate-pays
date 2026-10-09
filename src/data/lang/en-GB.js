@@ -750,6 +750,7 @@ export const pack = {
   'studio.hidden_note': 'Studio is a presentation tool. A hidden launcher is not authorisation; employee packages do not contain it.',
 
   // --- Exports ---------------------------------------------------------------------
+  'export.pdf_unsupported_chars': 'The PDF font can\'t show some characters in this record ({chars}). Nothing was changed or saved. Use Print and choose Save as PDF to keep every character.',
   'export.pdf_title': '{title} – {employee} – {period}',
   'export.sheet_summary': 'Summary',
   'export.sheet_earnings': 'Earnings',

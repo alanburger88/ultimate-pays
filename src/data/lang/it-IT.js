@@ -750,6 +750,7 @@ export const pack = {
   'studio.hidden_note': 'Lo Studio è uno strumento di presentazione. Un comando di avvio nascosto non costituisce un’autorizzazione; i pacchetti per i dipendenti non lo contengono.',
 
   // --- Exports ---------------------------------------------------------------------
+  'export.pdf_unsupported_chars': 'Il carattere del PDF non può mostrare alcuni caratteri di questo documento ({chars}). Non è stato modificato né salvato nulla. Usa Stampa e scegli Salva come PDF per conservare tutti i caratteri.',
   'export.pdf_title': '{title} — {employee} — {period}',
   'export.sheet_summary': 'Riepilogo',
   'export.sheet_earnings': 'Competenze',

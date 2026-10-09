@@ -28,6 +28,7 @@ export const profile = {
   subdivision: null,
   group: 'europe',
   currency: 'EUR',
+  timeZone: 'Europe/Berlin',
   locales: ['de-DE', 'en-GB', 'fr-FR', 'it-IT'],
   defaultLocale: 'de-DE',
   statutoryLocale: 'de-DE',

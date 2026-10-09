@@ -750,6 +750,7 @@ export const pack = {
   'studio.hidden_note': 'Le Studio est un outil de présentation. Un lanceur masqué ne vaut pas autorisation ; les versions salarié ne le contiennent pas.',
 
   // --- Exports ---------------------------------------------------------------------
+  'export.pdf_unsupported_chars': 'La police du PDF ne peut pas afficher certains caractères de ce document ({chars}). Rien n\'a été modifié ni enregistré. Utilisez Imprimer, puis Enregistrer au format PDF, pour conserver tous les caractères.',
   'export.pdf_title': '{title} — {employee} — {period}',
   'export.sheet_summary': 'Synthèse',
   'export.sheet_earnings': 'Rémunération',

@@ -84,6 +84,9 @@ function lineRow(ctx, line, { tags = {}, notes = {} } = {}) {
     units: calc && calc.type === 'units_rate' ? hours : null,
     rate: rate ? rate.text : null,
     rateMoney: rate ? rate.money : false,
+    // Typed rate for spreadsheets: money per unit (minor units, may carry extra precision) or a percentage.
+    rateMinor: calc && (calc.type === 'hours_rate' || calc.type === 'units_rate') && typeof calc.rateMinor === 'number' ? calc.rateMinor : null,
+    ratePermyriad: calc && calc.type === 'rate_base' && typeof calc.ratePermyriad === 'number' ? calc.ratePermyriad : null,
     amountMinor: line.amountMinor,
     ytdMinor: typeof line.ytdMinor === 'number' ? line.ytdMinor : null,
     taxable: typeof line.taxable === 'boolean' ? line.taxable : null,
@@ -126,7 +129,7 @@ function employeeRows(ctx) {
     e.classification ? { label: f('classification', 'record.field_classification'), lines: [e.classification] } : null,
     e.department ? { label: f('department', 'record.field_department'), lines: [e.department] } : null,
     e.location ? { label: f('location', 'record.field_location'), lines: [e.location] } : null,
-    e.hireDate ? { label: f('hireDate', 'record.field_hire_date'), lines: [ctx.fmt.date(e.hireDate)] } : null,
+    e.hireDate ? { label: f('hireDate', 'record.field_hire_date'), lines: [ctx.fmt.date(e.hireDate)], date: e.hireDate } : null,
     ...(e.identifiers || []).map((r) => ({ label: content.employeeField(r.key), lines: [r.valueMasked], id: true })),
   ].filter(Boolean);
 }
@@ -145,11 +148,11 @@ function documentRows(ctx, language) {
     { label: t('masthead.reference'), lines: [d.id], id: true },
     { label: t('export.field_version'), lines: [String(d.version)] },
     kind || title ? { label: t('export.field_document_kind'), lines: joinLines([title, kind && kind !== title ? kind : null]) } : null,
-    d.issuedAt ? { label: t('export.field_issued'), lines: [ctx.fmt.dateTime(d.issuedAt)] } : null,
-    period.start && period.end ? { label: t('masthead.period'), lines: joinLines([ctx.fmt.period(period), period.sequence && period.of ? t('masthead.period_of', { sequence: period.sequence, of: period.of }) : null]) } : null,
-    d.payDate ? { label: t('masthead.pay_date'), lines: [ctx.fmt.date(d.payDate)] } : null,
+    d.issuedAt ? { label: t('export.field_issued'), lines: [ctx.fmt.dateTime(d.issuedAt)], dateTime: d.issuedAt } : null,
+    period.start && period.end ? { label: t('masthead.period'), lines: joinLines([ctx.fmt.period(period), period.sequence && period.of ? t('masthead.period_of', { sequence: period.sequence, of: period.of }) : null]), period: { start: period.start, end: period.end } } : null,
+    d.payDate ? { label: t('masthead.pay_date'), lines: [ctx.fmt.date(d.payDate)], date: d.payDate } : null,
     d.currency ? { label: t('masthead.currency'), lines: [d.currency] } : null,
-    d.taxYear ? { label: t('record.field_tax_year'), lines: joinLines([d.taxYear.label, basis, d.taxYear.start && d.taxYear.end ? ctx.fmt.period({ start: d.taxYear.start, end: d.taxYear.end }) : null]) } : null,
+    d.taxYear ? { label: t('record.field_tax_year'), lines: joinLines([d.taxYear.label, basis, d.taxYear.start && d.taxYear.end ? ctx.fmt.period({ start: d.taxYear.start, end: d.taxYear.end }) : null]), period: d.taxYear.start && d.taxYear.end ? { start: d.taxYear.start, end: d.taxYear.end } : null } : null,
     freq ? { label: t('record.field_pay_frequency'), lines: [has(`record.frequency_${freq}`) ? t(`record.frequency_${freq}`) : freq] } : null,
     { label: t('export.field_profile'), lines: [`${d.profileId || profile.id} · ${t('masthead.version', { version: d.profileVersion || profile.version })}`] },
     d.contentVersion ? { label: t('export.field_content_version'), lines: [String(d.contentVersion)] } : null,
@@ -167,7 +170,7 @@ function paymentRows(ctx) {
     p.method ? { label: t('record.field_payment_method'), lines: [content.paymentMethod(p.method)] } : null,
     p.bankMasked ? { label: t('record.field_bank'), lines: [p.bankMasked], id: true } : null,
     typeof p.amountMinor === 'number' ? { label: t('common.amount'), lines: [ctx.fmt.money(p.amountMinor)], minor: p.amountMinor } : null,
-    p.date ? { label: t('masthead.pay_date'), lines: [ctx.fmt.date(p.date)] } : null,
+    p.date ? { label: t('masthead.pay_date'), lines: [ctx.fmt.date(p.date)], date: p.date } : null,
     p.reference ? { label: t('export.field_payment_reference'), lines: [p.reference], id: true } : null,
   ].filter(Boolean);
 }
@@ -247,7 +250,7 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
   const totals = profile.totals.map((def) => ({ id: def.id, label: content.total(def.id), minor: totalsMap[def.id], prominent: Boolean(def.prominent), primary: def.id === primary, payable: def.id === payable && payable !== primary }));
   const integrity = d.integrity || {};
   const ver = (x) => (x && typeof x === 'object' ? (x.version || x.id) : x);
-  const generatedText = ctx.fmt.dateTime(generatedAt);
+  const generatedText = ctx.fmt.dateTime(generatedAt, { local: true });
   return {
     locale: ctx.locale,
     language,
@@ -286,6 +289,9 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
       integrity.status === 'not-verified' || !integrity.status ? t('record.integrity_not_verified') : `${t('export.field_integrity_status')}: ${integrity.status}${integrity.method ? ` (${integrity.method})` : ''}`,
     ]),
     integrityStatus: integrity.status || 'not-verified',
+    integrityStatusText: !integrity.status || integrity.status === 'not-verified' ? t('record.integrity_not_verified') : integrity.status,
+    // Separate payments (data contract: distinct from lines) are part of every retention output.
+    adjustments: (record.adjustments || []).map((a) => ({ id: a.id, label: (content.adjustment(a.key) || {}).label || a.key, minor: a.amountMinor, paymentDate: a.paymentDate || null, paymentDateText: a.paymentDate ? ctx.fmt.date(a.paymentDate) : null })),
     lineage: joinLines([
       `${t('masthead.version', { version: d.version })} · ${t('record.issued_at', { date: ctx.fmt.dateTime(d.issuedAt) })}`,
       d.supersedes ? t('record.supersedes', { version: ver(d.supersedes) }) : null,
@@ -296,7 +302,7 @@ export function recordModel(ctx, { generatedAt = new Date().toISOString(), selec
     history: (record.history || []).map((prior) => {
       const pl = priorLines(prior);
       return {
-        periodId: prior.periodId || null, period: prior.period, periodText: ctx.fmt.period(prior.period),
+        periodId: prior.periodId || null, period: prior.period, periodText: ctx.fmt.period(prior.period), periodStart: prior.period && prior.period.start, periodEnd: prior.period && prior.period.end,
         payDate: prior.payDate || null, payDateText: prior.payDate ? ctx.fmt.date(prior.payDate) : null,
         taxYearLabel: prior.taxYearLabel || null, count: pl.length,
         netLabel: content.total(primary), netMinor: computeTotals(pl, profile).totals[primary],
@@ -340,8 +346,24 @@ function linesTable(ctx, cat) {
       h('td', { class: 'num' }, r.rate === null ? '—' : r.rate),
       h('td', { class: 'num' }, amount(ctx, r.amountMinor)),
       h('td', { class: 'num' }, r.ytdMinor === null ? '—' : amount(ctx, r.ytdMinor)),
-    ))),
-    cat.subtotalMinor === null ? null : h('tfoot', null, h('tr', null, h('th', { scope: 'row', colspan: '3' }, t('details.subtotal', { category: cat.label })), h('td', { class: 'num' }, amount(ctx, cat.subtotalMinor)), h('td', null))),
+    )), cat.subtotalMinor === null ? null : h('tr', { class: 'pl-px-subtotal' }, h('th', { scope: 'row', colspan: '3' }, t('details.subtotal', { category: cat.label })), h('td', { class: 'num' }, amount(ctx, cat.subtotalMinor)), h('td', null))),
+  );
+}
+
+/** ' (Net pay)' / ' (Amount paid)' after a total's own label, unless the label already says so. */
+export function totalSuffix(t, x) {
+  const tag = x.primary ? t('masthead.net_pay') : x.payable ? t('masthead.amount_paid') : null;
+  if (!tag) return '';
+  return String(x.label).toLowerCase().includes(String(tag).toLowerCase()) ? '' : ` (${tag})`;
+}
+
+function adjustmentsTable(ctx, m) {
+  const t = ctx.t;
+  if (!m.adjustments.length) return null;
+  return h('table', { class: 'pl-px-table' },
+    h('caption', null, t('mypay.separate_payment')),
+    h('thead', null, h('tr', null, h('th', { scope: 'col' }, t('details.col_description')), h('th', { scope: 'col' }, t('masthead.pay_date')), h('th', { scope: 'col', class: 'num' }, t('details.col_amount')))),
+    h('tbody', null, m.adjustments.map((a) => h('tr', null, h('td', null, a.label), h('td', null, a.paymentDateText || '—'), h('td', { class: 'num' }, amount(ctx, a.minor))))),
   );
 }
 
@@ -350,7 +372,7 @@ function totalsTable(ctx, m) {
   return h('table', { class: 'pl-px-table pl-px-totals' },
     h('thead', null, h('tr', null, h('th', { scope: 'col' }, t('export.totals')), h('th', { scope: 'col', class: 'num' }, t('details.col_amount')))),
     h('tbody', null, m.totals.map((x) => h('tr', { class: x.prominent ? 'is-prominent' : null, dataset: { total: x.id } },
-      h('th', { scope: 'row' }, x.label, x.primary ? ` (${t('masthead.net_pay')})` : x.payable ? ` (${t('masthead.amount_paid')})` : null),
+      h('th', { scope: 'row' }, x.label, totalSuffix(t, x)),
       h('td', { class: 'num' }, amount(ctx, x.minor)),
     ))),
   );
@@ -446,6 +468,7 @@ export function buildPrintView(ctx) {
       h('h2', null, t('record.full_record')),
       m.categories.map((cat) => linesTable(ctx, cat)),
       totalsTable(ctx, m),
+      adjustmentsTable(ctx, m),
     ),
     timeSection(ctx, m),
     h('section', { class: 'pl-px-section' },

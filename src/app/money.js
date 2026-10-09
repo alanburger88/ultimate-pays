@@ -88,11 +88,17 @@ export function formatDate(iso, { locale, style = 'medium' } = {}) {
   return new Intl.DateTimeFormat(locale, options).format(date);
 }
 
-export function formatDateTime(iso, { locale } = {}) {
+/**
+ * Date-time in a stated time zone, with the zone shown, so the same instant reads the same for every viewer.
+ * timeZone: an IANA zone (the issuer's), or omitted for the viewer's own zone (still labelled).
+ */
+export function formatDateTime(iso, { locale, timeZone } = {}) {
   if (!iso) return '—';
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+  const opts = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
+  try { return new Intl.DateTimeFormat(locale, timeZone ? { ...opts, timeZone } : opts).format(date); }
+  catch (err) { return new Intl.DateTimeFormat(locale, opts).format(date); }
 }
 
 export function formatPeriod(period, { locale } = {}) {

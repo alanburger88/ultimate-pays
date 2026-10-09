@@ -102,6 +102,8 @@ export async function exportPdf(ctx) {
     const ok = download(bytes, t('export.filename_pdf', { id: ctx.doc.record.document.id }), MIME.pdf);
     if (ok) reportStarted(ctx); else reportUnsupported(ctx);
   } catch (err) {
+    // Never alter a name or term to fit the PDF font: say so and offer Print, which keeps every character.
+    if (err && err.code === 'pdf_charset') { ctx.actions.toast(t('export.pdf_unsupported_chars', { chars: err.chars.slice(0, 6).join(' ') }), { kind: 'error', duration: 10000, action: { label: t('record.print'), onClick: () => ctx.actions.print() } }); return; }
     reportFailed(ctx, err);
   }
 }

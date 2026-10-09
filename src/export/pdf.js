@@ -11,7 +11,7 @@
  *
  * Contract: export function buildPdf(ctx, { generatedAt? }) -> Uint8Array
  */
-import { recordModel } from './print.js';
+import { recordModel, totalSuffix } from './print.js';
 
 // ---------------------------------------------------------------------------
 // WinAnsi encoding and Helvetica metrics
@@ -28,7 +28,29 @@ function isSpaceLike(cp) {
   return cp === 0x00a0 || (cp >= 0x2000 && cp <= 0x200a) || cp === 0x202f || cp === 0x205f || cp === 0x3000 || cp === 0x2007 || cp === 0xfeff;
 }
 
-/** Encode a JavaScript string as WinAnsi bytes. Unknown characters become '?'. */
+/**
+ * Characters this PDF (standard Helvetica, WinAnsi) cannot show exactly. Rather than altering a name or
+ * statutory term, the export is refused and the employee is pointed to Print, which keeps every character.
+ */
+export function unrepresentable(str) {
+  const bad = new Set();
+  for (const ch of String(str)) {
+    const cp = ch.codePointAt(0);
+    if (cp < 0x7f || cp === 0x09 || cp === 0x0a || cp === 0x0d || isSpaceLike(cp) || cp === 0x2212 || (cp >= 0x2010 && cp <= 0x2012)) continue;
+    if (CP1252[cp] !== undefined || (cp >= 0xa0 && cp <= 0xff)) continue;
+    bad.add(ch);
+  }
+  return Array.from(bad);
+}
+
+function collectStrings(value, out = []) {
+  if (typeof value === 'string') out.push(value);
+  else if (Array.isArray(value)) for (const v of value) collectStrings(v, out);
+  else if (value && typeof value === 'object') for (const v of Object.values(value)) collectStrings(v, out);
+  return out;
+}
+
+/** Encode a JavaScript string as WinAnsi bytes. Unknown characters become '?' (buildPdf refuses such text first). */
 export function toWinAnsi(str) {
   const out = [];
   for (const ch of String(str)) {
@@ -143,7 +165,8 @@ const GRAY_RULE = 0.72;
 function wrap(text, width, size, bold) {
   const lines = [];
   for (const para of String(text).split(/\r?\n/)) {
-    const words = para.split(/\s+/).filter(Boolean);
+    // Split on ordinary spaces only: no-break spaces (between a currency symbol and its figure) keep words together.
+    const words = para.split(/[ \t]+/).filter(Boolean);
     if (!words.length) { lines.push({ bytes: [], width: 0 }); continue; }
     let cur = [];
     let curW = 0;
@@ -233,8 +256,8 @@ class Layout {
   heading(text, { size = 12, after = 4, before = 6, rule = true } = {}) {
     const lh = size * LINE;
     this.y += before;
-    // keep the heading with at least two lines of what follows
-    this.ensure(lh + 9.5 * LINE * 2 + after + 6);
+    // keep the heading with what follows: a caption, a header row and two rows
+    this.ensure(lh + 9.5 * LINE * 4 + after + 12);
     const lines = wrap(text, this.width, size, true);
     for (const ln of lines) { this.drawBytes(ln.bytes, { x: this.left, top: this.y, size, bold: true }); this.y += lh; }
     if (rule) { this.rule(this.left, this.left + this.width, this.y + 1, { width: 0.75, gray: 0.4 }); this.y += 3; }
@@ -413,7 +436,7 @@ function totalsTable(ctx, L, m) {
     caption: t('export.totals'),
     columns: [{ label: t('details.col_description'), width: 0.72 }, { label: t('details.col_amount'), width: 0.28, align: 'right' }],
     rows: m.totals.map((x) => ({
-      cells: [`${x.label}${x.primary ? ` (${t('masthead.net_pay')})` : x.payable ? ` (${t('masthead.amount_paid')})` : ''}`, ctx.fmt.money(x.minor)],
+      cells: [`${x.label}${totalSuffix(t, x)}`, ctx.fmt.money(x.minor)],
       bold: x.prominent,
     })),
   });
@@ -477,6 +500,8 @@ function historySection(ctx, L, m) {
 export function buildPdf(ctx, { generatedAt = new Date().toISOString() } = {}) {
   const t = ctx.t;
   const m = recordModel(ctx, { generatedAt });
+  const lossy = unrepresentable(collectStrings(m).join(' '));
+  if (lossy.length) { const e = new Error('Characters outside the PDF font'); e.code = 'pdf_charset'; e.chars = lossy; throw e; }
   const L = new Layout({ paper: ctx.doc.profile.paper });
   const continued = `${m.header} ${t('export.print_continued')}`;
   L.onNewPage = (lay) => {
@@ -508,6 +533,13 @@ export function buildPdf(ctx, { generatedAt = new Date().toISOString() } = {}) {
   L.heading(t('record.full_record'));
   for (const cat of m.categories) linesTable(ctx, L, cat);
   totalsTable(ctx, L, m);
+  if (m.adjustments.length) {
+    L.table({
+      caption: t('mypay.separate_payment'),
+      columns: [{ label: t('details.col_description'), width: 0.5 }, { label: t('masthead.pay_date'), width: 0.22 }, { label: t('details.col_amount'), width: 0.28, align: 'right' }],
+      rows: m.adjustments.map((a) => ({ cells: [a.label, a.paymentDateText || '—', ctx.fmt.money(a.minor)] })),
+    });
+  }
 
   // Time and leave
   timeSection(ctx, L, m);

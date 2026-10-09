@@ -750,6 +750,7 @@ export const pack = {
   'studio.hidden_note': 'ISitudiyo sisixhobo somboniso. Isiqalisi esifihliweyo asilogunya; iipakethi zabasebenzi azisiqulathanga.',
 
   // --- Exports ---------------------------------------------------------------------
+  'export.pdf_unsupported_chars': 'Ifonti ye-PDF ayikwazi ukubonisa abanye oonobumba kule rekhodi ({chars}). Akukho nto itshintshiweyo okanye egciniweyo. Sebenzisa u-Printa uze ukhethe u-Gcina njenge-PDF ukuze ugcine bonke oonobumba.',
   'export.pdf_title': '{title} — {employee} — {period}',
   'export.sheet_summary': 'Isishwankathelo',
   'export.sheet_earnings': 'Umvuzo',

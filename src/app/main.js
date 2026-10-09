@@ -178,7 +178,8 @@ function createContext({ store, doc, config, services, scope }) {
     percent: (permyriad, digits = 2) => money.formatPercent(permyriad, { locale: doc.locale, digits }),
     rate: (minor, per = null) => money.formatRate(minor, { ...fmtOpts(), per }),
     date: (iso, style) => money.formatDate(iso, { locale: doc.locale, style }),
-    dateTime: (iso) => money.formatDateTime(iso, { locale: doc.locale }),
+    // Issue times are shown in the issuer's zone (profile.timeZone); { local: true } for the viewer's own clock.
+    dateTime: (iso, o = {}) => money.formatDateTime(iso, { locale: doc.locale, timeZone: o.local ? undefined : doc.profile.timeZone }),
     period: (p) => money.formatPeriod(p, { locale: doc.locale }),
   };
 

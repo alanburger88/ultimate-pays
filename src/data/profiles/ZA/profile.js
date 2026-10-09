@@ -23,6 +23,7 @@ export const profile = {
   subdivision: null,
   group: 'africa',
   currency: 'ZAR',
+  timeZone: 'Africa/Johannesburg',
   locales: ['en-ZA', 'af-ZA', 'zu-ZA', 'xh-ZA'],
   defaultLocale: 'en-ZA',
   statutoryLocale: 'en-ZA',

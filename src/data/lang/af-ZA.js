@@ -750,6 +750,7 @@ export const pack = {
   'studio.hidden_note': 'Die ateljee is ’n aanbiedingshulpmiddel. ’n Versteekte aansitter is nie magtiging nie; werknemerpakkette bevat dit nie.',
 
   // --- Exports ---------------------------------------------------------------------
+  'export.pdf_unsupported_chars': 'Die PDF-lettertipe kan sommige karakters in hierdie rekord nie wys nie ({chars}). Niks is verander of gestoor nie. Gebruik Druk en kies Stoor as PDF om elke karakter te behou.',
   'export.pdf_title': '{title} — {employee} — {period}',
   'export.sheet_summary': 'Opsomming',
   'export.sheet_earnings': 'Verdienste',

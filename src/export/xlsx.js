@@ -132,7 +132,7 @@ export function excelSerial(iso) {
 }
 
 // Cell constructors. Every string is an inline string; identifiers additionally carry the text ("@") style.
-const S = { text: 0, money: 1, date: 2, header: 3, hours: 4, int: 5, moneyBold: 6, id: 7, title: 8, bold: 3 };
+const S = { text: 0, money: 1, date: 2, header: 3, hours: 4, int: 5, moneyBold: 6, id: 7, title: 8, bold: 3, rate: 9, percent: 10 };
 const T = (text) => ({ k: 'text', v: text === null || text === undefined ? '' : String(text), s: S.text });
 const ID = (text) => ({ k: 'text', v: text === null || text === undefined ? '' : String(text), s: S.id });
 const HDR = (text) => ({ k: 'text', v: String(text), s: S.header });
@@ -142,6 +142,9 @@ const M = (minor, digits, bold = false) => (typeof minor === 'number' ? { k: 'nu
 const H = (hundredths) => (typeof hundredths === 'number' ? { k: 'num', v: (hundredths / 100).toFixed(2), s: S.hours } : T(''));
 const N = (n) => (typeof n === 'number' ? { k: 'num', v: String(n), s: S.int } : T(''));
 const D = (iso) => { const v = excelSerial(iso); return v === null ? T(iso || '') : { k: 'num', v: String(v), s: S.date }; };
+// Rates stay numbers: money per unit keeps any extra precision (#,##0.00##); percentages are true fractions (0.00##%).
+const RATE = (rateMinor, digits) => (typeof rateMinor === 'number' ? { k: 'num', v: String(Number((rateMinor / 10 ** digits).toFixed(digits + 2))), s: S.rate } : T(''));
+const PCT = (permyriad) => (typeof permyriad === 'number' ? { k: 'num', v: String(Number((permyriad / 10000).toFixed(6))), s: S.percent } : T(''));
 const BOOL = (b) => (typeof b === 'boolean' ? { k: 'bool', v: b ? '1' : '0', s: S.text } : T(''));
 
 function cellXml(cell, ref) {
@@ -175,12 +178,12 @@ function sheetXml({ rows, freezeRow = 0, paper = 'a4' }) {
 
 const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-<numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.00"/><numFmt numFmtId="165" formatCode="yyyy-mm-dd"/></numFmts>
+<numFmts count="4"><numFmt numFmtId="164" formatCode="#,##0.00"/><numFmt numFmtId="165" formatCode="yyyy-mm-dd"/><numFmt numFmtId="166" formatCode="#,##0.00##"/><numFmt numFmtId="167" formatCode="0.00##%"/></numFmts>
 <fonts count="3"><font><sz val="11"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="11"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="14"/><name val="Calibri"/><family val="2"/></font></fonts>
 <fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>
 <borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>
 <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-<cellXfs count="9">
+<cellXfs count="11">
 <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
 <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
 <xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
@@ -190,6 +193,8 @@ const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xf numFmtId="164" fontId="1" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/>
 <xf numFmtId="49" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
 <xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
+<xf numFmtId="167" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
 </cellXfs>
 <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
 </styleSheet>`;
@@ -246,7 +251,7 @@ function lineColumns(t, { withCategory = false, includeNotes = false } = {}) {
 function lineRow(r, { currency, digits, withCategory = false, includeNotes = false }) {
   return [
     ID(r.id), T(r.label), T(r.statutory || ''), ...(withCategory ? [T(r.categoryLabel)] : []), T(r.groupLabel || ''),
-    H(r.hoursHundredths), T(r.units || ''), T(r.rate || ''), M(r.amountMinor, digits), T(currency), r.ytdMinor === null ? T('') : M(r.ytdMinor, digits),
+    H(r.hoursHundredths), T(r.units || ''), r.rateMinor !== null && r.rateMinor !== undefined ? RATE(r.rateMinor, digits) : r.ratePermyriad !== null && r.ratePermyriad !== undefined ? PCT(r.ratePermyriad) : T(r.rate || ''), M(r.amountMinor, digits), T(currency), r.ytdMinor === null ? T('') : M(r.ytdMinor, digits),
     BOOL(r.taxable), BOOL(r.cash), ID(r.sourceRef || ''),
     ...(includeNotes ? [T(r.tagLabel || ''), T(r.note || '')] : []),
   ];
@@ -266,24 +271,60 @@ function categorySheet(t, m, name, categories, { currency, digits, withCategory 
   return { name, rows, freezeRow: 1 };
 }
 
+/**
+ * One particulars row with typed values: amounts are numbers, single dates are date cells, and a period's
+ * start and end are date cells in the Start / End columns (its readable text stays in Value). Issue times keep
+ * their zone-labelled text, since a spreadsheet date-time has no time zone.
+ */
+function particularRow(r, { currency, digits }) {
+  const text = r.lines.join('\n');
+  if (typeof r.minor === 'number') return [T(r.label), M(r.minor, digits), T(currency)];
+  if (r.date) return [T(r.label), D(r.date)];
+  if (r.period) return [T(r.label), T(text), T(''), D(r.period.start), D(r.period.end)];
+  return [T(r.label), r.id ? ID(text) : T(text)];
+}
+
+const particularsHeader = (t) => [HDR(t('export.col_field')), HDR(t('export.col_value')), HDR(t('export.col_currency')), HDR(t('export.col_start')), HDR(t('export.col_end'))];
+
+function adjustmentRows(t, m, { currency, digits }) {
+  if (!m.adjustments.length) return [];
+  return [
+    [],
+    [HDR(t('mypay.separate_payment')), HDR(t('export.col_amount')), HDR(t('export.col_currency')), HDR(t('export.col_pay_date'))],
+    ...m.adjustments.map((a) => [T(a.label), M(a.minor, digits), T(currency), a.paymentDate ? D(a.paymentDate) : T('')]),
+  ];
+}
+
 function summarySheet(t, m, { currency, digits }) {
   const d = m.particulars.document.rows;
   const rows = [
     [TITLE(m.header)],
     [T(m.scopeText)],
     [],
-    [HDR(t('export.col_field')), HDR(t('export.col_value')), HDR(t('export.col_currency'))],
+    particularsHeader(t),
     [T(t('masthead.employer')), T(m.employerName)],
     [T(t('common.employee')), T(m.employeeName)],
-    ...d.map((r) => [T(r.label), r.id ? ID(r.lines.join('\n')) : T(r.lines.join('\n'))]),
-    ...m.particulars.payment.rows.map((r) => (typeof r.minor === 'number' ? [T(r.label), M(r.minor, digits), T(currency)] : [T(r.label), r.id ? ID(r.lines.join('\n')) : T(r.lines.join('\n'))])),
+    ...d.map((r) => particularRow(r, { currency, digits })),
+    ...m.particulars.payment.rows.map((r) => particularRow(r, { currency, digits })),
     [],
     [HDR(t('export.totals')), HDR(t('export.col_amount')), HDR(t('export.col_currency'))],
     ...m.totals.map((x) => [x.prominent ? B(x.label) : T(x.label), M(x.minor, digits, x.prominent), T(currency)]),
+    ...adjustmentRows(t, m, { currency, digits }),
     [],
     ...m.notices.map((n) => [T(n)]),
   ];
   return { name: t('export.sheet_summary'), rows };
+}
+
+/** Employer, employee, document and payment particulars: the statement's mandatory content, kept with the figures. */
+function particularsSheet(t, m, money) {
+  const rows = [[TITLE(t('record.particulars'))]];
+  for (const group of [m.particulars.employer, m.particulars.employee, m.particulars.document, m.particulars.payment]) {
+    if (!group.rows.length) continue;
+    rows.push([], [B(group.title)], particularsHeader(t));
+    for (const r of group.rows) rows.push(particularRow(r, money));
+  }
+  return { name: t('record.particulars'), rows };
 }
 
 function timeSheet(t, m) {
@@ -308,21 +349,23 @@ function timeSheet(t, m) {
 }
 
 function historySheet(t, m, { currency, digits }) {
-  const rows = [[HDR(t('export.col_period')), HDR(t('export.col_pay_date')), HDR(t('export.col_tax_year')), HDR(t('export.col_line_id')), HDR(t('export.col_description')), HDR(t('export.col_category')), HDR(t('export.col_group')), HDR(t('export.col_hours')), HDR(t('export.col_amount')), HDR(t('export.col_currency')), HDR(t('export.col_ytd'))]];
+  const rows = [[HDR(t('export.col_period')), HDR(t('export.col_start')), HDR(t('export.col_end')), HDR(t('export.col_pay_date')), HDR(t('export.col_tax_year')), HDR(t('export.col_line_id')), HDR(t('export.col_description')), HDR(t('export.col_category')), HDR(t('export.col_group')), HDR(t('export.col_hours')), HDR(t('export.col_amount')), HDR(t('export.col_currency')), HDR(t('export.col_ytd'))]];
   for (const p of m.history) {
-    for (const r of p.lines) rows.push([T(p.periodText), p.payDate ? D(p.payDate) : T(''), T(p.taxYearLabel || ''), ID(r.id), T(r.label), T(r.categoryLabel), T(r.groupLabel || ''), r.hoursHundredths !== null ? H(r.hoursHundredths) : T(''), M(r.amountMinor, digits), T(currency), r.ytdMinor === null ? T('') : M(r.ytdMinor, digits)]);
-    rows.push([T(p.periodText), p.payDate ? D(p.payDate) : T(''), T(p.taxYearLabel || ''), T(''), B(p.netLabel), T(''), T(''), T(''), M(p.netMinor, digits, true), T(currency)]);
+    const span = [p.periodStart ? D(p.periodStart) : T(''), p.periodEnd ? D(p.periodEnd) : T('')];
+    for (const r of p.lines) rows.push([T(p.periodText), ...span, p.payDate ? D(p.payDate) : T(''), T(p.taxYearLabel || ''), ID(r.id), T(r.label), T(r.categoryLabel), T(r.groupLabel || ''), r.hoursHundredths !== null ? H(r.hoursHundredths) : T(''), M(r.amountMinor, digits), T(currency), r.ytdMinor === null ? T('') : M(r.ytdMinor, digits)]);
+    rows.push([T(p.periodText), ...span, p.payDate ? D(p.payDate) : T(''), T(p.taxYearLabel || ''), T(''), B(p.netLabel), T(''), T(''), T(''), M(p.netMinor, digits, true), T(currency)]);
   }
   if (rows.length === 1) rows.push([T(t('export.no_rows'))]);
   return { name: t('export.sheet_history'), rows, freezeRow: 1 };
 }
 
 function documentSheet(t, m) {
-  const rows = [[HDR(t('export.col_field')), HDR(t('export.col_value'))]];
-  for (const r of m.particulars.document.rows) rows.push([T(r.label), r.id ? ID(r.lines.join('\n')) : T(r.lines.join('\n'))]);
+  const money = { currency: m.currency, digits: minorDigits(m.currency) };
+  const rows = [particularsHeader(t)];
+  for (const r of m.particulars.document.rows) rows.push(particularRow(r, money));
   rows.push([T(t('export.field_generated')), T(m.generatedText)]);
   rows.push([T(t('export.field_scope')), T(m.scopeText)]);
-  rows.push([T(t('export.field_integrity_status')), T(m.integrityStatus)]);
+  rows.push([T(t('export.field_integrity_status')), T(m.integrityStatusText)]);
   if (m.supersedes) rows.push([T(t('export.field_supersedes')), ID(m.supersedes)]);
   if (m.supersededBy) rows.push([T(t('export.field_superseded_by')), ID(m.supersededBy)]);
   rows.push([]);
@@ -372,6 +415,7 @@ export function buildXlsx(ctx, { selectedOnly = false, includeNotes = false, gen
     ? [selectedSheet(t, m, { ...money, includeNotes })]
     : [
       summarySheet(t, m, money),
+      particularsSheet(t, m, money),
       categorySheet(t, m, t('export.sheet_earnings'), ['earning'], money),
       categorySheet(t, m, t('export.sheet_deductions'), ['deduction'], money),
       categorySheet(t, m, t('export.sheet_employer'), ['employer'], money),

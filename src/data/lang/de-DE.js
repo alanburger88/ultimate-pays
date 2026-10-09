@@ -750,6 +750,7 @@ export const pack = {
   'studio.hidden_note': 'Das Studio ist ein Präsentationswerkzeug. Ein versteckter Aufruf ist keine Berechtigung; Arbeitnehmerpakete enthalten es nicht.',
 
   // --- Exports ---------------------------------------------------------------------
+  'export.pdf_unsupported_chars': 'Die PDF-Schrift kann einige Zeichen in diesem Dokument nicht darstellen ({chars}). Es wurde nichts geändert oder gespeichert. Verwenden Sie Drucken und dann „Als PDF speichern“, damit alle Zeichen erhalten bleiben.',
   'export.pdf_title': '{title} – {employee} – {period}',
   'export.sheet_summary': 'Übersicht',
   'export.sheet_earnings': 'Bezüge',

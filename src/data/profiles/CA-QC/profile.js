@@ -21,6 +21,7 @@ export const profile = {
   subdivision: 'QC',
   group: 'north-america',
   currency: 'CAD',
+  timeZone: 'America/Toronto',
   locales: ['fr-CA', 'en-CA'],
   defaultLocale: 'fr-CA',
   statutoryLocale: 'fr-CA',

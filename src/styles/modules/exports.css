@@ -68,3 +68,7 @@
   .pl-px-table th { letter-spacing: 0; text-transform: none; font-size: 7pt; }
   .pl-px-table th.num { white-space: normal; }
 }
+
+/* Category subtotal is the last body row (not a repeating footer); keep captions with their first rows. */
+.pl-px .pl-px-subtotal th, .pl-px .pl-px-subtotal td { font-weight: 700; border-top: 1.5px solid #000; }
+@media print { .pl-px-table caption, .pl-px-table thead { break-after: avoid; page-break-after: avoid; } .pl-px h2, .pl-px h3 { break-after: avoid; page-break-after: avoid; } }

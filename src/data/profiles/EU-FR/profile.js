@@ -17,6 +17,7 @@ export const profile = {
   subdivision: null,
   group: 'europe',
   currency: 'EUR',
+  timeZone: 'Europe/Paris',
   // fr-FR and en-GB content packs are written; de-DE and it-IT remain placeholder
   // stubs and are not approved on any record until translated.
   locales: ['fr-FR', 'en-GB', 'de-DE', 'it-IT'],
