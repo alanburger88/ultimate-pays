@@ -203,7 +203,7 @@ function compositionChart(ctx, m) {
     const label = t('reward.segment_label', { component: c.label, amount: ctx.fmt.money(c.amount), share: t('reward.share_of_total', { percent: ctx.fmt.percent(c.sharePermyriad, 1) }) });
     const inner = h('svg:svg', { x: `${x}%`, y: 0, width: `${w}%`, height: H, overflow: 'visible' },
       h('svg:rect', { x: 0, y: BAR_Y, width: '100%', height: BAR_H, rx: 4, ry: 4, style: `fill:${c.colour}` }),
-      h('svg:text', { x: 12, y: BAR_Y + BAR_H / 2, class: 'seg-lbl', 'dominant-baseline': 'central', 'aria-hidden': 'true', visibility: 'hidden' }, ctx.fmt.percent(c.sharePermyriad, 0)));
+      h('svg:text', { x: 12, y: BAR_Y + BAR_H / 2, class: 'seg-lbl', 'dominant-baseline': 'central', 'aria-hidden': 'true', style: 'display:none' }, ctx.fmt.percent(c.sharePermyriad, 0)));
     labelled.push([inner, w]);
     const g = h('svg:g', { class: ['hit', 'seg', `seg-${c.id}`], dataset: { component: c.id } }, h('svg:title', null, label), inner);
     if (action) {
@@ -216,7 +216,8 @@ function compositionChart(ctx, m) {
     x += w;
   });
   // Show a segment's in-bar percentage only when the segment is wide enough to hold it (measured, re-measured on resize).
-  const fit = () => { const total = svg.getBoundingClientRect().width; for (const [inner, w] of labelled) { const text = inner.querySelector('text'); text.setAttribute('visibility', (total * w) / 100 >= 52 ? 'visible' : 'hidden'); } };
+  // Hidden labels use display:none so they never extend the chart's box (visibility:hidden still occupies layout).
+  const fit = () => { const total = svg.getBoundingClientRect().width; for (const [inner, w] of labelled) { const text = inner.querySelector('text'); text.style.display = (total * w) / 100 >= 52 ? '' : 'none'; } };
   requestAnimationFrame(fit);
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(fit).observe(svg);
   // Legend: text identity (never colour alone) with amount and share; each item is the same link as its segment.

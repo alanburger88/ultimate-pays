@@ -31,7 +31,7 @@
 .pl-panel { border-top: 1px solid var(--pl-line); padding-top: var(--pl-space-4); margin-top: var(--pl-space-4); }
 
 /* Chips / badges ---------------------------------------------------------------------- */
-.pl-chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 2px 10px; font-size: var(--pl-size-xs); font-weight: 600; background: var(--pl-surface-2); color: var(--pl-ink-2); border: 1px solid transparent; white-space: nowrap; }
+.pl-chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 2px 10px; font-size: var(--pl-size-xs); font-weight: 600; background: var(--pl-surface-2); color: var(--pl-ink-2); border: 1px solid transparent; white-space: normal; max-width: 100%; overflow-wrap: anywhere; text-align: left; line-height: 1.35; }
 .pl-chip-accent { background: var(--pl-accent-soft); color: var(--pl-accent-strong); }
 .pl-chip-positive { background: var(--pl-positive-soft); color: var(--pl-positive); }
 .pl-chip-negative { background: var(--pl-negative-soft); color: var(--pl-negative); }

@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { transformModule, moduleId } from './bundle.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -37,6 +38,9 @@ for (const file of walk(srcRoot)) {
     failures++;
     console.error(`lint: ${id}: ${err.message}`);
   }
+  // Full JavaScript syntax check: the import/export rewrite above does not parse function bodies.
+  try { execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' }); }
+  catch (err) { failures++; console.error(`lint: ${id}: syntax error\n${String(err.stderr).split('\n').slice(0, 5).join('\n')}`); }
 }
 if (failures) { console.error(`lint: ${failures} module problem(s).`); process.exit(1); }
 console.log('lint: all modules use bundler-compatible syntax.');
