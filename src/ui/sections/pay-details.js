@@ -45,7 +45,10 @@ let pendingCaret = null;
  * horizontal scrolling or hiding columns.
  */
 const CARDS_QUERY = '(max-width: 999px)';
-function useCards() { return isNarrow() || (window.matchMedia && window.matchMedia(CARDS_QUERY).matches); }
+/** Language/width combinations where the table was measured too wide; cards are used there instead. */
+const tooWide = new Set();
+function fitKey(ctx) { return `${ctx.locale}|${window.innerWidth}`; }
+function useCards(ctx) { return isNarrow() || (window.matchMedia && window.matchMedia(CARDS_QUERY).matches) || (ctx && tooWide.has(fitKey(ctx))); }
 
 /** Current ctx so the module can re-render when the viewport crosses the card/table breakpoint. */
 let liveCtx = null;
@@ -163,8 +166,15 @@ export function render(ctx) {
   const t = ctx.t;
   const nav = ctx.store.get().nav;
   const model = buildModel(ctx, nav.filters, nav.lineId);
-  const narrow = useCards();
+  const narrow = useCards(ctx);
   const selected = ctx.selectedLines();
+  if (!narrow) {
+    // After layout, check that every table fits; long translations can make one wider than the page.
+    requestAnimationFrame(() => {
+      const over = Array.from(document.querySelectorAll('#pl-section-host .pl-dtable')).some((tbl) => tbl.parentElement && tbl.scrollWidth > tbl.parentElement.clientWidth + 1);
+      if (over && liveCtx === ctx && ctx.store.get().nav.section === 'pay-details') { tooWide.add(fitKey(ctx)); ctx.store.update('nav', (n) => ({ ...n })); }
+    });
+  }
 
   const el = h('div', { class: 'stack-lg pl-details' },
     sectionHeader(ctx, t('details.title'), t('details.intro')),

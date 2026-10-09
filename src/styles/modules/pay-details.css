@@ -115,3 +115,10 @@
 .pl-calc-result { font-size: var(--pl-size-2xl); font-weight: 720; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; display: block; }
 .pl-calc-source { margin: 0; padding-left: 1.1em; }
 .pl-calc-summary .pl-formula { font-size: var(--pl-size-md); }
+
+/* Long translations (isiZulu, Afrikaans, German): table headers and row actions wrap rather than widening the table.
+   If a table still cannot fit, pay-details.js falls back to cards for that language and width. */
+.pl-dtable thead th, .pl-dtable thead th button.sort { white-space: normal; overflow-wrap: break-word; hyphens: auto; text-align: inherit; }
+.pl-dtable thead th.num { text-align: right; }
+.pl-dtable .col-actions { white-space: normal; }
+.pl-dtable td.col-actions > * { flex-wrap: wrap; }

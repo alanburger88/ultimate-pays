@@ -12,7 +12,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 h1, h2, h3, h4 { margin: 0 0 var(--pl-space-2); line-height: 1.25; font-weight: 650; letter-spacing: -0.01em; }
-h1 { font-size: var(--pl-size-2xl); }
+h1 { font-size: clamp(1.5rem, 1.1rem + 2.4vw, var(--pl-size-2xl)); }
+h1, h2, h3, h4 { overflow-wrap: anywhere; hyphens: auto; }
 h2 { font-size: var(--pl-size-xl); }
 h3 { font-size: var(--pl-size-lg); }
 h4 { font-size: var(--pl-size-md); }
@@ -66,6 +67,7 @@ small, .small { font-size: var(--pl-size-sm); }
 .pl-main { flex: 1; padding-top: var(--pl-space-5); padding-bottom: calc(var(--pl-launcher-safe) + var(--pl-tray-h, 0px)); }
 .pl-section { outline: none; }
 .pl-section-header { margin-bottom: var(--pl-space-4); }
+.pl-section-header > * { min-width: 0; }
 .pl-section-header p { color: var(--pl-muted); max-width: 60ch; }
 .pl-footer { border-top: 1px solid var(--pl-line); color: var(--pl-muted); font-size: var(--pl-size-xs); padding: var(--pl-space-4) 0 calc(var(--pl-launcher-safe) + var(--pl-tray-h, 0px)); }
 .pl-footer .pl-wrap { display: flex; flex-wrap: wrap; gap: var(--pl-space-2) var(--pl-space-4); align-items: center; }
