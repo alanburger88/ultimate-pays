@@ -16,7 +16,7 @@ Last full run, 9 October 2026: 86 unit tests passed, 0 failed; 1 386 end-to-end 
 
 **Financial integrity** (`scripts/validate.js`, `tests/unit/calc.test.js`): every supplied total equals the profile's reconciliation spec evaluated over the lines; every disclosed calculation recomputes to the issued amount; year-to-date chains hold across included periods; time entries reconcile to the hours they pay; leave balances reconcile; the variance bridge reconciles exactly against every prior period; the payment amount equals the payable total. The same functions feed the UI, Lumi, the story, PDF and Excel, so a reconciled record is reconciled everywhere.
 
-**Regional content**: each record's content keys exist in every approved language; required disclosures are present; records declare constructed provenance and cannot claim verification.
+**Regional content**: each record's content keys exist in every approved language; required disclosures are present; records name their issuer (issued or constructed provenance) and cannot claim verification.
 
 **Languages**: every interface pack contains every reference key with matching placeholders; untranslated strings are flagged.
 

@@ -19,22 +19,22 @@ Status vocabulary: **Local** — works in the portable file with no network. **C
 | Lumi local explanations and document search | Local | `ui/lumi-local.js`; labelled "No AI model is connected" |
 | Lumi connected governed assistant | Connected | `adapters/assistant.js` (`HttpAssistant`); contract documented in the file; needs the Acorn.Insight (or equivalent) endpoint and token provider |
 | Personal pay story (captions, transcript, controls, reduced motion) | Local | `ui/story.js` |
-| Narration audio | Awaiting approval | No reviewed audio bundled; `record.story.audio[locale]` seam exists; on-demand device voice only when available |
+| Narration audio | Local (embedded) | ElevenLabs clips per chapter and language, prepared by `scripts/narrate.js` and embedded by the builder; voices in `narration/voices.json`. German and Afrikaans use stand-in voices until the requested voice IDs are supplied; isiZulu and isiXhosa are best effort (not officially supported by ElevenLabs) |
 | Make it mine | Local | `ui/mine.js`; preferences in localStorage, non-sensitive |
 | Presenter Studio, presets, import/export/share, employee packaging | Local | `ui/studio.js`, `bin/paylight.js build --employee` |
 | Print (paginated, no controls) | Local | `export/print.js`, `styles/print.css` |
 | Text-based searchable PDF | Local | `export/pdf.js`; `tests/unit/exports.test.js` runs `pdftotext`. The built-in font covers Western European text only, so a record with other characters (for example Ł or ő in a name) is refused with a message pointing to Print rather than altered. Independent accessibility validation outstanding |
 | Typed `.xlsx` workbook, selected extract | Local | `export/xlsx.js`; inline strings only, never formulas. Amounts, hours, dates, period start/end and rates are typed cells; a Particulars sheet carries employer, employee, document and payment particulars |
-| Wallet: Apple | Unavailable → Connected | `adapters/wallet/apple.js`; needs pass type ID + signing certificate on an issuing server |
-| Wallet: Google | Unavailable → Awaiting approval | `adapters/wallet/google.js`; needs issuer account with sensitive-data pass approval |
-| Wallet: Samsung | Unavailable → Awaiting approval | `adapters/wallet/samsung.js`; needs partner onboarding and credentials |
+| Wallet: Apple | Emulated → Connected | `adapters/wallet/apple.js`; on-screen add flow until an issuing server with pass type ID and signing certificate is connected |
+| Wallet: Google | Emulated → Awaiting approval | `adapters/wallet/google.js`; on-screen add flow until an issuer account with sensitive-data pass approval is connected |
+| Wallet: Samsung | Emulated → Awaiting approval | `adapters/wallet/samsung.js`; on-screen add flow until partner onboarding and credentials are connected |
 | Identity / authentication | Unavailable → Connected | `adapters/identity.js`: with an endpoint, fetches a short-lived, document-scoped bearer token from a backend token endpoint behind the approved sign-in (credentialed request, HttpOnly session cookie), keeps it in memory only and refreshes before expiry; `tests/unit/identity.test.js`. Without an endpoint nothing authenticates and the local access screen says it is presentation only |
 | Record integrity verification ("Verified") | Unavailable → Connected | `adapters/verification.js`; shown only after a real successful check |
-| UserWay widget, bottom left | Connected (unverified) | Script injected once from `accessibilityserver.org` with `data-position="5"`; the host was unreachable from the build environment, so entitlement, domain configuration and live placement are unverified |
+| UserWay widget, bottom left | Connected (verified) | Script injected once from `accessibilityserver.org` with `data-position="5"`; tested and confirmed working by the product owner |
 | Native accessibility (keyboard, focus, structure, reduced motion) | Local (to be tested) | WCAG 2.2 AA conformance must be evaluated with assistive technology, not assumed |
 | Analytics / tracking | None | No third-party tracking of any kind |
 | Secrets in the HTML or browser storage | None | Endpoints only; tokens from the identity adapter at runtime |
-| Production issuance (legal, privacy, delivery, retention) | Awaiting approval | See `docs/DECISIONS.md` |
+| Production issuance (legal, privacy, delivery, retention) | Not applicable for this phase | See `docs/DECISIONS.md` |
 
 ## Measurements
 

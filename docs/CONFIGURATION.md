@@ -22,6 +22,8 @@ node bin/paylight.js list                      # profiles, languages and scenari
 | `--studio` | Open Presenter Studio on launch (`present` only). |
 | `--employee` | Build an employee package: one recipient, no Studio, no other recipients' data. Requires `--region`. |
 | `--out=FILE` | Output path for `build`. |
+| `--endpoints=FILE` | JSON file of HTTPS service endpoints embedded in the build (see Integration endpoints). Never read from a link. |
+| `--narration=off` | Leave the pay-story voice clips out of the build (smaller file; captions and the device voice remain). |
 | `--port`, `--host`, `--open` | Dev-server options for `present`. |
 
 `present` starts a dependency-free static server and prints a URL whose fragment carries the launch configuration. `build` embeds the same configuration as JSON (never code) in `<script id="paylight-launch" type="application/json">` inside the single HTML file.
@@ -38,6 +40,8 @@ paylight.html#config=<base64url presentation settings>   (shareable preset link 
 ```
 
 Navigation keys (`section`, `line`, `view`) are also kept in the fragment so the browser's back button and shared links restore the employee's place.
+
+`docs/URL-PARAMETERS.md` lists every parameter and a ready-made link for each region, record and language.
 
 ## Precedence
 
@@ -78,6 +82,37 @@ Bearer tokens come from the identity adapter at runtime. Its endpoint is a backe
 | Payroll queries | `POST` the reviewed payload with `Idempotency-Key` | `{ caseReference, acknowledgedAt, nextStep? }`; `409` with `caseReference` for a duplicate |
 | Verification | `POST` `{ documentRef, version, lines, totals }` | `{ verified: true, verifiedAt }` only after a real check with keys held outside the package |
 | Wallet (per provider) | `POST` `{ provider, documentRef, version }` | `{ url, state: 'requested' \| 'issued' \| 'added' }`; "added" only on provider confirmation |
+
+Without a wallet endpoint, each provider runs an on-screen add flow (preparing, confirm, added) and Presenter Studio lists it as **Emulated**. To show the plain unavailable state instead, add `"wallet": { "emulate": false }` to the endpoints file.
+
+## Pay-story narration (ElevenLabs)
+
+The story is read aloud by ElevenLabs voices. Clips are generated once, at build time, and embedded in each build for the records it contains, so the API key never reaches a browser or a file.
+
+```bash
+ELEVENLABS_API_KEY=… node scripts/narrate.js            # all records and languages (reuses cached clips)
+node scripts/narrate.js --only=EU-DE --lang=de-DE        # one region / language
+node scripts/narrate.js --dry-run                        # list what would be generated and the character count
+node scripts/narrate.js --prune                          # also delete clips no longer used
+npm run build                                            # embeds narration/audio clips into every build
+```
+
+- `narration/voices.json` holds the model (`eleven_v4`), the output format (`mp3_22050_32`) and one voice per language: name, library `voiceId`, `languageCode` and `enabled`.
+- The script opens the app in headless Chromium and reads each chapter's exact spoken text, so audio always matches the captions. Clips are cached in `narration/audio/<hash>.mp3`; the same text and voice are never generated twice.
+- At runtime a clip plays only if its recorded text still matches what the statement says; otherwise that chapter falls back to captions and the device voice.
+- Behind an HTTPS proxy the script relaunches Node with `NODE_USE_ENV_PROXY=1` so requests use it.
+
+| Language | Voice | Note |
+|---|---|---|
+| en-CA, en-GB, en-ZA | Megan | |
+| fr-CA | Jeanne Mance | |
+| fr-FR | Mélanie | |
+| de-DE | Yvonne | Stand-in until the ID for Mrs. Sophie is supplied |
+| it-IT | Beatrice | |
+| af-ZA | Cheyenne (South African) | Stand-in until the ID for Anneke is supplied |
+| zu-ZA, xh-ZA | Cheyenne (South African) | Best effort: not an officially supported ElevenLabs language; listen before showing |
+
+The presenter build carries every clip (about 6.6 MB of audio, roughly 8.5 MB once embedded); an employee package carries only its own record's languages.
 
 ## Storage
 

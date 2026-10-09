@@ -177,6 +177,64 @@ if (!args.only || args.only === 'CA-ON') {
   const rm = await openPage({ url, width: 1200, hash: '#region=CA-ON&lang=en-CA&preset=complete&theme=dark', reducedMotion: true, colorScheme: 'dark' });
   check('dark theme applies', await rm.page.evaluate(() => document.documentElement.dataset.theme === 'dark'));
   await rm.close();
+
+  // Product-owner feedback: header, theme toggle, no demo wording, story voice, wallets, drag reorder
+  for (const scheme of ['dark', 'light']) {
+    const tt = await openPage({ url, width: 1200, hash: '#region=CA-ON&lang=en-CA', colorScheme: scheme });
+    const state = () => tt.page.evaluate(() => { const b = document.querySelector('.pl-theme-toggle'); const rgb = getComputedStyle(document.body).backgroundColor.match(/\d+/g).map(Number); return { icon: b.dataset.showing, page: rgb[0] + rgb[1] + rgb[2] < 300 ? 'dark' : 'light' }; });
+    let st = await state();
+    check(`theme toggle icon matches the page on open (${scheme} device)`, st.icon === st.page, JSON.stringify(st));
+    for (let i = 0; i < 3; i++) {
+      const before = st.page;
+      await tt.page.click('.pl-theme-toggle'); await tt.page.waitForTimeout(120);
+      st = await state();
+      check(`theme toggle click ${i + 1} flips the page and keeps the icon in step (${scheme} device)`, st.page !== before && st.icon === st.page, JSON.stringify(st));
+    }
+    await tt.close();
+  }
+  for (const [hash, label] of [['#region=CA-ON&lang=fr-CA', 'CA-ON fr-CA'], ['#region=EU-FR&lang=fr-FR', 'EU-FR fr-FR'], ['#region=ZA&lang=af-ZA', 'ZA af-ZA']]) {
+    const s = await openPage({ url, width: 1200, hash });
+    const text = await s.page.evaluate(() => document.body.innerText);
+    check(`${label} has no demo wording`, !/constructed|construit|konstruiert|costruit|saamgestel|presentation record|not employer-issued|proof of earnings|preuve de revenu/i.test(text));
+    check(`${label} header shows the employee number, not the record reference`, await s.page.evaluate(() => { const f = document.querySelector('.pl-masthead-facts').innerText; return /\d{4,}/.test(f) && !/AVN-/.test(f); }));
+    check(`${label} print and story actions in the tab row`, await s.page.isVisible('.pl-nav-actions .pl-tool-print') && await s.page.isVisible('.pl-nav-actions .pl-tool-story'));
+    check(`${label} story invitation leads My pay`, await s.page.evaluate(() => { const c = document.querySelector('#section-my-pay .pl-mp-story'); const k = document.querySelector('#section-my-pay .pl-kpi'); return Boolean(c && k && (c.compareDocumentPosition(k) & Node.DOCUMENT_POSITION_FOLLOWING)); }));
+    await s.close();
+  }
+  const phone = await openPage({ url, width: 390, height: 844, hash: '#region=CA-ON&lang=en-CA' });
+  check('phone header stays compact (<= 140 px)', await phone.page.evaluate(() => document.querySelector('.pl-masthead').offsetHeight <= 140));
+  await phone.page.click('.pl-mh-details');
+  check('phone Details reveals the particulars', await phone.page.isVisible('.pl-masthead-facts'));
+  await phone.close();
+  // Story voice: the credit appears where clips are bundled for the language
+  const voiceRun = await openPage({ url, width: 1200, hash: '#region=EU-IT&lang=it-IT' });
+  await voiceRun.page.click('[data-focus-key="mypay-story"]'); await voiceRun.page.waitForSelector('.pl-story-narration');
+  const hasNarration = await voiceRun.page.evaluate(() => Boolean(document.getElementById('pl-narration')));
+  check('story offers the bundled voice when clips are embedded', !hasNarration || /ElevenLabs/.test(await voiceRun.page.locator('.pl-story-narration').innerText()));
+  await voiceRun.close();
+  // Wallet: emulated add flow
+  const w = await openPage({ url, width: 1200, hash: '#region=EU-DE&lang=en-GB&section=record-actions' });
+  await w.page.click('[data-focus-key="ra-wallet-google"]');
+  await w.page.waitForSelector('.pl-wallet-pass', { timeout: 5000 });
+  await w.page.click('.pl-wallet-actions .pl-btn-primary');
+  await w.page.waitForSelector('.pl-wallet-done', { timeout: 5000 });
+  check('wallet add flow reaches Added', /Added to Google Wallet/.test(await w.page.locator('.pl-wallet-sheet').innerText()));
+  await w.page.click('.pl-wallet-actions .pl-btn-primary'); await w.page.waitForTimeout(200);
+  check('wallet panel then shows the pass as added', /Show pass/.test(await w.page.locator('#ra-wallet-google').innerText()));
+  await w.close();
+  // Make it mine: drag a section by its handle
+  const mm = await openPage({ url, width: 1200, hash: '#region=CA-ON&lang=en-CA&preset=complete' });
+  await mm.page.click('[data-focus-key="mypay-mine"]'); await mm.page.waitForSelector('.pl-mine-grip');
+  const order = () => mm.page.evaluate(() => Array.from(document.querySelectorAll('.pl-mine-order li')).map((li) => li.dataset.id));
+  const o0 = await order(); const lastId = o0[o0.length - 1];
+  const g = await mm.page.locator(`.pl-mine-order li[data-id="${lastId}"] .pl-mine-grip`).boundingBox();
+  const target = await mm.page.locator('.pl-mine-order li').nth(1).boundingBox();
+  await mm.page.mouse.move(g.x + g.width / 2, g.y + g.height / 2); await mm.page.mouse.down();
+  for (let k = 1; k <= 10; k++) await mm.page.mouse.move(g.x + g.width / 2, g.y + (target.y + 4 - g.y) * (k / 10));
+  await mm.page.mouse.up();
+  check('Make it mine reorders by dragging a handle', (await order())[1] === lastId);
+  check('Make it mine has no up/down buttons', (await mm.page.locator('[data-move]').count()) === 0);
+  await mm.close();
 }
 
 fs.writeFileSync(path.join(outDir, 'results.json'), JSON.stringify(results, null, 2));
